@@ -49,13 +49,13 @@ class UserController extends Controller
 
     public function create()
     {
-        $states = Location::select('state')->distinct()->orderby('state')->get();
-        return view('users.create', compact('states'));
+        $locations = Location::select('state')->distinct()->orderby('state')->get();
+        return view('users.create', compact('locations'));
     }
 
     public function store(Request $request)
     {
-        $request->validate($request->all(), [
+        $request->validate([
             'name'          =>  'required',
             'email'         =>  'required|email|max:255|unique:users',
             'mobile'        =>  'required|digits:10|unique:users,mobile',
@@ -67,7 +67,8 @@ class UserController extends Controller
             'role'          =>  'required',
         ], [
             'name.required'         =>  'Please Enter Name',
-            'mobile.required'       =>  'Please Enter Mobile number',
+            'email.required'        =>  'Please Enter Email',
+            'mobile.required'       =>  'Please Enter Mobile No.',
             'address.required'      =>  'Please Enter Address',
             'state.required'        =>  'Please Select State',
             'city.required'         =>  'Please Select City',
@@ -78,17 +79,14 @@ class UserController extends Controller
         ]);
 
         $image_name = "";
-        if (!empty($request->hasFile('profile_image'))) {
-            $request->validate($request->all(), [
+        if ($request->hasFile('profile_image')) {
+            $request->validate([
                 'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
             if ($request->hasFile('profile_image')) {
-                $files = $request->file('profile_image');
-                foreach ($files as $file) {
-                    $image_name = $file->getClientOriginalName();
-                    $uid = auth()->user()->id;
-                    $path = Storage::putFileAs('public/profile_image/' . $uid, $file, $image_name);
-                }
+                $file = $request->file('profile_image');
+                $image_name = $file->getClientOriginalName();
+                $path = Storage::putFileAs('public/profile_image/', $file, $image_name);
             }
         }
 
@@ -120,15 +118,16 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        return view('brand.edit', compact('brand'));
+        $locations = Location::select('state')->distinct()->orderby('state')->get();
+        return view('users.edit', compact('user', 'locations', 'id'));
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate($request->all(), [
+        $request->validate([
             'name'          =>  'required',
-            'email'         =>  'required|email|max:255|unique:users',
-            'mobile'        =>  'required|digits:10|unique:users,mobile',
+            'email'         =>  'required|email|unique:users,email,' . $id,
+            'mobile'        =>  'required|digits:10|unique:users,mobile,' . $id,
             'address'       =>  'required',
             'state'         =>  'required',
             'city'          =>  'required',
@@ -136,7 +135,8 @@ class UserController extends Controller
             'role'          =>  'required',
         ], [
             'name.required'         =>  'Please Enter Name',
-            'mobile.required'       =>  'Please Enter Mobile number',
+            'email.required'        =>  'Please Enter Email',
+            'mobile.required'       =>  'Please Enter Mobile No.',
             'address.required'      =>  'Please Enter Address',
             'state.required'        =>  'Please Select State',
             'city.required'         =>  'Please Select City',
@@ -147,17 +147,14 @@ class UserController extends Controller
 
         $user = User::find($id);
         $image_name = $user->profile_image;
-        if (!empty($request->hasFile('profile_image'))) {
-            $request->validate($request->all(), [
+        if ($request->hasFile('profile_image')) {
+            $request->validate([
                 'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
             if ($request->hasFile('profile_image')) {
-                $files = $request->file('profile_image');
-                foreach ($files as $file) {
-                    $image_name = $file->getClientOriginalName();
-                    $uid = auth()->user()->id;
-                    $path = Storage::putFileAs('public/profile_image/' . $uid, $file, $image_name);
-                }
+                $file = $request->file('profile_image');
+                $image_name = $file->getClientOriginalName();
+                $path = Storage::putFileAs('public/profile_image/', $file, $image_name);
             }
         }
 

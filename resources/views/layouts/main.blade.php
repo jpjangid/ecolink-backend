@@ -44,16 +44,27 @@
       overflow-x: auto;
     }
 
-    body {
-      font-size: 0.85rem !important;
-    }
-
-    a {
+    body,
+    a,
+    button,
+    input {
       font-size: 0.85rem !important;
     }
 
     h1 {
       font-size: 1.6rem !important;
+    }
+
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
     }
   </style>
   @yield('css')

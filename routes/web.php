@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,8 +27,13 @@ Route::middleware(['auth', 'prevent'])->group(function () {
         Route::get('create', [UserController::class, 'create']);
         Route::post('store', [UserController::class, 'store']);
         Route::get('edit/{id}', [UserController::class, 'edit']);
-        Route::put('update', [UserController::class, 'update']);
-        Route::delete('delete', [UserController::class, 'destroy']);
+        Route::put('update/{id}', [UserController::class, 'update']);
+        Route::get('delete/{id}', [UserController::class, 'destroy']);
     });
 });
+
+Route::get('statelist', [LocationController::class, 'getState']);
+Route::post('citylist', [LocationController::class, 'getCity']);
+Route::post('pincodelist', [LocationController::class, 'getPincode']);
+
 require __DIR__ . '/auth.php';

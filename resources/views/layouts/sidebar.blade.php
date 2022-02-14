@@ -1,10 +1,17 @@
+<style>
+	p,
+	a,
+	i {
+		color: white !important;
+	}
+</style>
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #006466;">
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#e66465, #9198e5);">
 	<!-- Brand Logo -->
-	<a href="{{ url('/home')}}" class="brand-link">
+	<div class="brand-link">
 		<img src="{{ asset('Trevers.png') }}" alt="Ecolink logo" class="brand-image img-circle elevation-3" style="opacity: .8">
 		<span class="brand-text font-weight-strong text-white" style="font-size: 1rem !important;">ECOLINK </span>
-	</a>
+	</div>
 
 	<!-- Sidebar -->
 	<div class="sidebar">
@@ -24,42 +31,14 @@
 				<!-- Add icons to the links using the .nav-icon class
 			with font-awesome or any other icon font library -->
 
-				<li class="nav-header">Dashboard</li>
 
-				<li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="nav-icon fas fa-file-contract"></i>
+				<li class="nav-item">
+					<a href="{{ url('dashboard') }}" class="nav-link">
+						<i class="nav-icon fas fa-chart-pie"></i>
 						<p>
-							Reports
-							<i class="fas fa-angle-left right"></i>
+							Dashboard
 						</p>
 					</a>
-					<ul class="nav nav-treeview">
-						<li class="nav-item">
-							<a href="{{ url('/reports/clientlist') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Site Cost Reports</p>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="{{ url('/reports/materiallist') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Material Reports</p>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="{{ url('/reports/vendorlist') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Vendor Reports</p>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="{{ url('/reports/supervisorlist') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Supervisor Reports</p>
-							</a>
-						</li>
-					</ul>
 				</li>
 
 				<li class="nav-item has-treeview">

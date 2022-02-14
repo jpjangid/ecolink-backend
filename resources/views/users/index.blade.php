@@ -30,7 +30,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
-                        <li class="breadcrumb-item"><a href="{{ url('/client/registraion') }}" class="btn btn-info mt-o" style="float: right;">New Client</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('/users/create') }}" class="btn btn-info mt-o" style="float: right;">New User</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
