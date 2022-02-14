@@ -1,0 +1,8 @@
+Saia WEB INTEGRATION SERVICES
+https://www.saia.com/tools-and-resources/web-integration-services
+
+Fedex WEB INTEGRATION
+https://github.com/Arkitecht/fedex-laravel
+
+Paypal WEB INTEGRATION
+https://clickysoft.com/how-to-integrate-paypal-payment-gateway-in-laravel/
