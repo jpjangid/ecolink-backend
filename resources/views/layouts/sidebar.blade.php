@@ -9,7 +9,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#e66465, #9198e5);">
 	<!-- Brand Logo -->
 	<div class="brand-link">
-		<img src="{{ asset('Trevers.png') }}" alt="Ecolink logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+		<img src="{{ asset('New_Ecolink_Logo-33.png') }}" alt="Ecolink logo" class="brand-image  elevation-3" style="opacity: .8">
 		<span class="brand-text font-weight-strong text-white" style="font-size: 1rem !important;">ECOLINK </span>
 	</div>
 
