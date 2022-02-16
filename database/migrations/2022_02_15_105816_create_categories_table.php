@@ -19,12 +19,11 @@ class CreateCategoriesTable extends Migration
             $table->string('slug')->nullable();
             $table->integer('parent_id')->nullable();
             $table->longtext('description')->nullable();
-            $table->text('featured_image')->nullable();
+            $table->text('image')->nullable();
             $table->string('alt')->nullable();
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->text('keywords')->nullable();
-            $table->text('tags')->nullable();
             $table->text('og_title')->nullable();
             $table->text('og_description')->nullable();
             $table->text('og_image')->nullable();

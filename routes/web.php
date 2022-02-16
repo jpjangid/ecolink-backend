@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\BlogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ use App\Http\Controllers\LocationController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::middleware(['auth', 'prevent'])->group(function () {
+Route::middleware(['auth', 'prevent'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     Route::prefix('users')->group(function () {
@@ -29,6 +30,16 @@ Route::middleware(['auth', 'prevent'])->group(function () {
         Route::get('edit/{id}', [UserController::class, 'edit']);
         Route::put('update/{id}', [UserController::class, 'update']);
         Route::get('delete/{id}', [UserController::class, 'destroy']);
+    });
+
+    Route::prefix('blogs')->group(function () {
+        Route::get('/', [BlogController::class, 'index']);
+        Route::get('/create', [BlogController::class, 'create']);
+        Route::post('/store', [BlogController::class, 'store']);
+        Route::get('/edit/{id}', [BlogController::class, 'edit']);
+        Route::put('/update/{id}', [BlogController::class, 'update']);
+        Route::get('/delete/{id}', [BlogController::class, 'destroy']);
+        Route::post('/update_status', [BlogController::class, 'update_status']);
     });
 });
 

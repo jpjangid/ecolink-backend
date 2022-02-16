@@ -47,7 +47,9 @@
     body,
     a,
     button,
-    input {
+    input,
+    select,
+    textarea {
       font-size: 0.85rem !important;
     }
 

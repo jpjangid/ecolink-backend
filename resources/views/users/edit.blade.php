@@ -12,7 +12,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('users') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('admin/users') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -21,46 +21,46 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="post" action="{{ url('users/update', $id) }}" enctype="multipart/form-data">
+            <form method="post" action="{{ url('admin/users/update', $id) }}" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="row">
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="name"><span style="color: red;">* </span> Full Name:</label>
                         <input type="text" class="form-control" name="name" placeholder="Enter full name" value="{{ $user->name }}" />
                         @error('name')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="email"><span style="color: red;">* </span>Email:</label>
                         <input type="email" class="form-control" name="email" placeholder="Enter email" value="{{ $user->email }}" />
                         @error('email')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
                         <input type="number" class="form-control" name="mobile" placeholder="Enter mobile number" value="{{ $user->mobile }}" />
                         @error('mobile')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="address"><span style="color: red;">* </span>Address:</label>
                         <input type="text" class="form-control" name="address" placeholder="Enter address" value="{{ $user->address }}" />
                         @error('address')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
                         <input readonly type="text" class="form-control" name="country" placeholder="Enter country" value="India" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="state"><span style="color: red;">* </span>State:</label>
                         <select class="form-control select2bs4" name="state" id="state">
                             <option value="">Select State</option>
@@ -72,7 +72,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="city"><span style="color: red;">* </span>City:</label>
                         <select class="form-control select2bs4" name="city" id="city">
                             <option value="">Select City</option>
@@ -81,7 +81,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="pincode"><span style="color: red;">* </span>Postal:</label>
                         <select class="form-control select2bs4" name="pincode" id="pincode">
                             <option value="">Select Postal</option>
@@ -90,7 +90,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="role"><span style="color: red;">* </span>Role:</label>
                         <select class="form-control select2bs4" name="role" id="role">
                             <option value="">Select Role</option>
@@ -101,24 +101,22 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="profile_image">Profile Image:</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image">
                             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                         </div>
                     </div>
-                    <div class="mt-2 col-md-6">
+                    <div class="mt-2 col-md-4">
                         <label for="password">Password:</label>
                         <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
                         @error('password')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-2 col-md-6">
-                    </div>
-                    <div class="col-md-12">
-                        <button type="submit" class="btn btn-info" style="float: right;">Register</button>
+                    <div class="col-md-12 mt-2">
+                        <button type="submit" class="btn btn-info">Update</button>
                     </div>
                 </div>
             </form>

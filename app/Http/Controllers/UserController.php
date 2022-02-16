@@ -35,8 +35,8 @@ class UserController extends Controller
             return Datatables::of($users)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $delete_url = url('users/delete', $row['id']);
-                    $edit_url = url('users/edit', $row['id']);
+                    $delete_url = url('admin/users/delete', $row['id']);
+                    $edit_url = url('admin/users/edit', $row['id']);
                     $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
                     $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                     return $btn;
@@ -106,13 +106,7 @@ class UserController extends Controller
             'profile_image'         =>  $image_name,
         ]);
 
-        return redirect('/users')->with('success', 'User has been added successfully');
-    }
-
-    public function show($id)
-    {
-        $user = User::find($id);
-        return view('brand.show', compact('brand'));
+        return redirect('admin/users')->with('success', 'User has been added successfully');
     }
 
     public function edit($id)
@@ -176,7 +170,7 @@ class UserController extends Controller
         $user->profile_image    =   $image_name;
         $user->save();
 
-        return redirect('/users')->with('success', 'User updated successfully');
+        return redirect('admin/users')->with('success', 'User updated successfully');
     }
 
     public function destroy($id)
@@ -184,6 +178,6 @@ class UserController extends Controller
         $user = User::find($id);
         $user->flag  = '1';
         $user->update();
-        return redirect('/users')->with('danger', 'User deleted successfully');
+        return redirect('admin/users')->with('danger', 'User deleted successfully');
     }
 }

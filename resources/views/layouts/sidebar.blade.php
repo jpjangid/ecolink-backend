@@ -1,10 +1,3 @@
-<style>
-	p,
-	a,
-	i {
-		color: white !important;
-	}
-</style>
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#e66465, #9198e5);">
 	<!-- Brand Logo -->
@@ -33,7 +26,7 @@
 
 
 				<li class="nav-item">
-					<a href="{{ url('dashboard') }}" class="nav-link">
+					<a href="{{ url('admin/dashboard') }}" class="nav-link">
 						<i class="nav-icon fas fa-chart-pie"></i>
 						<p>
 							Dashboard
@@ -51,15 +44,39 @@
 					</a>
 					<ul class="nav nav-treeview">
 						<li class="nav-item">
-							<a href="{{ url('/users/create') }}" class="nav-link">
+							<a href="{{ url('admin/users/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add User</p>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a href="{{ url('/users') }}" class="nav-link">
+							<a href="{{ url('admin/users') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>User List</p>
+							</a>
+						</li>
+					</ul>
+				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-blog"></i>
+						<p>
+							Blogs
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						<li class="nav-item">
+							<a href="{{ url('admin/blogs/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Blog</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ url('admin/blogs') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Blog List</p>
 							</a>
 						</li>
 					</ul>

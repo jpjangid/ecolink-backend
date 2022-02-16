@@ -19,7 +19,7 @@ class CreateBlogsTable extends Migration
             $table->string('title');
             $table->longtext('description');
             $table->text('short_description');
-            $table->text('featured_image');
+            $table->text('image');
             $table->string('alt');
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();

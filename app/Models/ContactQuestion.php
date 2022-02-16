@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ContactUs extends Model
+class ContactQuestion extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'first_name', 'last_name', 'phone', 'address_1', 'address_2', 'city', 'state', 'zip', 'country', 'email', 'interested_in', 'type'
+        'contact_id', 'input_1', 'input_2', 'input_3', 'input_4', 'input_5', 'input_6', 'input_7'
     ];
 }

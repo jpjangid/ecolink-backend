@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Users')
+@section('title', 'Blogs')
 
 @section('content')
 <div class="content">
@@ -19,18 +19,18 @@
     </div>
     @endif
 
-    <!-- <h3 class="mb-3" style="margin-bottom: 30px">Users <a href="/client/registraion" class="btn btn-info mt-o" style="float: right;">New Client</a></h3> -->
+    <!-- <h3 class="mb-3" style="margin-bottom: 30px">Blogs <a href="/client/registraion" class="btn btn-info mt-o" style="float: right;">New Client</a></h3> -->
 
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Users</h1>
+                    <h1 class="m-0 text-dark">Blogs</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
-                        <li class="breadcrumb-item"><a href="{{ url('admin/users/create') }}" class="btn btn-info mt-o" style="float: right;">New User</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('admin/blogs/create') }}" class="btn btn-info mt-o" style="float: right;">New Blog</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -41,13 +41,11 @@
         <table id="example" class="table table-striped table-bordered" style="width:100%">
             <thead>
                 <tr class="text-center">
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Mobile No.</th>
-                    <th>Address</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Pincode</th>
+                    <th>Title</th>
+                    <th>Slug</th>
+                    <th>Blog Category</th>
+                    <th>Publish Date</th>
+                    <th>Publish</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
@@ -63,34 +61,26 @@
         var table = $('#example').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('admin/users') }}",
+            ajax: "{{ url('admin/blogs') }}",
             columns: [{
-                    data: 'name',
-                    name: 'name'
+                    data: 'title',
+                    name: 'title'
                 },
                 {
-                    data: 'email',
-                    name: 'email'
+                    data: 'slug',
+                    name: 'slug'
                 },
                 {
-                    data: 'mobile',
-                    name: 'mobile'
+                    data: 'category',
+                    name: 'category'
                 },
                 {
-                    data: 'address',
-                    name: 'address'
+                    data: 'publish_date',
+                    name: 'publish_date'
                 },
                 {
-                    data: 'city',
-                    name: 'city'
-                },
-                {
-                    data: 'state',
-                    name: 'state'
-                },
-                {
-                    data: 'pincode',
-                    name: 'pincode'
+                    data: 'active',
+                    name: 'active'
                 },
                 {
                     data: 'action',
