@@ -15,12 +15,11 @@ class CreateBlogsTable extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->string('slug');
-            $table->string('title');
-            $table->longtext('description');
-            $table->text('short_description');
-            $table->text('image');
-            $table->string('alt');
+            $table->string('slug')->nullable();
+            $table->string('title')->nullable();
+            $table->longtext('description')->nullable();
+            $table->text('image')->nullable();
+            $table->string('alt')->nullable();
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->text('keywords')->nullable();

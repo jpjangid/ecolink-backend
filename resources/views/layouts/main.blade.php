@@ -94,7 +94,7 @@
     @include('/layouts/footer')
   </div>
   <!-- jQuery -->
-  <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <!-- jQuery UI 1.11.4 -->
   <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
   <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -127,15 +127,22 @@
   <script src="{{ asset('js/pages/dashboard.js') }}"></script>
   <!-- AdminLTE for demo purposes -->
   <script src="{{ asset('js/demo.js') }}"></script>
-  <script src="{{ asset('https://code.jquery.com/jquery-3.5.1.js') }}"></script>
-  <script src="{{ asset('https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap.min.js')}}"></script>
-  <script src="{{ asset('https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js')}}"></script>
+  <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
   <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <script type="text/javascript">
     $(function() {
       $('.select2bs4').select2({
         theme: 'bootstrap4'
       });
+    });
+    $('.custom-file input').change(function(e) {
+      var files = [];
+      for (var i = 0; i < $(this)[0].files.length; i++) {
+        files.push($(this)[0].files[i].name);
+      }
+      $(this).next('.custom-file-label').html(files.join(', '));
     });
 
     function myFunction() {

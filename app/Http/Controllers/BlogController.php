@@ -36,7 +36,7 @@ Controller
                 ->addColumn('active', function ($row) {
                     $checked = $row['status'] == '1' ? 'checked' : '';
                     $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
-                                        <input type="hidden" value="' . $row['id'] . '" class="category_id">
+                                        <input type="hidden" value="' . $row['id'] . '" class="blog_id">
                                         <input type="checkbox" class="form-check-input js-switch  h-20px w-30px" id="customSwitch1" name="status" value="' . $row['status'] . '" ' . $checked . '>
                                     </div>';
 
@@ -45,8 +45,8 @@ Controller
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/blogs/delete', $row['id']);
                     $edit_url = url('admin/blogs/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-sm ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-info btn-sm ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
                 ->rawColumns(['action', 'active'])
@@ -65,14 +65,12 @@ Controller
         $request->validate([
             'title'                 =>  'required',
             'description'           =>  'required',
-            'short_description'     =>  'required',
             'publish_date'          =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required',
         ], [
             'title.required'                =>  'Blog Title is required',
             'description.required'          =>  'Blog Description is required',
-            'short_description.required'    =>  'Blog Short Description is required',
             'publish_date.required'         =>  'Blog Publish Date is required',
             'alt.required'                  =>  'Featured Image Alt text is required',
             'slug.required'                 =>  'Blog Slug is required',
@@ -105,8 +103,7 @@ Controller
             'slug'                      =>  $request->slug,
             'title'                     =>  $request->title,
             'description'               =>  $request->description,
-            'short_description'         =>  $request->short_description,
-            'image'            =>  $image,
+            'image'                     =>  $image,
             'meta_title'                =>  $request->meta_title,
             'meta_description'          =>  $request->meta_description,
             'keywords'                  =>  $request->keywords,
@@ -118,7 +115,6 @@ Controller
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
-            'og_alt'                    =>  $request->og_alt,
         ]);
 
         return redirect('admin/blogs')->with('success', 'Blog Created Successfully');
@@ -137,7 +133,7 @@ Controller
     {
         $blog = DB::table('blogs')->find($id);
 
-        return view('blogs.edit', compact('blog'));
+        return view('blogs.edit', compact('blog', 'id'));
     }
 
     public function update(Request $request, $id)
@@ -145,14 +141,12 @@ Controller
         $request->validate([
             'title'                 =>  'required',
             'description'           =>  'required',
-            'short_description'     =>  'required',
             'publish_date'          =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required',
         ], [
             'title.required'                =>  'Blog Title is required',
             'description.required'          =>  'Blog Description is required',
-            'short_description.required'    =>  'Blog Short Description is required',
             'publish_date.required'         =>  'Blog Publish Date is required',
             'alt.required'                  =>  'Featured Image Alt text is required',
             'slug'                          =>  'Blog Slug is required',
@@ -186,8 +180,7 @@ Controller
         $blog->slug                     =  $request->slug;
         $blog->title                    =  $request->title;
         $blog->description              =  $request->description;
-        $blog->short_description        =  $request->short_description;
-        $blog->image           =  $image;
+        $blog->image                    =  $image;
         $blog->meta_title               =  $request->meta_title;
         $blog->meta_description         =  $request->meta_description;
         $blog->keywords                 =  $request->keywords;
@@ -199,7 +192,6 @@ Controller
         $blog->og_title                 =  $request->og_title;
         $blog->og_description           =  $request->og_description;
         $blog->og_image                 =  $og_image;
-        $blog->og_alt                   =  $request->og_alt;
         $blog->update();
 
         return redirect('admin/blogs')->with('success', 'Blog Updated Successfully');

@@ -2,21 +2,17 @@
 
 @section('title', 'Add Blog')
 
-@section('css')
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-@endsection
-
 @section('content')
 <div class="content">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Add User</h1>
+                    <h1 class="m-0 text-dark">Add Blog</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('admin/users') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('admin/blogs') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -32,7 +28,7 @@
                     <!-- Blog Title -->
                     <div class="col-md-4 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="title">Title</label>
+                            <label class="required form-label" for="title"><span style="color: red;">* </span>Title</label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" id="title" placeholder="Please Enter Blog title" value="{{ old('title') }}">
                             @error('title')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -43,7 +39,7 @@
                     <!-- slug -->
                     <div class="col-md-4 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="slug">Slug</label>
+                            <label class="required form-label" for="slug"><span style="color: red;">* </span>Slug</label>
                             <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ old('slug')}}" placeholder="Please enter slug of blog" />
                             @error('slug')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -68,7 +64,7 @@
                     <!-- alt title-->
                     <div class="col-md-4 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="alt_title">Alt Title</label>
+                            <label class="required form-label" for="alt_title"><span style="color: red;">* </span>Alt Title</label>
                             <input type="text" class="form-control @error('alt_title') is-invalid @enderror" name="alt" id="alt_title" placeholder="Please Enter Alt Title" value="{{ old('alt') }}">
                             @error('meta_description')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -79,12 +75,12 @@
                     <!-- published date -->
                     <div class="col-md-4 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="category">Category</label>
+                            <label class="required form-label" for="category"><span style="color: red;">* </span>Category</label>
                             <select class="form-control @error('category') is-invalid @enderror" name="category">
                                 <option value="">Select Blog Category</option>
-                                <option value="beauty" {{ old('catgory') == 'beauty' ? 'selected' : '' }}>Beauty</option>
-                                <option value="cosmetic" {{ old('catgory') == 'cosmetic' ? 'selected' : '' }}>Cosmetic</option>
-                                <option value="fashion" {{ old('catgory') == 'fashion' ? 'selected' : '' }}>Fashion</option>
+                                <option value="beauty" {{ old('category') == 'beauty' ? 'selected' : '' }}>Beauty</option>
+                                <option value="cosmetic" {{ old('category') == 'cosmetic' ? 'selected' : '' }}>Cosmetic</option>
+                                <option value="fashion" {{ old('category') == 'fashion' ? 'selected' : '' }}>Fashion</option>
                             </select>
                             @error('category')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -95,7 +91,7 @@
                     <!-- published date -->
                     <div class="col-md-4 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="publish_date">Publish Date</label>
+                            <label class="required form-label" for="publish_date"><span style="color: red;">* </span>Publish Date</label>
                             <input type="date" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ old('publish_date')}}" placeholder="Please Enter Meta Tag" />
                             @error('publish_date')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -106,7 +102,7 @@
                     <!-- Status -->
                     <div class="col-md-4 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="status">Publish Blog</label>
+                            <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
                                 <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
@@ -121,7 +117,7 @@
                     <!-- Blog Description -->
                     <div class="col-md-12 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="description">Detail Description</label>
+                            <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
                             <textarea id="summernote" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo old('description'); ?></textarea>
                             @error('description')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -167,7 +163,7 @@
                 <div class="row mt-2" style="border: 1px solid gray;border-radius: 10px;">
 
                     <!-- OG Title -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-6 mt-2">
                         <div class="form-group">
                             <label class="form-label" for="og_title">OG Title</label>
                             <input type="text" class="form-control @error('og_title') is-invalid @enderror" name="og_title" value="{{ old('og_title')}}" placeholder="Please Enter OG Title" />
@@ -178,7 +174,7 @@
                     </div>
 
                     <!-- blog image -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-6 mt-2">
                         <div class="form-group">
                             <label for="og_image"><span style="color: red;">* </span>OG Image:</label>
                             <div class="custom-file">
@@ -186,17 +182,6 @@
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('og_image')
-                            <span class="error invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- OG Title -->
-                    <div class="col-md-4 mt-2">
-                        <div class="form-group">
-                            <label class="form-label" for="og_alt">OG Image Alt</label>
-                            <input type="text" class="form-control @error('og_alt') is-invalid @enderror" name="og_alt" value="{{ old('og_alt')}}" placeholder="Please Enter OG Image Alt" />
-                            @error('og_alt')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
@@ -227,8 +212,6 @@
 </div>
 @endsection
 @section('js')
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
 <!-- Page specific script -->
 <!-- <script type="text/javascript">

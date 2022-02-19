@@ -92,5 +92,24 @@
         });
 
     });
+
+    $(document).on('change', '.js-switch', function() {
+        var row = $(this).closest('tr');
+        let status = row.find('.js-switch').val();
+        let blogId = row.find('.blog_id').val();
+        $.ajax({
+            url: "{{ url('admin/blogs/update_status') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                status: status,
+                blog_id: blogId,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                swal("Good job!", data.message, "success");
+            }
+        });
+    });
 </script>
 @endsection
