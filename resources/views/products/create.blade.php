@@ -1,18 +1,18 @@
 @extends('layouts.main')
 
-@section('title', 'Add Blog')
+@section('title', 'Add Product')
 
 @section('content')
 <div class="content">
     <div class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Add Blog</h1>
+                    <h1 class="m-0 text-dark">Add Product</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('admin/blogs') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('admin/products') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -21,16 +21,16 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/blogs/store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/products/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
 
-                    <!-- Blog Title -->
+                    <!-- Product Title -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="title"><span style="color: red;">* </span>Title</label>
-                            <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" id="title" placeholder="Please Enter Blog title" value="{{ old('title') }}">
-                            @error('title')
+                            <label class="required form-label" for="name"><span style="color: red;">* </span>Product Name</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Please Enter Product Name" value="{{ old('name') }}">
+                            @error('name')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
@@ -40,14 +40,96 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="slug"><span style="color: red;">* </span>Slug</label>
-                            <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ old('slug')}}" placeholder="Please enter slug of blog" />
+                            <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ old('slug')}}" placeholder="Please Enter Slug" />
                             @error('slug')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
 
-                    <!-- blog image -->
+                    <!-- main category -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="category_id"><span style="color: red;">* </span>Category</label>
+                            <select name="category_id" class="form-control select2bs4">
+                                <option value="">Select Category</option>
+                                @foreach($cats as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Product HSN -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="hsn">HSN</label>
+                            <input type="text" class="form-control @error('hsn') is-invalid @enderror" name="hsn" id="hsn" placeholder="Please Enter Product HSN" value="{{ old('hsn') }}">
+                            @error('hsn')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Product SKU -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="sku">SKU</label>
+                            <input type="text" class="form-control @error('sku') is-invalid @enderror" name="sku" id="sku" placeholder="Please Enter Product SKU" value="{{ old('sku') }}">
+                            @error('sku')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Product Regular Price -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="regular_price"><span style="color: red;">* </span>Product Regular Price</label>
+                            <input type="number" class="form-control" name="regular_price" id="regular_price" placeholder="Please Enter Product Regular Price" value="{{ old('regular_price') }}">
+                        </div>
+                    </div>
+
+                    <!-- GST % -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="gst"><span style="color: red;">* </span>GST %</label>
+                            <input type="number" class="form-control" name="gst" id="gst" placeholder="Please Enter GST %" value="{{ old('gst') }}">
+                        </div>
+                    </div>
+
+                    <!-- Product Discount Type -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="discount_type"><span style="color: red;">* </span>Product Discount Type</label>
+                            <select name="discount_type" class="form-control" id="dis_type">
+                                <option value="">Select Type</option>
+                                <option value="percentage" {{ old('discount_type') == 'percentage' ? 'selected' : '' }}>Percentage</option>
+                                <option value="flat" {{ old('discount_type') == 'flat' ? 'selected' : '' }}>Flat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Product Discount -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="discount"><span style="color: red;">* </span>Product Discount</label>
+                            <input type="number" class="form-control" name="discount" id="discount" placeholder="Please Enter Product Discount" value="{{ old('discount') }}">
+                        </div>
+                    </div>
+
+                    <!-- Product Sale Price -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="sale_price"><span style="color: red;">* </span>Product Sale Price</label>
+                            <input type="number" class="form-control" name="sale_price" id="sale_price" placeholder="Please Enter Product Sale Price" value="{{ old('sale_price') }}" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Product Image -->
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
@@ -72,37 +154,10 @@
                         </div>
                     </div>
 
-                    <!-- published date -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="required form-label" for="category"><span style="color: red;">* </span>Category</label>
-                            <select class="form-control @error('category') is-invalid @enderror" name="category">
-                                <option value="">Select Blog Category</option>
-                                <option value="beauty" {{ old('category') == 'beauty' ? 'selected' : '' }}>Beauty</option>
-                                <option value="cosmetic" {{ old('category') == 'cosmetic' ? 'selected' : '' }}>Cosmetic</option>
-                                <option value="fashion" {{ old('category') == 'fashion' ? 'selected' : '' }}>Fashion</option>
-                            </select>
-                            @error('category')
-                            <span class="error invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- published date -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="required form-label" for="publish_date"><span style="color: red;">* </span>Publish Date</label>
-                            <input type="date" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ old('publish_date')}}" placeholder="Please Enter Meta Tag" />
-                            @error('publish_date')
-                            <span class="error invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
                     <!-- Status -->
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <div class="form-group">
-                            <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
+                            <label class="required form-label" for="status"><span style="color: red;">* </span>Status</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
                                 <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
@@ -114,7 +169,7 @@
                         </div>
                     </div>
 
-                    <!-- Blog Description -->
+                    <!-- Product Description -->
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
@@ -173,7 +228,7 @@
                         </div>
                     </div>
 
-                    <!-- blog image -->
+                    <!-- Product image -->
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="og_image"><span style="color: red;">* </span>OG Image:</label>
@@ -191,18 +246,20 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label" for="og_description">OG Description</label>
-                            <textarea rows="4" cols="" class="form-control @error('og_description') is-invalid @enderror" name="og_description" placeholder="Please enter OG Description">{{ old('og_description')}}</textarea>
+                            <textarea rows="4" cols="" class="form-control @error('og_description') is-invalid @enderror" name="og_description" placeholder="Please Enter OG Description">{{ old('og_description')}}</textarea>
                             @error('og_description')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
+
                 </div>
                 <div class="row">
                     <div class="col-md-12 mt-2">
                         <button type="submit" class="btn btn-info">Add</button>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -243,6 +300,60 @@
             ['view', ['fullscreen', 'codeview', 'help']]
         ]
     });
+
+    $(document).on('change', '#regular_price', function() {
+        var dis_type = $('#dis_type').val();
+        var dis = $('#discount').val();
+        var price = $('#regular_price').val();
+        discount_amt(dis_type, dis, price);
+    });
+
+    $(document).on('change', '#dis_type', function() {
+        var dis_type = $('#dis_type').val();
+        var dis = $('#discount').val();
+        var price = $('#regular_price').val();
+        discount_amt(dis_type, dis, price);
+    });
+
+    $(document).on('change', '#discount', function() {
+        var dis_type = $('#dis_type').val();
+        var dis = $('#discount').val();
+        var price = $('#regular_price').val();
+        discount_amt(dis_type, dis, price);
+    });
+
+    $(document).on('change', '#gst', function() {
+        var dis_type = $('#dis_type').val();
+        var dis = $('#discount').val();
+        var price = $('#regular_price').val();
+        discount_amt(dis_type, dis, price);
+    });
+
+    function discount_amt(dis_type, dis, price) {
+        var amt = 0;
+        var gst = $('#gst').val();
+        var gst_amt = ((price * gst) / 100)
+        price = parseFloat(price) + parseFloat(gst_amt);
+
+        if (dis_type != '' && dis != '' && price != '') {
+            if (dis_type == 'percentage') {
+                amt = parseFloat(price) - parseFloat((price * dis) / 100);
+                $('#sale_price').val(amt);
+            } else {
+                if (price !== null) {
+                    if (dis < price) {
+                        amt = parseFloat(price) - parseFloat(dis);
+                        $('#sale_price').val(amt);
+                    } else {
+                        swal("Danger!", 'Please Enter Correct Discount', "error");
+                        $('#discount').val('');
+                    }
+                }
+            }
+        } else {
+            $('#sale_price').val(price);
+        }
+    }
 </script>
 
 @endsection

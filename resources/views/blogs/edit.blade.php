@@ -27,7 +27,7 @@
                 <div class="row">
 
                     <!-- Blog Title -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="title"><span style="color: red;">* </span>Title</label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" id="title" placeholder="Please Enter Blog title" value="{{ $blog->title }}">
@@ -38,7 +38,7 @@
                     </div>
 
                     <!-- slug -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="slug"><span style="color: red;">* </span>Slug</label>
                             <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ $blog->slug }}" placeholder="Please enter slug of blog" />
@@ -49,7 +49,7 @@
                     </div>
 
                     <!-- blog image -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
                             <div class="custom-file">
@@ -63,7 +63,7 @@
                     </div>
 
                     <!-- alt title-->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="alt_title"><span style="color: red;">* </span>Alt Title</label>
                             <input type="text" class="form-control @error('alt_title') is-invalid @enderror" name="alt" id="alt_title" placeholder="Please Enter Alt Title" value="{{ $blog->alt }}">
@@ -74,7 +74,7 @@
                     </div>
 
                     <!-- published date -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="category"><span style="color: red;">* </span>Category</label>
                             <select class="form-control @error('category') is-invalid @enderror" name="category">
@@ -90,7 +90,7 @@
                     </div>
 
                     <!-- published date -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="publish_date"><span style="color: red;">* </span>Publish Date</label>
                             <input type="date" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ $blog->publish_date }}" placeholder="Please Enter Meta Tag" />
@@ -101,7 +101,7 @@
                     </div>
 
                     <!-- Status -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
@@ -116,7 +116,7 @@
                     </div>
 
                     <!-- Blog Description -->
-                    <div class="col-md-12 mt-2">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
                             <textarea id="summernote" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo $blog->description; ?></textarea>
@@ -129,7 +129,7 @@
                 <div class="row" style="border: 1px solid gray;border-radius: 10px;">
 
                     <!-- Meta Title -->
-                    <div class="col-md-6 mt-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label" for="meta_title">Meta Title</label>
                             <input type="text" class="form-control @error('meta_title') is-invalid @enderror" name="meta_title" value="{{ $blog->meta_title }}" placeholder="Please Enter Meta Title" />
@@ -140,7 +140,7 @@
                     </div>
 
                     <!-- keywords -->
-                    <div class="col-md-6 mt-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label" for="keywords">Meta Keywords</label>
                             <input type="text" class="form-control @error('keywords') is-invalid @enderror" name="keywords" id="keywords" value="{{ $blog->keywords }}" placeholder="Please Enter Meta Keywords" />
@@ -151,7 +151,7 @@
                     </div>
 
                     <!-- meta_description -->
-                    <div class="col-md-12 mt-2">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label" for="meta_description">Meta Description</label>
                             <textarea rows="4" cols="" class="form-control @error('meta_description') is-invalid @enderror" name="meta_description" placeholder="Please Enter Meta Description">{{ $blog->meta_description }}</textarea>
@@ -161,10 +161,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-2" style="border: 1px solid gray;border-radius: 10px;">
+                <div class="row" style="border: 1px solid gray;border-radius: 10px;">
 
                     <!-- OG Title -->
-                    <div class="col-md-6 mt-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label" for="og_title">OG Title</label>
                             <input type="text" class="form-control @error('og_title') is-invalid @enderror" name="og_title" value="{{ $blog->og_title }}" placeholder="Please Enter OG Title" />
@@ -175,7 +175,7 @@
                     </div>
 
                     <!-- blog image -->
-                    <div class="col-md-6 mt-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="og_image"><span style="color: red;">* </span>OG Image:</label>
                             <div class="custom-file">
@@ -189,7 +189,7 @@
                     </div>
 
                     <!-- OG description -->
-                    <div class="col-md-12 mt-2">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label" for="og_description">OG Description</label>
                             <textarea rows="4" cols="" class="form-control @error('og_description') is-invalid @enderror" name="og_description" placeholder="Please enter OG Description">{{ $blog->og_description }}</textarea>

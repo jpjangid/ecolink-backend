@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,16 @@ Route::middleware(['auth', 'prevent'])->prefix('admin')->group(function () {
         Route::put('/update/{id}', [CategoryController::class, 'update_sub']);
         Route::get('/delete/{id}', [CategoryController::class, 'destroy_sub']);
         Route::post('/update_status', [CategoryController::class, 'update_status_sub']);
+    });
+
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/create', [ProductController::class, 'create']);
+        Route::post('/store', [ProductController::class, 'store']);
+        Route::get('/edit/{id}', [ProductController::class, 'edit']);
+        Route::put('/update/{id}', [ProductController::class, 'update']);
+        Route::get('/delete/{id}', [ProductController::class, 'destroy']);
+        Route::post('/update_status', [ProductController::class, 'update_status']);
     });
 });
 

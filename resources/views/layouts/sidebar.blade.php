@@ -123,6 +123,29 @@
 						</li>
 					</ul>
 				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<p>
+							Product
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						<li class="nav-item">
+							<a href="{{ url('admin/products/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Product</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ url('admin/products') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Product List</p>
+							</a>
+						</li>
+					</ul>
+				</li>
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

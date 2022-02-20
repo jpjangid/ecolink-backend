@@ -6,7 +6,7 @@
 <div class="content">
     <div class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
                     <h1 class="m-0 text-dark">Edit Sub Category</h1>
                 </div><!-- /.col -->
@@ -27,7 +27,7 @@
                 <div class="row">
 
                     <!-- Category Title -->
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="name"><span style="color: red;">* </span>Name</label>
                             <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="name" id="name" placeholder="Please Enter Category Name" value="{{ $category->name }}">
@@ -38,7 +38,7 @@
                     </div>
 
                     <!-- slug -->
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="slug"><span style="color: red;">* </span>Slug</label>
                             <input type="text" class="form-control form-control-solid @error('slug') is-invalid @enderror" name="slug" value="{{ $category->slug }}" placeholder="Please Enter Slug" />
@@ -49,7 +49,7 @@
                     </div>
 
                     <!-- category parent -->
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="parent_id"><span style="color: red;">* </span>Parent Category</label>
                             <select class="form-control select2bs4 @error('parent_id') is-invalid @enderror" name="parent_id">
@@ -65,7 +65,7 @@
                     </div>
 
                     <!-- Category image -->
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
                             <div class="custom-file">
@@ -79,7 +79,7 @@
                     </div>
 
                     <!-- alt title-->
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="alt_title"><span style="color: red;">* </span>Alt Title</label>
                             <input type="text" class="form-control form-control-solid @error('alt_title') is-invalid @enderror" name="alt" id="alt_title" placeholder="Please Enter Alt Title" value="{{ $category->alt }}">
@@ -90,7 +90,7 @@
                     </div>
 
                     <!-- Status -->
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
@@ -105,7 +105,7 @@
                     </div>
 
                     <!-- Category Description -->
-                    <div class="col-md-12 mb-2">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
                             <textarea id="summernote" class="form-control form-control-solid @error('description') is-invalid @enderror" name="description"><?php echo $category->description; ?></textarea>
@@ -118,7 +118,7 @@
                 <div class="row" style="border: 1px solid gray;border-radius: 10px;">
 
                     <!-- Meta Title -->
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label" for="meta_title">Meta Title</label>
                             <input type="text" class="form-control form-control-solid @error('meta_title') is-invalid @enderror" name="meta_title" value="{{ $category->meta_title }}" placeholder="Please Enter Meta Title" />
@@ -129,7 +129,7 @@
                     </div>
 
                     <!-- keywords -->
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label" for="keywords">Keywords</label>
                             <input type="text" class="form-control form-control-solid @error('keywords') is-invalid @enderror" name="keywords" id="keywords" value="{{ $category->keywords }}" placeholder="Please Enter keywords" />
@@ -140,7 +140,7 @@
                     </div>
 
                     <!-- meta_description -->
-                    <div class="col-md-12 mb-2">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label" for="meta_description">Meta Description</label>
                             <textarea rows="4" cols="" class="form-control form-control-solid @error('meta_description') is-invalid @enderror" name="meta_description" placeholder="Please Enter Meta Description">{{ $category->meta_description }}</textarea>
@@ -150,10 +150,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-2" style="border: 1px solid gray;border-radius: 10px;">
+                <div class="row" style="border: 1px solid gray;border-radius: 10px;">
 
                     <!-- OG Title -->
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label" for="og_title">OG Title</label>
                             <input type="text" class="form-control form-control-solid @error('og_title') is-invalid @enderror" name="og_title" value="{{ $category->og_title }}" placeholder="Please Enter OG Title" />
@@ -164,7 +164,7 @@
                     </div>
 
                     <!-- Category image -->
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="og_image">OG Image:</label>
                             <div class="custom-file">
@@ -178,7 +178,7 @@
                     </div>
 
                     <!-- OG description -->
-                    <div class="col-md-12 mb-2">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label" for="og_description">OG Description</label>
                             <textarea rows="4" cols="" class="form-control form-control-solid @error('og_description') is-invalid @enderror" name="og_description" placeholder="Please Enter OG Description">{{ $category->og_description }}</textarea>
@@ -192,7 +192,7 @@
                 <div class="row">
 
                     <div class="col-md-12 mt-2">
-                        <button type="submit" class="btn btn-info">Add</button>
+                        <button type="submit" class="btn btn-info">Update</button>
                     </div>
                 </div>
 
