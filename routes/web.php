@@ -7,6 +7,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\NewsLetterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +73,15 @@ Route::middleware(['auth', 'prevent'])->prefix('admin')->group(function () {
         Route::put('/update/{id}', [ProductController::class, 'update']);
         Route::get('/delete/{id}', [ProductController::class, 'destroy']);
         Route::post('/update_status', [ProductController::class, 'update_status']);
+    });
+
+    Route::prefix('newsletters')->group(function () {
+        Route::get('/', [NewsLetterController::class, 'index']);
+        Route::get('/create', [NewsLetterController::class, 'create']);
+        Route::post('/store', [NewsLetterController::class, 'store']);
+        Route::get('/edit/{id}', [NewsLetterController::class, 'edit']);
+        Route::put('/update/{id}', [NewsLetterController::class, 'update']);
+        Route::get('/delete/{id}', [NewsLetterController::class, 'destroy']);
     });
 });
 

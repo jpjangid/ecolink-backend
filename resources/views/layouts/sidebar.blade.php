@@ -146,6 +146,29 @@
 						</li>
 					</ul>
 				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<p>
+							News Letter
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						<li class="nav-item">
+							<a href="{{ url('admin/newsletters/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add News Letter</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ url('admin/newsletters') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>News Letter List</p>
+							</a>
+						</li>
+					</ul>
+				</li>
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->
