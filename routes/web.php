@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,26 @@ Route::middleware(['auth', 'prevent'])->prefix('admin')->group(function () {
         Route::put('/update/{id}', [BlogController::class, 'update']);
         Route::get('/delete/{id}', [BlogController::class, 'destroy']);
         Route::post('/update_status', [BlogController::class, 'update_status']);
+    });
+
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index']);
+        Route::get('/create', [CategoryController::class, 'create']);
+        Route::post('/store', [CategoryController::class, 'store']);
+        Route::get('/edit/{id}', [CategoryController::class, 'edit']);
+        Route::put('/update/{id}', [CategoryController::class, 'update']);
+        Route::get('/delete/{id}', [CategoryController::class, 'destroy']);
+        Route::post('/update_status', [CategoryController::class, 'update_status']);
+    });
+
+    Route::prefix('sub/categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index_sub']);
+        Route::get('/create', [CategoryController::class, 'create_sub']);
+        Route::post('/store', [CategoryController::class, 'store_sub']);
+        Route::get('/edit/{id}', [CategoryController::class, 'edit_sub']);
+        Route::put('/update/{id}', [CategoryController::class, 'update_sub']);
+        Route::get('/delete/{id}', [CategoryController::class, 'destroy_sub']);
+        Route::post('/update_status', [CategoryController::class, 'update_status_sub']);
     });
 });
 

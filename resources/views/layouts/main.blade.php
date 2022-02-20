@@ -68,6 +68,10 @@
     input[type=number] {
       -moz-appearance: textfield;
     }
+
+    .modal-backdrop {
+      position: relative;
+    }
   </style>
   @yield('css')
   @yield('script')
