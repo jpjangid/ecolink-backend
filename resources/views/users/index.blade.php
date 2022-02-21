@@ -38,7 +38,7 @@
     </div>
 
     <div class="container-fluid" style="overflow-x:auto;">
-        <table id="example" class="table table-striped table-bordered" style="width:100%">
+        <table id="userTable" class="table table-striped table-bordered" style="width:100%">
             <thead>
                 <tr class="text-center">
                     <th>Name</th>
@@ -60,7 +60,7 @@
 @section('js')
 <script type="text/javascript">
     $(function() {
-        var table = $('#example').DataTable({
+        var table = $('#userTable').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ url('admin/users') }}",

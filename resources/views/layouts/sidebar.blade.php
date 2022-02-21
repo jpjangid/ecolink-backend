@@ -25,7 +25,7 @@
 			with font-awesome or any other icon font library -->
 
 				<li class="nav-item">
-					<a href="{{ url('admin/dashboard') }}" class="nav-link">
+					<a href="{{ url('admin/home') }}" class="nav-link">
 						<p>
 							Dashboard
 						</p>

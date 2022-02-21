@@ -1,13 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\NewsLetterController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -20,11 +21,14 @@ use App\Http\Controllers\NewsLetterController;
 |
 */
 
+
+Auth::routes();
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::middleware(['auth', 'prevent'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
@@ -88,5 +92,3 @@ Route::middleware(['auth', 'prevent'])->prefix('admin')->group(function () {
 Route::get('statelist', [LocationController::class, 'getState']);
 Route::post('citylist', [LocationController::class, 'getCity']);
 Route::post('pincodelist', [LocationController::class, 'getPincode']);
-
-require __DIR__ . '/auth.php';
