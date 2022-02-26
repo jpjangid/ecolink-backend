@@ -20,7 +20,7 @@ class ReturnItems extends Model
 
     public function item()
     {
-        return $this->belongsTo('App\Models\OrderItem', 'order_item_id');
+        return $this->belongsTo('App\Models\OrderItems', 'order_item_id');
     }
 
     public function user()

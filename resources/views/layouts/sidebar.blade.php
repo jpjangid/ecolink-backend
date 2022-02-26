@@ -215,6 +215,22 @@
 						</li>
 					</ul>
 				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/orders') }}" class="nav-link">
+						<p>
+							Orders
+						</p>
+					</a>
+				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/returns') }}" class="nav-link">
+						<p>
+							Order Returns
+						</p>
+					</a>
+				</li>
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

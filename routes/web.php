@@ -29,10 +29,18 @@ use App\Http\Controllers\ReturnController;
 
 Auth::routes();
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
+})->middleware('prevent-back-history');
+
+Route::get('/artisan/clear', function () {
+    \Artisan::call('cache:clear');
+    \Artisan::call('route:clear');
+    \Artisan::call('view:clear');
+    \Artisan::call('config:clear');
+    \Artisan::call('optimize:clear');
 });
 
-Route::middleware(['auth', 'prevent'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::prefix('users')->group(function () {
