@@ -169,6 +169,52 @@
 						</li>
 					</ul>
 				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<p>
+							Page
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						<li class="nav-item">
+							<a href="{{ url('admin/pages/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Page</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ url('admin/pages') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Page List</p>
+							</a>
+						</li>
+					</ul>
+				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<p>
+							Coupon
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						<li class="nav-item">
+							<a href="{{ url('admin/coupons/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Coupon</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ url('admin/coupons') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Coupon List</p>
+							</a>
+						</li>
+					</ul>
+				</li>
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

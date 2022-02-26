@@ -19,7 +19,6 @@ class CreateCouponsTable extends Migration
             $table->string('code')->unique();
             $table->string('type')->nullable();
             $table->unsignedBigInteger('cat_id')->nullable();
-            $table->unsignedBigInteger('sub_cat_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->float('min_order_amount')->nullable();
