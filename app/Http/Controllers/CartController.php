@@ -4,82 +4,78 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class CartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        if (request()->ajax()) {
+            /* Getting all records */
+            $allcarts = Cart::select('id', 'user_id', 'product_id', 'quantity')->with('user:id,name', 'product:id,name')->get();
+
+            /* Converting Selected Data into desired format */
+            $carts = new Collection;
+            foreach ($allcarts as $cart) {
+                $carts->push([
+                    'id'            => $cart->id,
+                    'user'          => $cart->user->name,
+                    'product'       => $cart->product->name,
+                    'quantity'      => $cart->quantity,
+                    'created_at'    => date('d-m-Y h:i A', strtotime($cart->created_at)),
+                ]);
+            }
+
+            /* Sending data through yajra datatable for server side rendering */
+            return Datatables::of($carts)
+                ->addIndexColumn()
+                /* Adding Actions like edit, delete and show */
+                ->addColumn('action', function ($row) {
+                    $delete_url = url('admin/carts/delete', $row['id']);
+                    $edit_url = url('admin/carts/edit', $row['id']);
+                    $btn = '';
+                    // $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('carts.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Cart $cart)
+    public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Cart $cart)
+    public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Cart $cart)
+    public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Cart $cart)
+    public function destroy($id)
     {
-        //
+        /* Deleting Entry from table */
+        Cart::where('id', $id)->delete();
+
+        return redirect('admin/carts')->with('danger', 'Entry Deleted');
     }
 }

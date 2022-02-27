@@ -17,22 +17,26 @@ Controller
     public function index()
     {
         if (request()->ajax()) {
-            $blogs1 = DB::table('blogs')->where('flag', '0')->get();
+            /* Getting all records */
+            $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->get();
 
+            /* Converting Selected Data into desired format */
             $blogs = new Collection;
-            foreach ($blogs1 as $blog) {
+            foreach ($allblogs as $blog) {
                 $blogs->push([
-                    'id'    => $blog->id,
-                    'title'  => $blog->title,
-                    'slug'  => $blog->slug,
-                    'category' => $blog->category,
+                    'id'            => $blog->id,
+                    'title'         => $blog->title,
+                    'slug'          => $blog->slug,
+                    'category'      => $blog->category,
                     'publish_date'  => date('d-m-Y', strtotime($blog->publish_date)),
                     'status' => $blog->status
                 ]);
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($blogs)
                 ->addIndexColumn()
+                /* Status Active and Deactive Checkbox */
                 ->addColumn('active', function ($row) {
                     $checked = $row['status'] == '1' ? 'checked' : '';
                     $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -42,6 +46,7 @@ Controller
 
                     return $active;
                 })
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/blogs/delete', $row['id']);
                     $edit_url = url('admin/blogs/edit', $row['id']);
@@ -57,11 +62,13 @@ Controller
 
     public function create()
     {
+        /* Loading Create Page */
         return view('blogs.create');
     }
 
     public function store(Request $request)
     {
+        /* Validating Input fields */
         $request->validate([
             'title'                 =>  'required',
             'description'           =>  'required',
@@ -76,29 +83,27 @@ Controller
             'slug.required'                 =>  'Blog Slug is required',
         ]);
 
+        /* Storing Featured Image on local disk */
         $image = "";
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
             $file = $request->file('image');
             $fileNameString = (string) Str::uuid();
             $image = $fileNameString . time() . "." . $extension;
-            $path = Storage::putFileAs('public/blogs/', $file, $image);
+            Storage::putFileAs('public/blogs/', $file, $image);
         }
 
+        /* Storing OG Image on local disk */
         $og_image = "";
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
             $file = $request->file('og_image');
             $fileNameString = (string) Str::uuid();
             $og_image = $fileNameString . time() . "." . $extension;
-            $path = Storage::putFileAs('public/blogs/og_images', $file, $og_image);
+            Storage::putFileAs('public/blogs/og_images', $file, $og_image);
         }
 
-        $status = 0;
-        if (isset($request->status)) {
-            $status = 1;
-        }
-
+        /* Storing Data in Table */
         Blog::create([
             'slug'                      =>  $request->slug,
             'title'                     =>  $request->title,
@@ -110,18 +115,20 @@ Controller
             'tags'                      =>  $request->tags,
             'publish_date'              =>  $request->publish_date,
             'alt'                       =>  $request->alt,
-            'status'                    =>  $status,
+            'status'                    =>  $request->status,
             'category'                  =>  $request->category,
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
         ]);
 
+        /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/blogs')->with('success', 'Blog Created Successfully');
     }
 
     public function update_status(Request $request)
     {
+        /* Updating status of selected entry */
         $blog = Blog::find($request->blog_id);
         $blog->status   = $request->status == 1 ? 0 : 1;
         $blog->update();
@@ -131,6 +138,7 @@ Controller
 
     public function edit($id)
     {
+        /* Getting Blog data for edit using Id */
         $blog = DB::table('blogs')->find($id);
 
         return view('blogs.edit', compact('blog', 'id'));
@@ -138,6 +146,7 @@ Controller
 
     public function update(Request $request, $id)
     {
+        /* Validating Input fields */
         $request->validate([
             'title'                 =>  'required',
             'description'           =>  'required',
@@ -152,31 +161,30 @@ Controller
             'slug'                          =>  'Blog Slug is required',
         ]);
 
+        /* Fetching Blog Data using Id */
         $blog = Blog::find($id);
 
+        /* Storing Featured Image on local disk */
         $image = $blog->image;
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
             $file = $request->file('image');
             $fileNameString = (string) Str::uuid();
             $image = $fileNameString . time() . "." . $extension;
-            $path = Storage::putFileAs('public/blogs/', $file, $image);
+            Storage::putFileAs('public/blogs/', $file, $image);
         }
 
+        /* Storing OG Image on local disk */
         $og_image = $blog->og_image;
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
             $file = $request->file('og_image');
             $fileNameString = (string) Str::uuid();
             $og_image = $fileNameString . time() . "." . $extension;
-            $path = Storage::putFileAs('public/blogs/og_images', $file, $og_image);
+            Storage::putFileAs('public/blogs/og_images', $file, $og_image);
         }
 
-        $status = 0;
-        if (isset($request->status)) {
-            $status = 1;
-        }
-
+        /* Updating Data fetched by Id */
         $blog->slug                     =  $request->slug;
         $blog->title                    =  $request->title;
         $blog->description              =  $request->description;
@@ -187,21 +195,21 @@ Controller
         $blog->tags                     =  $request->tags;
         $blog->publish_date             =  $request->publish_date;
         $blog->alt                      =  $request->alt;
-        $blog->status                   =  $status;
+        $blog->status                   =  $request->status;
         $blog->category                 =  $request->category;
         $blog->og_title                 =  $request->og_title;
         $blog->og_description           =  $request->og_description;
         $blog->og_image                 =  $og_image;
         $blog->update();
 
+        /* After successfull update of data redirecting to index page with message */
         return redirect('admin/blogs')->with('success', 'Blog Updated Successfully');
     }
 
     public function destroy($id)
     {
-        $blog = Blog::find($id);
-        $blog->flag   =   '1';
-        $blog->update();
+        /* Updating selected entry Flag to 1 for soft delete */
+        Blog::where('id', $id)->update(['flag' => 1]);
 
         return redirect('admin/blogs')->with('danger', 'Blog Deleted');
     }

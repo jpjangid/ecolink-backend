@@ -16,8 +16,10 @@ class UserController extends Controller
     public function index()
     {
         if (request()->ajax()) {
+            /* Getting all records */
             $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode')->where('flag', '0')->get();
 
+            /* Converting Selected Data into desired format */
             $users = new Collection;
             foreach ($allusers as $user) {
                 $users->push([
@@ -32,8 +34,10 @@ class UserController extends Controller
                 ]);
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($users)
                 ->addIndexColumn()
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/users/delete', $row['id']);
                     $edit_url = url('admin/users/edit', $row['id']);
@@ -49,12 +53,14 @@ class UserController extends Controller
 
     public function create()
     {
+        /* Loading Create Page with location data */
         $locations = Location::select('state')->distinct()->orderby('state')->get();
         return view('users.create', compact('locations'));
     }
 
     public function store(Request $request)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'          =>  'required',
             'email'         =>  'required|email|max:255|unique:users',
@@ -78,6 +84,7 @@ class UserController extends Controller
             'password.required'     =>  'Please Enter Password',
         ]);
 
+        /* Storing Featured Image on local disk */
         $image_name = "";
         if ($request->hasFile('profile_image')) {
             $request->validate([
@@ -90,8 +97,10 @@ class UserController extends Controller
             }
         }
 
+        /* Hashing password */
         $pass = Hash::make($request['password']);
 
+        /* Storing Data in Table */
         User::create([
             'name'                  =>  $request['name'],
             'email'                 =>  $request['email'],
@@ -106,11 +115,13 @@ class UserController extends Controller
             'profile_image'         =>  $image_name,
         ]);
 
+        /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/users')->with('success', 'User has been added successfully');
     }
 
     public function edit($id)
     {
+        /* Getting User data with location for edit using Id */
         $user = User::find($id);
         $locations = Location::select('state')->distinct()->orderby('state')->get();
         return view('users.edit', compact('user', 'locations', 'id'));
@@ -118,6 +129,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'          =>  'required',
             'email'         =>  'required|email|unique:users,email,' . $id,
@@ -139,7 +151,10 @@ class UserController extends Controller
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
         ]);
 
+        /* Fetching Blog Data using Id */
         $user = User::find($id);
+
+        /* Storing Featured Image on local disk */
         $image_name = $user->profile_image;
         if ($request->hasFile('profile_image')) {
             $request->validate([
@@ -157,6 +172,7 @@ class UserController extends Controller
             $pass = Hash::make($request['password']);
         }
 
+        /* Updating Data fetched by Id */
         $user->name             =   $request['name'];
         $user->email            =   $request['email'];
         $user->mobile           =   $request['mobile'];
@@ -170,14 +186,15 @@ class UserController extends Controller
         $user->profile_image    =   $image_name;
         $user->save();
 
+        /* After successfull update of data redirecting to index page with message */
         return redirect('admin/users')->with('success', 'User updated successfully');
     }
 
     public function destroy($id)
     {
-        $user = User::find($id);
-        $user->flag  = '1';
-        $user->update();
+        /* Updating selected entry Flag to 1 for soft delete */
+        User::where('id', $id)->update(['flag' => 1]);
+
         return redirect('admin/users')->with('danger', 'User deleted successfully');
     }
 }

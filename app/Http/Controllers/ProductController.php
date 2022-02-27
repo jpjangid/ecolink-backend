@@ -15,8 +15,10 @@ class ProductController extends Controller
     public function index()
     {
         if (request()->ajax()) {
+            /* Getting all records */
             $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status')->where(['status' => 1, 'flag' => 0])->get();
 
+            /* Converting Selected Data into desired format */
             $products = new Collection;
             foreach ($allproducts as $product) {
                 $products->push([
@@ -27,8 +29,10 @@ class ProductController extends Controller
                 ]);
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($products)
                 ->addIndexColumn()
+                /* Status Active and Deactive Checkbox */
                 ->addColumn('active', function ($row) {
                     $checked = $row['status'] == '1' ? 'checked' : '';
                     $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -38,6 +42,7 @@ class ProductController extends Controller
 
                     return $active;
                 })
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/products/delete', $row['id']);
                     $edit_url = url('admin/products/edit', $row['id']);
@@ -53,13 +58,15 @@ class ProductController extends Controller
 
     public function create()
     {
-        $cats  = DB::table('categories')->where(['flag' => '0'])->get();
+        /* Loading Create Page with categories data */
+        $categories  = DB::table('categories')->where(['flag' => '0'])->get();
 
-        return view('products.create', compact('cats'));
+        return view('products.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required',
             'slug'                  =>  'required',
@@ -78,6 +85,7 @@ class ProductController extends Controller
             'category_id.required'          =>  'Please Select Category',
         ]);
 
+        /* Storing OG Image on local disk */
         $og_image = '';
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
@@ -87,6 +95,7 @@ class ProductController extends Controller
             Storage::putFileAs('public/products/og_images', $file, $og_image);
         }
 
+        /* Storing Featured Image on local disk */
         $image = '';
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
@@ -96,7 +105,8 @@ class ProductController extends Controller
             Storage::putFileAs('public/products', $file, $image);
         }
 
-        $product = Product::create([
+        /* Storing Data in Table */
+        Product::create([
             'name'                  =>  $request->name,
             'slug'                  =>  $request->slug,
             'parent_id'             =>  $request->category_id,
@@ -119,11 +129,13 @@ class ProductController extends Controller
             'gst'                   =>  $request->gst,
         ]);
 
+        /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/products')->with('success', 'Product added successfully');
     }
 
     public function update_status(Request $request)
     {
+        /* Updating status of selected entry */
         $product = Product::find($request->product_id);
         $product->status   = $request->status == 1 ? 0 : 1;
         $product->update();
@@ -133,15 +145,17 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $cats = DB::table('categories')->where(['flag' => '0'])->get();
+        /* Getting Product data with categories for edit using Id */
+        $categories = DB::table('categories')->where(['flag' => '0'])->get();
 
         $product = DB::table('products')->find($id);
 
-        return view('products.edit', compact('cats', 'product', 'id'));
+        return view('products.edit', compact('categories', 'product', 'id'));
     }
 
     public function update(Request $request, $id)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required',
             'slug'                  =>  'required',
@@ -160,8 +174,10 @@ class ProductController extends Controller
             'category_id.required'          =>  'Please Select Category',
         ]);
 
+        /* Fetching Blog Data using Id */
         $product = Product::find($id);
 
+        /* Storing Featured Image on local disk */
         $image = $product->image;
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
@@ -171,6 +187,7 @@ class ProductController extends Controller
             Storage::putFileAs('public/products', $file, $image);
         }
 
+        /* Storing OG Image on local disk */
         $og_image = $product->og_image;
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
@@ -180,6 +197,7 @@ class ProductController extends Controller
             Storage::putFileAs('public/products/og_images', $file, $og_image);
         }
 
+        /* Updating Data fetched by Id */
         $product->name                  =  $request->name;
         $product->slug                  =  $request->slug;
         $product->description           =  $request->description;
@@ -202,6 +220,7 @@ class ProductController extends Controller
         $product->image                 =  $image;
         $product->update();
 
+        /* After successfull update of data redirecting to index page with message */
         return redirect('admin/products')->with('success', 'Product updated successfully');
     }
 }

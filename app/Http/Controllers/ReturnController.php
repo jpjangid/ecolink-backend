@@ -22,8 +22,10 @@ class ReturnController extends Controller
     public function index()
     {
         if (request()->ajax()) {
+            /* Getting all records */
             $all_return_orders = ReturnItems::with('item.order', 'user', 'product')->orderby('created_at', 'desc')->get();
 
+            /* Converting Selected Data into desired format */
             $return_orders = new Collection;
             foreach ($all_return_orders as $return_order) {
                 $return_orders->push([
@@ -38,8 +40,10 @@ class ReturnController extends Controller
                 ]);
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($return_orders)
                 ->addIndexColumn()
+                /* Link to redirect on Return Order Detail Page */
                 ->addColumn('returnno', function ($row) {
                     $edit_url = url('admin/returns/return_detail', $row['id']);
                     $btn = '<a href="' . $edit_url . '">#' . $row['return_no'] . '</i></a>';
@@ -53,6 +57,7 @@ class ReturnController extends Controller
 
     public function return_detail($id)
     {
+        /* Return Order Detail Page with user and order data */
         $return_order = ReturnItems::where('id', $id)->with('item', 'order', 'user', 'product')->first();
         $order_id = $return_order->order_id;
         $order = Order::where('id', $order_id)->with('items.product')->first();

@@ -217,6 +217,14 @@
 				</li>
 
 				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/carts') }}" class="nav-link">
+						<p>
+							Carts
+						</p>
+					</a>
+				</li>
+
+				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/orders') }}" class="nav-link">
 						<p>
 							Orders

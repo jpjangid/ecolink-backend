@@ -13,19 +13,23 @@ class NewsLetterController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $letters1 = DB::table('news_letters')->where('flag', '0')->get();
+            /* Getting all records */
+            $allnewsletters = DB::table('news_letters')->select('id', 'email', 'created_at')->where('flag', '0')->get();
 
-            $letters = new Collection;
-            foreach ($letters1 as $letter) {
-                $letters->push([
-                    'id'        => $letter->id,
-                    'email'     => $letter->email,
-                    'date'      => date('d-m-Y', strtotime($letter->created_at)),
+            /* Converting Selected Data into desired format */
+            $newsletters = new Collection;
+            foreach ($allnewsletters as $newsletter) {
+                $newsletters->push([
+                    'id'        => $newsletter->id,
+                    'email'     => $newsletter->email,
+                    'date'      => date('d-m-Y', strtotime($newsletter->created_at)),
                 ]);
             }
 
-            return Datatables::of($letters)
+            /* Sending data through yajra datatable for server side rendering */
+            return Datatables::of($newsletters)
                 ->addIndexColumn()
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/newsletters/delete', $row['id']);
                     $edit_url = url('admin/newsletters/edit', $row['id']);
@@ -41,46 +45,53 @@ class NewsLetterController extends Controller
 
     public function create()
     {
+        /* Loading Create Page */
         return view('newsletters.create');
     }
 
     public function store(Request $request)
     {
+        /* Validating Input fields */
         $request->validate([
             'email'     =>  'required|email',
         ]);
 
+        /* Storing Data in Table */
         NewsLetter::create([
             'email'     =>  $request->email,
         ]);
 
+        /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/newsletters')->with('success', 'News Letter Added successfully');
     }
 
     public function edit($id)
     {
+        /* Getting News Letter data for edit using Id */
         $letter = DB::table('news_letters')->find($id);
         return view('newsletters.edit', compact('id', 'letter'));
     }
 
     public function update(Request $request, $id)
     {
+        /* Validating Input fields */
         $request->validate([
             'email'     =>  'required|email',
         ]);
 
+        /* Updating Data fetched by Id */
         $letter = NewsLetter::find($id);
         $letter->email = $request->email;
         $letter->update();
 
+        /* After successfull update of data redirecting to index page with message */
         return redirect('admin/newsletters')->with('success', 'News Letter Updated successfully');
     }
 
     public function destroy($id)
     {
-        $letter = NewsLetter::find($id);
-        $letter->flag = 1;
-        $letter->update();
+        /* Updating selected entry Flag to 1 for soft delete */
+        NewsLetter::where('id', $id)->update(['flag' => 1]);
 
         return redirect('admin/newsletters')->with('danger', 'News Letter Deleted successfully');
     }

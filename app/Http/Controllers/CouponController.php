@@ -13,8 +13,10 @@ class CouponController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $allcoupons = DB::table('coupons')->where('flag', '0')->get();
+            /* Getting all records */
+            $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->get();
 
+            /* Converting Selected Data into desired format */
             $coupons = new Collection;
             foreach ($allcoupons as $coupon) {
                 $coupons->push([
@@ -30,8 +32,10 @@ class CouponController extends Controller
                 ]);
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($coupons)
                 ->addIndexColumn()
+                /* Status Active and Deactive Checkbox */
                 ->addColumn('active', function ($row) {
                     $checked = $row['show_in_front'] == '1' ? 'checked' : '';
                     $active  = '<div class="form-check form-switch form-check-custom form-check-solid" style="padding-left: 3.75rem !important">
@@ -41,6 +45,7 @@ class CouponController extends Controller
 
                     return $active;
                 })
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/coupons/delete', $row['id']);
                     $edit_url = url('admin/coupons/edit', $row['id']);
@@ -57,12 +62,13 @@ class CouponController extends Controller
 
     public function create()
     {
+        /* Loading Create Page with users, products and categories data */
         $users = DB::table('users')->where('role', 'user')->get();
         $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
-        $cats = DB::table('categories')->where(['flag' => '0'])->get();
+        $categories = DB::table('categories')->where(['flag' => '0'])->get();
 
         return view('coupons.create', compact(
-            'cats',
+            'categories',
             'users',
             'products'
         ));
@@ -70,6 +76,7 @@ class CouponController extends Controller
 
     public function store(Request $request)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'          =>  'required',
             'code'          =>  'required',
@@ -82,6 +89,7 @@ class CouponController extends Controller
 
         $days = implode(",", $request->days);
 
+        /* Storing Data in Table */
         Coupon::create([
             'name'                  =>  $request->name,
             'code'                  =>  $request->code,
@@ -101,18 +109,20 @@ class CouponController extends Controller
             'days'                  =>  $days,
         ]);
 
+        /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/coupons')->with('success', 'Coupon Added Successfully');
     }
 
     public function edit($id)
     {
+        /* Getting Coupon data for edit using Id */
         $coupon = DB::table('coupons')->find($id);
         $users = DB::table('users')->where('role', 'user')->get();
         $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
-        $cats = DB::table('categories')->where(['flag' => '0'])->get();
+        $categories = DB::table('categories')->where(['flag' => '0'])->get();
 
         return view('coupons.edit', compact(
-            'cats',
+            'categories',
             'users',
             'products',
             'coupon',
@@ -122,6 +132,7 @@ class CouponController extends Controller
 
     public function update(Request $request, $id)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'          =>  'required',
             'code'          =>  'required',
@@ -132,6 +143,7 @@ class CouponController extends Controller
             'type.required'     =>  'Coupon Type is required',
         ]);
 
+        /* Fetching Blog Data using Id */
         $coupon = Coupon::find($id);
 
         $days = $coupon->days;
@@ -139,6 +151,7 @@ class CouponController extends Controller
             $days = implode(",", $request->days);
         }
 
+        /* Updating Data fetched by Id */
         $coupon->name                   =  $request->name;
         $coupon->code                   =  $request->code;
         $coupon->type                   =  $request->type;
@@ -157,20 +170,21 @@ class CouponController extends Controller
         $coupon->days                   =  $days;
         $coupon->update();
 
+        /* After successfull update of data redirecting to index page with message */
         return redirect('admin/coupons')->with('success', 'Coupon Updated Successfully');
     }
 
     public function destroy($id)
     {
-        $coupon = Coupon::find($id);
-        $coupon->flag = '1';
-        $coupon->update();
+        /* Updating selected entry Flag to 1 for soft delete */
+        Coupon::where('id', $id)->update(['flag' => 1]);
 
         return redirect('admin/coupons')->with('success', 'Coupon Deleted Successfully');
     }
 
     public function update_status(Request $request)
     {
+        /* Updating status of selected entry */
         $coupon = Coupon::find($request->coupon_id);
         $coupon->show_in_front   = $request->show_in_front == 1 ? 0 : 1;
         $coupon->update();

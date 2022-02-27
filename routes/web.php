@@ -16,6 +16,7 @@ use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\AskChemistController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\RequestProductController;
+use App\Http\Controllers\CartController;
 
 
 /*
@@ -167,6 +168,15 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/edit/{id}', [RequestProductController::class, 'edit']);
         Route::put('/update/{id}', [RequestProductController::class, 'update']);
         Route::get('/delete/{id}', [RequestProductController::class, 'destroy']);
+    });
+
+    Route::prefix('carts')->group(function () {
+        Route::get('/', [CartController::class, 'index']);
+        Route::get('/create', [CartController::class, 'create']);
+        Route::post('/store', [CartController::class, 'store']);
+        Route::get('/edit/{id}', [CartController::class, 'edit']);
+        Route::put('/update/{id}', [CartController::class, 'update']);
+        Route::get('/delete/{id}', [CartController::class, 'destroy']);
     });
 });
 

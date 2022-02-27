@@ -12,23 +12,28 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
+    //Code for Main Category
     public function index()
     {
         if (request()->ajax()) {
-            $categories1 = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->get();
+            /* Getting all records */
+            $maincategories = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->get();
 
+            /* Converting Selected Data into desired format */
             $categories = new Collection;
-            foreach ($categories1 as $category1) {
+            foreach ($maincategories as $category1) {
                 $categories->push([
-                    'id'    => $category1->id,
-                    'name'  => $category1->name,
-                    'slug'  => $category1->slug,
-                    'status' => $category1->status
+                    'id'        => $category1->id,
+                    'name'      => $category1->name,
+                    'slug'      => $category1->slug,
+                    'status'    => $category1->status
                 ]);
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($categories)
                 ->addIndexColumn()
+                /* Status Active and Deactive Checkbox */
                 ->addColumn('active', function ($row) {
                     $checked = $row['status'] == '1' ? 'checked' : '';
                     $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -38,6 +43,7 @@ class CategoryController extends Controller
 
                     return $active;
                 })
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/categories/delete', $row['id']);
                     $edit_url = url('admin/categories/edit', $row['id']);
@@ -53,11 +59,13 @@ class CategoryController extends Controller
 
     public function create()
     {
+        /* Loading Create Page */
         return view('category.create');
     }
 
     public function store(Request $request)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required|unique:categories,name',
             'description'           =>  'required',
@@ -70,6 +78,7 @@ class CategoryController extends Controller
             'slug.required'                 =>  'Category Slug is required',
         ]);
 
+        /* Storing Featured Image on local disk */
         $image = "";
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
@@ -79,6 +88,7 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/', $file, $image);
         }
 
+        /* Storing OG Image on local disk */
         $og_image = "";
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
@@ -88,11 +98,7 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/og_images', $file, $og_image);
         }
 
-        $status = 0;
-        if (isset($request->status)) {
-            $status = 1;
-        }
-
+        /* Storing Data in Table */
         Category::create([
             'slug'                      =>  $request->slug,
             'name'                      =>  $request->name,
@@ -103,23 +109,26 @@ class CategoryController extends Controller
             'keywords'                  =>  $request->keywords,
             'tags'                      =>  $request->tags,
             'alt'                       =>  $request->alt,
-            'status'                    =>  $status,
+            'status'                    =>  $request->status,
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
         ]);
 
+        /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/categories')->with('success', 'Category added successfully');
     }
 
     public function edit($id)
     {
+        /* Getting Category data for edit using Id */
         $category = DB::table('categories')->where('id', $id)->first();
         return view('category.edit', compact('category', 'id'));
     }
 
     public function update(Request $request, $id)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required|unique:categories,name,' . $id,
             'description'           =>  'required',
@@ -132,6 +141,7 @@ class CategoryController extends Controller
             'slug.required'                 =>  'Category Slug is required',
         ]);
 
+        /* Storing Featured Image on local disk */
         $image = "";
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
@@ -141,6 +151,7 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/', $file, $image);
         }
 
+        /* Storing OG Image on local disk */
         $og_image = "";
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
@@ -150,31 +161,29 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/og_images', $file, $og_image);
         }
 
-        $status = 0;
-        if (isset($request->status)) {
-            $status = 1;
-        }
-
+        /* Updating Data fetched by Id */
         DB::table('categories')->where('id', $id)->update([
             'slug'                      =>  $request->slug,
             'name'                      =>  $request->name,
             'description'               =>  $request->description,
-            'image'                     =>  $image,
+            'image'                     =>  $image != '' ? $image : $request->image,
             'meta_title'                =>  $request->meta_title,
             'meta_description'          =>  $request->meta_description,
             'keywords'                  =>  $request->keywords,
             'alt'                       =>  $request->alt,
-            'status'                    =>  $status,
+            'status'                    =>  $request->status,
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
-            'og_image'                  =>  $og_image,
+            'og_image'                  =>  $og_image != '' ? $og_image : $request->og_image,
         ]);
 
+        /* After successfull update of data redirecting to index page with message */
         return redirect('admin/categories')->with('success', 'Category updated successfully');
     }
 
     public function update_status(Request $request)
     {
+        /* Updating status of selected entry */
         $category = Category::find($request->category_id);
         $category->status   = $request->status == 1 ? 0 : 1;
         $category->update();
@@ -184,34 +193,40 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
+        /* Updating selected entry Flag to 1 for soft delete */
         DB::table('categories')->where('id', $id)->update(['flag' => 1]);
         return redirect('admin/categories')->with('danger', 'Category deleted successfully');
     }
 
-    //level 2 code for sub category
+    //Code for Sub Category
     public function index_sub()
     {
         if (request()->ajax()) {
-            $categories1 = Category::where('flag', 0)->where('parent_id', null)->with('subcategory')->distinct('parent_id')->get();
+            /* Getting all records */
+            $maincategories = Category::where('flag', 0)->where('parent_id', null)->with('subcategory')->distinct('parent_id')->get();
+
+            /* Converting Selected Data into desired format */
             $categories = new Collection;
-            foreach ($categories1 as $category1) {
-                if (!empty($category1->subcategory)) {
-                    foreach ($category1->subcategory as $sub) {
+            foreach ($maincategories as $category) {
+                if (!empty($category->subcategory)) {
+                    foreach ($category->subcategory as $sub) {
                         if ($sub->flag == 0) {
                             $categories->push([
-                                'id'    => $sub->id,
-                                'main'  => $category1->name,
-                                'name'  => $sub->name,
-                                'slug'  => $sub->slug,
-                                'status' => $sub->status
+                                'id'        => $sub->id,
+                                'main'      => $category->name,
+                                'name'      => $sub->name,
+                                'slug'      => $sub->slug,
+                                'status'    => $sub->status
                             ]);
                         }
                     }
                 }
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($categories)
                 ->addIndexColumn()
+                /* Status Active and Deactive Checkbox */
                 ->addColumn('active', function ($row) {
                     $checked = $row['status'] == '1' ? 'checked' : '';
                     $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -221,6 +236,7 @@ class CategoryController extends Controller
 
                     return $active;
                 })
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/sub/categories/delete', $row['id']);
                     $edit_url = url('admin/sub/categories/edit', $row['id']);
@@ -236,12 +252,14 @@ class CategoryController extends Controller
 
     public function create_sub()
     {
+        /* Loading Create Page with Categories */
         $categories = DB::table('categories')->where('parent_id', null)->where(['flag' => 0, 'status' => 1])->get();
         return view('category.sub.create', compact('categories'));
     }
 
     public function store_sub(Request $request)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required|unique:categories,name',
             'description'           =>  'required',
@@ -254,6 +272,7 @@ class CategoryController extends Controller
             'slug.required'                 =>  'Category Slug is required',
         ]);
 
+        /* Storing Featured Image on local disk */
         $image = "";
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
@@ -263,6 +282,7 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/', $file, $image);
         }
 
+        /* Storing OG Image on local disk */
         $og_image = "";
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
@@ -272,11 +292,7 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/og_images', $file, $og_image);
         }
 
-        $status = 0;
-        if (isset($request->status)) {
-            $status = 1;
-        }
-
+        /* Storing Data in Table */
         Category::create([
             'slug'                      =>  $request->slug,
             'name'                      =>  $request->name,
@@ -287,17 +303,19 @@ class CategoryController extends Controller
             'meta_description'          =>  $request->meta_description,
             'keywords'                  =>  $request->keywords,
             'alt'                       =>  $request->alt,
-            'status'                    =>  $status,
+            'status'                    =>  $request->status,
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
         ]);
 
+        /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/sub/categories')->with('success', 'Sub category added successfully');
     }
 
     public function edit_sub($id)
     {
+        /* Getting Sub Category data with category for edit using Id */
         $categories = DB::table('categories')->where('parent_id', null)->where(['flag' => 0, 'status' => 1])->get();
         $category = DB::table('categories')->where('id', $id)->first();
         return view('category.sub.edit', compact('category', 'categories', 'id'));
@@ -305,6 +323,7 @@ class CategoryController extends Controller
 
     public function update_sub(Request $request, $id)
     {
+        /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required|unique:categories,name,' . $id,
             'description'           =>  'required',
@@ -317,6 +336,7 @@ class CategoryController extends Controller
             'slug.required'                 =>  'Category Slug is required',
         ]);
 
+        /* Storing Featured Image on local disk */
         $image = "";
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
@@ -326,6 +346,7 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/', $file, $image);
         }
 
+        /* Storing OG Image on local disk */
         $og_image = "";
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
@@ -335,11 +356,7 @@ class CategoryController extends Controller
             Storage::putFileAs('public/category/og_images', $file, $og_image);
         }
 
-        $status = 0;
-        if (isset($request->status)) {
-            $status = 1;
-        }
-
+        /* Updating Data fetched by Id */
         DB::table('categories')->where('id', $id)->update([
             'slug'                      =>  $request->slug,
             'name'                      =>  $request->name,
@@ -350,17 +367,19 @@ class CategoryController extends Controller
             'meta_description'          =>  $request->meta_description,
             'keywords'                  =>  $request->keywords,
             'alt'                       =>  $request->alt,
-            'status'                    =>  $status,
+            'status'                    =>  $request->status,
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
         ]);
 
+        /* After successfull update of data redirecting to index page with message */
         return redirect('admin/sub/categories')->with('success', 'Sub category updated successfully');
     }
 
     public function update_status_sub(Request $request)
     {
+        /* Updating status of selected entry */
         $category = Category::find($request->category_id);
         $category->status   = $request->status == 1 ? 0 : 1;
         $category->update();
@@ -370,7 +389,9 @@ class CategoryController extends Controller
 
     public function destroy_sub($id)
     {
+        /* Updating selected entry Flag to 1 for soft delete */
         DB::table('categories')->where('id', $id)->update(['flag' => 1]);
+
         return redirect('admin/sub/categories')->with('danger', 'Sub Category deleted successfully');
     }
 }

@@ -53,8 +53,8 @@
                             <label class="form-label" for="category_id"><span style="color: red;">* </span>Category</label>
                             <select name="category_id" class="form-control select2bs4">
                                 <option value="">Select Category</option>
-                                @foreach($cats as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                             @error('category_id')

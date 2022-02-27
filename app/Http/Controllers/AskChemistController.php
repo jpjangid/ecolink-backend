@@ -14,8 +14,10 @@ class AskChemistController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $allcontact = DB::table('contact_us')->where(['flag' => '0', 'type' => 'askchemist'])->get();
+            /* Getting all records */
+            $allcontact = DB::table('contact_us')->select('id', 'first_name', 'last_name', 'phone', 'email', 'created_at')->where(['flag' => '0', 'type' => 'askchemist'])->get();
 
+            /* Converting Selected Data into desired format */
             $contacts = new Collection;
             foreach ($allcontact as $contact) {
                 $contacts->push([
@@ -28,8 +30,10 @@ class AskChemistController extends Controller
                 ]);
             }
 
+            /* Sending data through yajra datatable for server side rendering */
             return Datatables::of($contacts)
                 ->addIndexColumn()
+                /* Adding Actions like edit, delete and show */
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/askchemist/delete', $row['id']);
                     $edit_url = url('admin/askchemist/edit', $row['id']);
@@ -46,37 +50,39 @@ class AskChemistController extends Controller
         return view('askchemist.index');
     }
 
-    public function create()
-    {
-        //
-    }
+    // public function create()
+    // {
+    //     //
+    // }
 
-    public function store(Request $request)
-    {
-        //
-    }
+    // public function store(Request $request)
+    // {
+    //     //
+    // }
 
     public function show($id)
     {
+        /* Getting Contact with Question to show using Id */
         $contact = ContactUs::where('id', $id)->with('question')->first();
 
         return view('askchemist.show', compact('contact'));
     }
 
-    public function edit($id)
-    {
-        $contact = ContactUs::where('id', $id)->with('question')->first();
+    // public function edit($id)
+    // {
+    //     $contact = ContactUs::where('id', $id)->with('question')->first();
 
-        return view('askchemist.edit', compact('contact'));
-    }
+    //     return view('askchemist.edit', compact('contact'));
+    // }
 
-    public function update(Request $request, $id)
-    {
-        dd($request->all());
-    }
+    // public function update(Request $request, $id)
+    // {
+    //     dd($request->all());
+    // }
 
     public function destroy($id)
     {
+        /* Updating selected entry Flag to 1 for soft delete */
         ContactUs::where('id', $id)->update(['flag' => 1]);
 
         return redirect()->back()->with('danger', 'Entry Deleted successfully');
