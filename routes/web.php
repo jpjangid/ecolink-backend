@@ -13,6 +13,9 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReturnController;
+use App\Http\Controllers\AskChemistController;
+use App\Http\Controllers\ContactUsController;
+use App\Http\Controllers\RequestProductController;
 
 
 /*
@@ -140,6 +143,30 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/', [ReturnController::class, 'index']);
         Route::get('/return_detail/{id}', [ReturnController::class, 'return_detail']);
         Route::post('/update', [ReturnController::class, 'update']);
+    });
+
+    Route::prefix('askchemist')->group(function () {
+        Route::get('/', [AskChemistController::class, 'index']);
+        Route::get('/show/{id}', [AskChemistController::class, 'show']);
+        Route::get('/edit/{id}', [AskChemistController::class, 'edit']);
+        Route::put('/update/{id}', [AskChemistController::class, 'update']);
+        Route::get('/delete/{id}', [AskChemistController::class, 'destroy']);
+    });
+
+    Route::prefix('contact')->group(function () {
+        Route::get('/', [ContactUsController::class, 'index']);
+        Route::get('/show/{id}', [ContactUsController::class, 'show']);
+        Route::get('/edit/{id}', [ContactUsController::class, 'edit']);
+        Route::put('/update/{id}', [ContactUsController::class, 'update']);
+        Route::get('/delete/{id}', [ContactUsController::class, 'destroy']);
+    });
+
+    Route::prefix('requestproduct')->group(function () {
+        Route::get('/', [RequestProductController::class, 'index']);
+        Route::get('/show/{id}', [RequestProductController::class, 'show']);
+        Route::get('/edit/{id}', [RequestProductController::class, 'edit']);
+        Route::put('/update/{id}', [RequestProductController::class, 'update']);
+        Route::get('/delete/{id}', [RequestProductController::class, 'destroy']);
     });
 });
 

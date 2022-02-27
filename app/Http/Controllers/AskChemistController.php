@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ContactUs;
 use Illuminate\Http\Request;
+use App\Models\ContactUs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
-class ContactUsController extends Controller
+
+class AskChemistController extends Controller
 {
     public function index()
     {
         if (request()->ajax()) {
-            $allcontact = DB::table('contact_us')->where(['flag' => '0', 'type' => 'contact'])->get();
+            $allcontact = DB::table('contact_us')->where(['flag' => '0', 'type' => 'askchemist'])->get();
 
             $contacts = new Collection;
             foreach ($allcontact as $contact) {
@@ -30,9 +31,9 @@ class ContactUsController extends Controller
             return Datatables::of($contacts)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/contact/delete', $row['id']);
-                    $edit_url = url('admin/contact/edit', $row['id']);
-                    $show_url = url('admin/contact/show', $row['id']);
+                    $delete_url = url('admin/askchemist/delete', $row['id']);
+                    $edit_url = url('admin/askchemist/edit', $row['id']);
+                    $show_url = url('admin/askchemist/show', $row['id']);
                     $btn = '';
                     // $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
                     $btn .= '<a class="btn btn-info btn-xs ml-1" href="' . $show_url . '"><i class="fa fa-eye"></i></a>';
@@ -42,7 +43,7 @@ class ContactUsController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('contact.index');
+        return view('askchemist.index');
     }
 
     public function create()
@@ -59,14 +60,14 @@ class ContactUsController extends Controller
     {
         $contact = ContactUs::where('id', $id)->with('question')->first();
 
-        return view('contact.show', compact('contact'));
+        return view('askchemist.show', compact('contact'));
     }
 
     public function edit($id)
     {
         $contact = ContactUs::where('id', $id)->with('question')->first();
 
-        return view('contact.edit', compact('contact'));
+        return view('askchemist.edit', compact('contact'));
     }
 
     public function update(Request $request, $id)
@@ -76,6 +77,8 @@ class ContactUsController extends Controller
 
     public function destroy($id)
     {
-        //
+        ContactUs::where('id', $id)->update(['flag' => 1]);
+
+        return redirect()->back()->with('danger', 'Entry Deleted successfully');
     }
 }

@@ -231,6 +231,30 @@
 						</p>
 					</a>
 				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/askchemist') }}" class="nav-link">
+						<p>
+							Ask Chemist
+						</p>
+					</a>
+				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/requestproduct') }}" class="nav-link">
+						<p>
+							Request Product
+						</p>
+					</a>
+				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/contact') }}" class="nav-link">
+						<p>
+							Contact
+						</p>
+					</a>
+				</li>
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

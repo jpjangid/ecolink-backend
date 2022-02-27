@@ -10,6 +10,11 @@ class ContactUs extends Model
     use HasFactory;
 
     protected $fillable = [
-        'first_name', 'last_name', 'phone', 'address_1', 'address_2', 'city', 'state', 'zip', 'country', 'email', 'interested_in', 'type'
+        'first_name', 'last_name', 'phone', 'address_1', 'address_2', 'city', 'state', 'zip', 'country', 'email', 'type', 'flag'
     ];
+
+    public function question()
+    {
+        return $this->hasOne('App\Models\ContactQuestion', 'contact_id', 'id');
+    }
 }

@@ -25,8 +25,8 @@ class CreateContactUsTable extends Migration
             $table->string('zip')->nullable();
             $table->string('country')->nullable();
             $table->string('email')->nullable();
-            $table->text('interested_in')->nullable();
             $table->string('type')->nullable();
+            $table->tinyInteger('flag')->default(0);
             $table->timestamps();
         });
     }

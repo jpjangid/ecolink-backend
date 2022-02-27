@@ -24,6 +24,9 @@ class CreateContactQuestionsTable extends Migration
             $table->text('input_5')->nullable();
             $table->text('input_6')->nullable();
             $table->text('input_7')->nullable();
+            $table->text('input_8')->nullable();
+            $table->text('input_9')->nullable();
+            $table->text('input_10')->nullable();
             $table->timestamps();
         });
     }
