@@ -33,7 +33,7 @@
       </a>
       <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
 
-        <a class="dropdown-item" href="{{ url('/profile',auth()->user()->id) }}"><i class="fas fa-user mr-2"></i> Profile </a>
+        <a class="dropdown-item" href="{{ url('admin/profile',auth()->user()->id) }}"><i class="fas fa-user mr-2"></i> Profile </a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">

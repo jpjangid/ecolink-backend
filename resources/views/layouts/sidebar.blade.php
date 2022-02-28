@@ -14,7 +14,7 @@
 				<img src="{{ auth()->user()->profile_image != null ? asset('public/storage/profile/'.auth()->user()->id.'/'.auth()->user()->profile_image) : asset('default.jpg') }}" class="img-rounded elevation-2" alt="{{ auth()->user()->name }}">
 			</div>
 			<div class="info">
-				<a href="{{ url('profile',auth()->user()->id) }}" class="d-block">{{ auth()->user()->name }}</a>
+				<a href="{{ url('admin/profile',auth()->user()->id) }}" class="d-block">{{ auth()->user()->name }}</a>
 			</div>
 		</div>
 

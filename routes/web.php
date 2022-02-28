@@ -17,6 +17,7 @@ use App\Http\Controllers\AskChemistController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\RequestProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProfileController;
 
 
 /*
@@ -46,6 +47,9 @@ Route::get('/artisan/clear', function () {
 
 Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    //Profile Route
+    Route::get('profile/{id}', [ProfileController::class, 'edit']);
+    Route::patch('profile/update/{id}', [ProfileController::class, 'update']);
 
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
