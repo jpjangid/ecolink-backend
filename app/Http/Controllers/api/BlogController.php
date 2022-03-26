@@ -20,6 +20,11 @@ class BlogController extends Controller
     {
         /* Getting blog by slug */
         $blog = DB::table('blogs')->where('slug', $request->slug)->first();
-        return response()->json(['blog' => $blog], 200);
+
+        if (!empty($blog)) {
+            return response()->json(['blog' => $blog], 200);
+        }
+
+        return response()->json(['error' => 'Invalid Slug'], 404);
     }
 }
