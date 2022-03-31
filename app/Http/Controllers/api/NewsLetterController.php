@@ -3,42 +3,25 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\NewsLetter;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 class NewsLetterController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $validator = Validator::make($request->all(), [
+            'email'     =>  'required|email',
+        ]);
 
-    public function create()
-    {
-        //
-    }
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
-    public function store(Request $request)
-    {
-        //
-    }
+        NewsLetter::create([
+            'email'     =>  $request->email,
+        ]);
 
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
+        return response()->json(['success' => 'Newsletter Subscribed Successfully'], 200);
     }
 }

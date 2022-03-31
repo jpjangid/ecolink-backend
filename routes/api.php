@@ -6,6 +6,7 @@ use App\Http\Controllers\api\BlogController;
 use App\Http\Controllers\api\CartController;
 use App\Http\Controllers\api\PageController;
 use App\Http\Controllers\api\HomeController;
+use App\Http\Controllers\api\NewsLetterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,3 +35,6 @@ Route::post('getPage', [PageController::class, 'index']);
 
 //Route For Getting Data for Home Page
 Route::post('home', [HomeController::class, 'index']);
+
+//Route For Storing Newsletter
+Route::post('newsletter', [NewsLetterController::class, 'index']);
