@@ -75,6 +75,7 @@ class ProductController extends Controller
             'regular_price'         =>  'required',
             'sale_price'            =>  'required',
             'category_id'           =>  'required',
+            'alt'                   =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'slug.required'                 =>  'Please Enter Slug',
@@ -83,6 +84,7 @@ class ProductController extends Controller
             'regular_price.required'        =>  'Please Enter Regular Price',
             'sale_price.required'           =>  'Please Enter Sale Price',
             'category_id.required'          =>  'Please Select Category',
+            'alt.required'                  =>  'Please Enter Alt',
         ]);
 
         /* Storing OG Image on local disk */
@@ -127,6 +129,7 @@ class ProductController extends Controller
             'alt'                   =>  $request->alt,
             'hsn'                   =>  $request->hsn,
             'gst'                   =>  $request->gst,
+            'tag'                   =>  $request->tag,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -164,6 +167,7 @@ class ProductController extends Controller
             'regular_price'         =>  'required',
             'sale_price'            =>  'required',
             'category_id'           =>  'required',
+            'alt'                   =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'slug.required'                 =>  'Please Enter Slug',
@@ -172,6 +176,7 @@ class ProductController extends Controller
             'regular_price.required'        =>  'Please Enter Regular Price',
             'sale_price.required'           =>  'Please Enter Sale Price',
             'category_id.required'          =>  'Please Select Category',
+            'alt.required'                  =>  'Please Enter Alt',
         ]);
 
         /* Fetching Blog Data using Id */
@@ -218,6 +223,7 @@ class ProductController extends Controller
         $product->regular_price         =  $request->regular_price;
         $product->sale_price            =  $request->sale_price;
         $product->image                 =  $image;
+        $product->tag                   =  $request->tag;
         $product->update();
 
         /* After successfull update of data redirecting to index page with message */

@@ -146,16 +146,16 @@
                     <!-- alt title-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="alt_title"><span style="color: red;">* </span>Alt Title</label>
-                            <input type="text" class="form-control @error('alt_title') is-invalid @enderror" name="alt" id="alt_title" placeholder="Please Enter Alt Title" value="{{ old('alt') }}">
-                            @error('meta_description')
+                            <label class="required form-label" for="alt"><span style="color: red;">* </span>Alt Title</label>
+                            <input type="text" class="form-control @error('alt') is-invalid @enderror" name="alt" id="alt" placeholder="Please Enter Alt Title" value="{{ old('alt') }}">
+                            @error('alt')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
 
                     <!-- Status -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Status</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
@@ -166,6 +166,14 @@
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
+                        </div>
+                    </div>
+
+                    <!-- Product Tag-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="tag">Product Tag</label>
+                            <input type="text" class="form-control @error('tag') is-invalid @enderror" name="tag" id="tag" placeholder="Please Enter Product Tag" value="{{ old('tag') }}">
                         </div>
                     </div>
 

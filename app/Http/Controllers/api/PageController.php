@@ -11,7 +11,7 @@ class PageController extends Controller
 {
     public function index(Request $request)
     {
-        //Getting Page Using Slug
+        /* Getting Page Using Slug */
         $validator = Validator::make($request->all(), [
             'slug' => 'required',
         ]);

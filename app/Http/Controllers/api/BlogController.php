@@ -7,6 +7,8 @@ use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class BlogController extends Controller
 {
@@ -25,7 +27,6 @@ class BlogController extends Controller
     public function blog(Request $request)
     {
         /* Getting blog by slug */
-        //Getting Page Using Slug
         $validator = Validator::make($request->all(), [
             'slug' => 'required',
         ]);

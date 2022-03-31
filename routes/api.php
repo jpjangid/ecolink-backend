@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\BlogController;
 use App\Http\Controllers\api\CartController;
 use App\Http\Controllers\api\PageController;
+use App\Http\Controllers\api\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +31,6 @@ Route::post('getCartItems', [CartController::class, 'getCartItems']);
 
 //Route For Getting Page Using slug
 Route::post('getPage', [PageController::class, 'index']);
+
+//Route For Getting Data for Home Page
+Route::post('home', [HomeController::class, 'index']);

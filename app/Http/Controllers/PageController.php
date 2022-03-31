@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LinkCategory;
 use Illuminate\Http\Request;
 use App\Models\Page;
 use Illuminate\Support\Str;
@@ -59,8 +60,11 @@ class PageController extends Controller
 
     public function create()
     {
+        /* Getting All Link Categories */
+        $categories = LinkCategory::all();
+        
         /* Loading Create Page */
-        return view('pages.create');
+        return view('pages.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -130,10 +134,12 @@ class PageController extends Controller
 
     public function edit($id)
     {
+        /* Getting All Link Categories */
+        $categories = LinkCategory::all();
         /* Getting Blog data for edit using Id */
         $page = DB::table('pages')->find($id);
 
-        return view('pages.edit', compact('page', 'id'));
+        return view('pages.edit', compact('page', 'id', 'categories'));
     }
 
     public function update(Request $request, $id)

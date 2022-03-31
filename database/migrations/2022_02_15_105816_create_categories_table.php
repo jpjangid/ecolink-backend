@@ -19,6 +19,7 @@ class CreateCategoriesTable extends Migration
             $table->string('slug')->nullable();
             $table->integer('parent_id')->nullable();
             $table->longtext('description')->nullable();
+            $table->string('short_desc')->nullable();
             $table->text('image')->nullable();
             $table->string('alt')->nullable();
             $table->text('meta_title')->nullable();

@@ -35,6 +35,7 @@ class CreateProductsTable extends Migration
             $table->text('og_image')->nullable();
             $table->text('image')->nullable();
             $table->string('alt')->nullable();
+            $table->string('alt')->nullable();
             $table->tinyInteger('status')->default('0');
             $table->tinyInteger('flag')->default('0');
             $table->timestamps();

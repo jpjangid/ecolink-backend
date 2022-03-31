@@ -91,7 +91,7 @@
                     <!-- Status -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
+                            <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Sub Category</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
                                 <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
@@ -100,6 +100,14 @@
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
+                        </div>
+                    </div>
+
+                    <!-- Category Short Description -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="short_desc">Short Description</label>
+                            <textarea class="form-control form-control-solid @error('short_desc') is-invalid @enderror" name="short_desc" placeholder="Please Enter Short Description"><?php echo old('short_desc'); ?></textarea>
                         </div>
                     </div>
 

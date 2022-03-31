@@ -47,6 +47,19 @@
                         </div>
                     </div>
 
+                    <!-- page category -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="category"><span style="color: red;">* </span>Page Category</label>
+                            <select class="form-control form-control-solid @error('category') is-invalid @enderror" name="category" >
+                                <option value="">Select Page Category</option>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Page image -->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -75,7 +88,7 @@
                     <!-- Status -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
+                            <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Page</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
                                 <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>

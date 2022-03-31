@@ -12,4 +12,9 @@ class Page extends Model
     protected $fillable = [
         'slug', 'title', 'description', 'image', 'alt', 'meta_title', 'meta_description', 'keywords', 'tags', 'og_title', 'og_description', 'og_image', 'og_alt', 'status', 'flag', 'category'
     ];
+
+    public function pagecategory()
+    {
+        return $this->belongsTo('App\Models\LinkCategory', 'category');
+    }
 }
