@@ -20,7 +20,7 @@ class PageController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
 
-        $page = DB::table('pages')->where(['flag' => 0, 'slug' => $request->slug])->first();
+        $page = DB::table('pages')->where(['status' => 1, 'slug' => $request->slug])->first();
 
         if (!empty($page)) {
             return response()->json(['page' => $page], 200);

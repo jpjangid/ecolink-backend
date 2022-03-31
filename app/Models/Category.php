@@ -15,16 +15,16 @@ class Category extends Model
 
     public function subcategory()
     {
-        return $this->hasMany('App\Models\Category', 'parent_id')->orderBy('name', 'asc');
+        return $this->hasMany('App\Models\Category', 'parent_id')->where('status',1)->orderBy('name', 'asc');
     }
 
     public function parent()
     {
-        return $this->belongsTo('App\Models\Category', 'parent_id');
+        return $this->belongsTo('App\Models\Category', 'parent_id')->where('status',1);
     }
 
     public function products()
     {
-        return $this->hasMany('App\Models\Product','parent_id', 'id');
+        return $this->hasMany('App\Models\Product','parent_id', 'id')->where('status',1);
     }
 }

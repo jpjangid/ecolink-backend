@@ -35,7 +35,7 @@ class BlogController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
 
-        $blog = DB::table('blogs')->where('slug', $request->slug)->first();
+        $blog = DB::table('blogs')->where(['slug' => $request->slug, 'status' => 1])->first();
 
         if(!empty($blog)){
             return response()->json(['blog' => $blog], 200);

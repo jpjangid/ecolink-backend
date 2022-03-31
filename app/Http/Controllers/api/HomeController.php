@@ -17,11 +17,11 @@ class HomeController extends Controller
     {
         $pagecategories = LinkCategory::select('id', 'name', 'slug')->with('sublink:id,category,title,slug')->get();
 
-        $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->get();
+        $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->where('status', 1)->get();
 
-        $blogs = DB::table('blogs')->select('id', 'title', 'slug', 'description', 'publish_date', 'status', 'image', 'alt')->where('flag', '0')->get();
+        $blogs = DB::table('blogs')->select('id', 'title', 'slug', 'description', 'publish_date', 'status', 'image', 'alt')->where('status', 1)->get();
 
-        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug')->with('ratings:id,rating,product_id')->get();
+        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug')->with('ratings:id,rating,product_id')->where(['status' => 1])->get();
 
         foreach ($products as $product) {
             $rate = $product->ratings->avg('rating');
