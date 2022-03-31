@@ -111,6 +111,7 @@ class PageController extends Controller
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
+            'category'                  =>  $request->category,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -185,6 +186,7 @@ class PageController extends Controller
         $page->og_title                 =  $request->og_title;
         $page->og_description           =  $request->og_description;
         $page->og_image                 =  $og_image;
+        $page->category                 =  $request->category;
         $page->update();
 
         /* After successfull update of data redirecting to index page with message */

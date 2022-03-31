@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\BlogController;
 use App\Http\Controllers\api\CartController;
+use App\Http\Controllers\api\PageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Route for Blogs
-Route::get('blogs', [BlogController::class, 'blogs']);
-Route::post('blog', [BlogController::class, 'blog']);
+Route::get('getallblogs', [BlogController::class, 'blogs']);
+Route::post('getblog', [BlogController::class, 'blog']);
 
 //Route For Get Cart Items
 Route::post('getCartItems', [CartController::class, 'getCartItems']);
+
+//Route For Getting Page Using slug
+Route::post('getPage', [PageController::class, 'index']);
