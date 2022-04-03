@@ -177,6 +177,63 @@
                         </div>
                     </div>
 
+                    <!-- Product In Stock Status -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="in_stock">In Stock</label>
+                            <select class="form-control @error('in_stock') is-invalid @enderror" name="in_stock">
+                                <option value="1" {{ old('in_stock') == '1' ? 'selected' : '' }}>Yes</option>
+                                <option value="0" {{ old('in_stock') == '0' ? 'selected' : '' }}>No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Product Stock-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="stock"><span style="color: red;">* </span>Product Stock</label>
+                            <input type="number" class="form-control @error('stock') is-invalid @enderror" name="stock" id="stock" placeholder="Please Enter Product Stock" value="{{ old('stock') }}">
+                            @error('stock')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Product Low Stock Amount-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="low_stock"><span style="color: red;">* </span>Product Low Stock Amount</label>
+                            <input type="number" class="form-control @error('low_stock') is-invalid @enderror" name="low_stock" id="low_stock" placeholder="Please Enter Product Low Stock Amount" value="{{ old('low_stock') }}">
+                            @error('low_stock')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Tax Status-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="tax_status">Tax Status</label>
+                            <input type="text" class="form-control @error('tax_status') is-invalid @enderror" name="tax_status" id="tax_status" placeholder="Please Enter Tax Status" value="{{ old('tax_status') }}">
+                        </div>
+                    </div>
+
+                    <!-- Tax Class-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="tax_class">Tax Class</label>
+                            <input type="text" class="form-control @error('tax_class') is-invalid @enderror" name="tax_class" id="tax_class" placeholder="Please Enter Tax Class" value="{{ old('tax_class') }}">
+                        </div>
+                    </div>
+
+                    <!-- Sold individually-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="sold_individually">Sold individually</label>
+                            <input type="number" class="form-control @error('sold_individually') is-invalid @enderror" name="sold_individually" id="sold_individually" placeholder="Please Enter Sold individually" value="{{ old('sold_individually') }}">
+                        </div>
+                    </div>
+
                     <!-- Product Short Description -->
                     <div class="col-md-12">
                         <div class="form-group">

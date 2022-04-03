@@ -36,7 +36,7 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('in_stock')->default('0');
             $table->unsignedInteger('stock')->nullable();
             $table->unsignedInteger('low_stock')->nullable();
-            $table->unsignedInteger('solid_individually')->nullable();
+            $table->unsignedInteger('sold_individually')->nullable();
             $table->float('weight')->nullable();
             $table->float('lenght')->nullable();
             $table->float('width')->nullable();
