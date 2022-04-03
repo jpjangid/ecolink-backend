@@ -177,11 +177,22 @@
                         </div>
                     </div>
 
+                    <!-- Product Short Description -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="short_desc"><span style="color: red;">* </span>Short Description</label>
+                            <textarea class="form-control @error('short_desc') is-invalid @enderror" name="short_desc"><?php echo old('short_desc'); ?></textarea>
+                            @error('short_desc')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
                     <!-- Product Description -->
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
-                            <textarea id="summernote" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo old('description'); ?></textarea>
+                            <textarea id="wysiwyg" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo old('description'); ?></textarea>
                             @error('description')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -294,21 +305,6 @@
     });
 </script> -->
 <script>
-    $('#summernote').summernote({
-        placeholder: 'Please Enter Description',
-        tabsize: 2,
-        height: 120,
-        toolbar: [
-            ['style', ['style']],
-            ['font', ['bold', 'underline', 'clear']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'video']],
-            ['view', ['fullscreen', 'codeview', 'help']]
-        ]
-    });
-
     $(document).on('change', '#regular_price', function() {
         var dis_type = $('#dis_type').val();
         var dis = $('#discount').val();

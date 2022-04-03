@@ -39,6 +39,7 @@
   <!-- Select 2 Css -->
   <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+  <link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
   <style>
     .container-fluid {
       overflow-x: auto;
@@ -135,7 +136,10 @@
   <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
   <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
+
   <script type="text/javascript">
+    var editor = new FroalaEditor('#wysiwyg');
     $(function() {
       $('.select2bs4').select2({
         theme: 'bootstrap4'

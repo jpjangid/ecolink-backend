@@ -119,7 +119,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
-                            <textarea id="summernote" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo $blog->description; ?></textarea>
+                            <textarea id="wysiwyg" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo $blog->description; ?></textarea>
                             @error('description')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -232,21 +232,5 @@
         }
     });
 </script> -->
-<script>
-    $('#summernote').summernote({
-        placeholder: 'Please Enter Description',
-        tabsize: 2,
-        height: 120,
-        toolbar: [
-            ['style', ['style']],
-            ['font', ['bold', 'underline', 'clear']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'video']],
-            ['view', ['fullscreen', 'codeview', 'help']]
-        ]
-    });
-</script>
 
 @endsection
