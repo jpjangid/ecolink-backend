@@ -8,6 +8,7 @@ use App\Http\Controllers\api\ContactController;
 use App\Http\Controllers\api\PageController;
 use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\NewsLetterController;
+use App\Http\Controllers\api\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,3 +43,6 @@ Route::post('newsletter', [NewsLetterController::class, 'index']);
 
 //Route For Storing Contact Details
 Route::post('contact', [ContactController::class, 'contact']);
+
+//Route For Getting Product Using slug
+Route::post('getProduct', [ProductController::class, 'index']);
