@@ -18,12 +18,14 @@ class ContactController extends Controller
             'address_1'     =>  'required',
             'email'         =>  'required|email',
             'type'          =>  'required',
+            'phone'         =>  'numeric|digits:10'
         ],[
             'first_name.required'       =>  'Please Enter First Name',
             'last_name.required'        =>  'Please Enter Last Name',
             'address_1.required'        =>  'Please Enter Address',
             'email'                     =>  'Please Enter Email',
             'type'                      =>  'Please Enter Contact Type',
+            'phone.numeric'             =>  'Please Enter Mobile No. in digits',
         ]);
 
         if ($validator->fails()) {

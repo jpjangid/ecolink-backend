@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\BlogController;
 use App\Http\Controllers\api\CartController;
+use App\Http\Controllers\api\ContactController;
 use App\Http\Controllers\api\PageController;
 use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\NewsLetterController;
@@ -38,3 +39,6 @@ Route::post('home', [HomeController::class, 'index']);
 
 //Route For Storing Newsletter
 Route::post('newsletter', [NewsLetterController::class, 'index']);
+
+//Route For Storing Contact Details
+Route::post('contact', [ContactController::class, 'contact']);
