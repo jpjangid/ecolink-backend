@@ -28,7 +28,7 @@ class User extends Authenticatable
         'pincode',
         'mobile',
         'profile_image',
-        'role',
+        'role_id',
         'flag'
     ];
 
