@@ -130,6 +130,18 @@ class ProductController extends Controller
             'hsn'                   =>  $request->hsn,
             'gst'                   =>  $request->gst,
             'tag'                   =>  $request->tag,
+            'short_desc'            =>  $request->short_desc, 
+            'tax_status'            =>  $request->tax_status, 
+            'tax_class'             =>  $request->tax_class, 
+            'in_stock'              =>  $request->in_stock, 
+            'stock'                 =>  $request->stock, 
+            'low_stock'             =>  $request->low_stock, 
+            'sold_individually'     =>  $request->sold_individually, 
+            'weight'                =>  $request->weight, 
+            'lenght'                =>  $request->lenght, 
+            'width'                 =>  $request->width, 
+            'height'                =>  $request->height, 
+            'shipping_class'        =>  $request->shipping_class,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -224,6 +236,18 @@ class ProductController extends Controller
         $product->sale_price            =  $request->sale_price;
         $product->image                 =  $image;
         $product->tag                   =  $request->tag;
+        $product->short_desc            =  $request->short_desc; 
+        $product->tax_status            =  $request->tax_status; 
+        $product->tax_class             =  $request->tax_class; 
+        $product->in_stock              =  $request->in_stock; 
+        $product->stock                 =  $request->stock; 
+        $product->low_stock             =  $request->low_stock; 
+        $product->sold_individually     =  $request->sold_individually; 
+        $product->weight                =  $request->weight; 
+        $product->lenght                =  $request->lenght; 
+        $product->width                 =  $request->width; 
+        $product->height                =  $request->height; 
+        $product->shipping_class        =  $request->shipping_class;
         $product->update();
 
         /* After successfull update of data redirecting to index page with message */
