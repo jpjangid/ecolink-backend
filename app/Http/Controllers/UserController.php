@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -55,7 +56,8 @@ class UserController extends Controller
     {
         /* Loading Create Page with location data */
         $locations = Location::select('state')->distinct()->orderby('state')->get();
-        return view('users.create', compact('locations'));
+        $roles = Role::all();
+        return view('users.create', compact('locations','roles'));
     }
 
     public function store(Request $request)
@@ -70,7 +72,7 @@ class UserController extends Controller
             'city'          =>  'required',
             'pincode'       =>  'required',
             'password'      =>  'required|min:8',
-            'role'          =>  'required',
+            'role_id'       =>  'required',
         ], [
             'name.required'         =>  'Please Enter Name',
             'email.required'        =>  'Please Enter Email',
@@ -79,7 +81,7 @@ class UserController extends Controller
             'state.required'        =>  'Please Select State',
             'city.required'         =>  'Please Select City',
             'pincode.required'      =>  'Please Select Pincode',
-            'role.required'         =>  'Please Select Role',
+            'role_id.required'      =>  'Please Select Role',
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
             'password.required'     =>  'Please Enter Password',
         ]);
@@ -111,7 +113,7 @@ class UserController extends Controller
             'city'                  =>  $request['city'],
             'pincode'               =>  $request['pincode'],
             'password'              =>  $pass,
-            'role'                  =>  $request['role'],
+            'role_id'               =>  $request['role_id'],
             'profile_image'         =>  $image_name,
         ]);
 
@@ -123,8 +125,9 @@ class UserController extends Controller
     {
         /* Getting User data with location for edit using Id */
         $user = User::find($id);
+        $roles = Role::all();
         $locations = Location::select('state')->distinct()->orderby('state')->get();
-        return view('users.edit', compact('user', 'locations', 'id'));
+        return view('users.edit', compact('user', 'locations', 'id','roles'));
     }
 
     public function update(Request $request, $id)

@@ -90,13 +90,14 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
-                        <label for="role"><span style="color: red;">* </span>Role:</label>
-                        <select class="form-control select2bs4" name="role" id="role">
+                        <label for="role_id"><span style="color: red;">* </span>Role:</label>
+                        <select class="form-control select2bs4" name="role_id" id="role_id">
                             <option value="">Select Role</option>
-                            <option value="admin" {{old('role') == 'admin' ? 'selected' : ''}}>Admin</option>
-                            <option value="client" {{old('role') == 'client' ? 'selected' : ''}}>Client</option>
+                            @foreach($roles as $role)
+                            <option value="{{$role->id}}" {{old('role_id') == $role->id ? 'selected' : ''}}>{{$role->name}}</option>
+                            @endforeach
                         </select>
-                        @error('role')
+                        @error('role_id')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

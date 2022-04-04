@@ -10,6 +10,6 @@
             'city'                  =>  'Udaipur',
             'pincode'               =>  '313001',
             'password'              =>  $pass,
-            'role'                  =>  'admin',
+            'role_id'               =>  1,
             'profile_image'         =>  '',
         ]);
