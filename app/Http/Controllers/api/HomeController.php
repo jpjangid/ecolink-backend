@@ -17,7 +17,7 @@ class HomeController extends Controller
     {
         $pagecategories = LinkCategory::select('id', 'name', 'slug')->with('sublink:id,category,title,slug')->get();
 
-        $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->where('status', 1)->get();
+        $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->get();
 
         $blogs = DB::table('blogs')->select('id', 'title', 'slug', 'description', 'publish_date', 'status', 'image', 'alt')->where('status', 1)->get();
 
@@ -34,6 +34,10 @@ class HomeController extends Controller
 
         $data = collect(['pagecategories' => $pagecategories, 'categories' => $categories, 'blogs' => $blogs, 'products' => $products, 'cart_count' => $cart_count]);
 
-        return response($data);
+        if($data->isNotEmpty()){
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
+        }else{
+            return response()->json(['message' => 'No Data found', 'code' => 400], 400);
+        }
     }
 }

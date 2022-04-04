@@ -18,9 +18,9 @@ class BlogController extends Controller
         $blogs = DB::table('blogs')->where('flag', 0)->get();
 
         if($blogs->isNotEmpty()){
-            return response()->json(['blogs' => $blogs], 200);
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs], 200);
         }else{
-            return response()->json(['error' => 'No Data Found'], 400);
+            return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
 
@@ -32,15 +32,15 @@ class BlogController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
         $blog = DB::table('blogs')->where(['slug' => $request->slug, 'status' => 1])->first();
 
         if(!empty($blog)){
-            return response()->json(['blog' => $blog], 200);
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blog], 200);
         }else{
-            return response()->json(['error' => 'No Data Found'], 400);
+            return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
 }

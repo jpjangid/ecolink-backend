@@ -14,9 +14,9 @@ class CartController extends Controller
         $carts = Cart::where('user_id', $request->user_id)->with('user', 'product')->get();
 
         if($carts->isNotEmpty()){
-            return response()->json(['carts' => $carts], 200);
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $carts], 200);
         }else{
-            return response()->json(['error' => 'No Product Found in Cart'], 400);
+            return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);
         }
     }
 }

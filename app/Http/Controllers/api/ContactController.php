@@ -29,7 +29,7 @@ class ContactController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
         $contact = ContactUs::create([
@@ -60,6 +60,6 @@ class ContactController extends Controller
             'input_10'      =>  $request['input_10'],
         ]);
 
-        return response()->json(['success' => 'Contact Details Added Successfully'], 200);
+        return response()->json(['message' => 'Contact Details Added Successfully', 'code' => 200], 200);
     }
 }

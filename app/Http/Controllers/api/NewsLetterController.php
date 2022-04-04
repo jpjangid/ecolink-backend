@@ -15,13 +15,13 @@ class NewsLetterController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
         NewsLetter::create([
             'email'     =>  $request->email,
         ]);
 
-        return response()->json(['success' => 'Newsletter Subscribed Successfully'], 200);
+        return response()->json(['message' => 'Newsletter Subscribed Successfully', 'code' => 200], 200);
     }
 }

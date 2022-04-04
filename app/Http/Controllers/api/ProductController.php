@@ -15,15 +15,15 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
         $product = DB::table('products')->where(['slug' => $request->slug, 'status' => 1])->first();
 
         if(!empty($product)){
-            return response()->json(['product' => $product], 200);
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $product], 200);
         }else{
-            return response()->json(['error' => 'No Data Found'], 400);
+            return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\api\PageController;
 use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\NewsLetterController;
 use App\Http\Controllers\api\ProductController;
+use App\Http\Controllers\api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,3 +47,9 @@ Route::post('contact', [ContactController::class, 'contact']);
 
 //Route For Getting Product Using slug
 Route::post('getProduct', [ProductController::class, 'index']);
+
+//Route For Getting Categories
+Route::get('getCategories', [CategoryController::class, 'index']);
+
+//Route For Getting Category Using slug
+Route::post('getCategory', [CategoryController::class, 'category']);

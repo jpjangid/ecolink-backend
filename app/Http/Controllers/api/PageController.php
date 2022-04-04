@@ -17,15 +17,15 @@ class PageController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
         $page = DB::table('pages')->where(['status' => 1, 'slug' => $request->slug])->first();
 
         if (!empty($page)) {
-            return response()->json(['page' => $page], 200);
+            return response()->json(['message' => 'Data fetched Successfully', 'data' => $page], 200);
         } else {
-            return response()->json(['error' => 'No Data Found'], 400);
+            return response()->json(['message' => 'No Data Found'], 400);
         }
     }
 }
