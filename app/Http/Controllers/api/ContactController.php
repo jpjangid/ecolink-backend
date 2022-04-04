@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContactQuestion;
+use App\Models\ContactUs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,39 +13,51 @@ class ContactController extends Controller
     public function contact(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'address_1'     => 'required',
+            'first_name'    =>  'required',
+            'last_name'     =>  'required',
+            'address_1'     =>  'required',
+            'email'         =>  'required|email',
+            'type'          =>  'required',
+        ],[
+            'first_name.required'       =>  'Please Enter First Name',
+            'last_name.required'        =>  'Please Enter Last Name',
+            'address_1.required'        =>  'Please Enter Address',
+            'email'                     =>  'Please Enter Email',
+            'type'                      =>  'Please Enter Contact Type',
         ]);
-    }
 
-    public function create()
-    {
-        //
-    }
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
-    public function store(Request $request)
-    {
-        //
-    }
+        $contact = ContactUs::create([
+            'first_name'        =>  $request['first_name'], 
+            'last_name'         =>  $request['last_name'], 
+            'phone'             =>  $request['phone'],
+            'address_1'         =>  $request['address_1'],
+            'address_2'         =>  $request['address_2'],
+            'city'              =>  $request['city'],
+            'state'             =>  $request['state'],
+            'zip'               =>  $request['zip'],
+            'country'           =>  $request['country'],
+            'email'             =>  $request['email'],
+            'type'              =>  $request['type'],
+        ]);
 
-    public function show($id)
-    {
-        //
-    }
+        ContactQuestion::create([
+            'contact_id'    =>  $contact->id,
+            'input_1'       =>  $request['input_1'], 
+            'input_2'       =>  $request['input_2'], 
+            'input_3'       =>  $request['input_3'], 
+            'input_4'       =>  $request['input_4'], 
+            'input_5'       =>  $request['input_5'], 
+            'input_6'       =>  $request['input_6'], 
+            'input_7'       =>  $request['input_7'], 
+            'input_8'       =>  $request['input_8'], 
+            'input_9'       =>  $request['input_9'], 
+            'input_10'      =>  $request['input_10'],
+        ]);
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
+        return response()->json(['success' => 'Contact Details Added Successfully'], 200);
     }
 }
