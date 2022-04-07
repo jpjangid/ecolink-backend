@@ -63,7 +63,8 @@ class CouponController extends Controller
     public function create()
     {
         /* Loading Create Page with users, products and categories data */
-        $users = DB::table('users')->where('role', 'user')->get();
+        $role = DB::table('roles')->where('name','client')->first();
+        $users = DB::table('users')->where('role_id', $role->id)->get();
         $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
         $categories = DB::table('categories')->where(['flag' => '0'])->get();
 
@@ -117,7 +118,8 @@ class CouponController extends Controller
     {
         /* Getting Coupon data for edit using Id */
         $coupon = DB::table('coupons')->find($id);
-        $users = DB::table('users')->where('role', 'user')->get();
+        $role = DB::table('roles')->where('name','client')->first();
+        $users = DB::table('users')->where('role_id', $role->id)->get();
         $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
         $categories = DB::table('categories')->where(['flag' => '0'])->get();
 

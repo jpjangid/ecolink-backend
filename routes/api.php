@@ -10,28 +10,31 @@ use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\NewsLetterController;
 use App\Http\Controllers\api\ProductController;
 use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\CheckoutController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+//Route for register new user
+Route::post('/register', [UserController::class, 'register']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route for login user
+Route::post('login', [UserController::class, 'login']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    //Route for logout user
+    Route::post('/logout', [UserController::class, 'logout']);
+
+    //Route For Get Cart Items
+    Route::post('getCartItems', [CartController::class, 'getCartItems']);
+    //Route For Get Cart Items
+    Route::post('addCartItems', [CartController::class, 'addCartItems']);
+    //Route For Checkout
+    Route::post('checkout', [CheckoutController::class, 'index']);
 });
 
-//Route for Blogs
+//Route for Get All Blogs
 Route::get('getallblogs', [BlogController::class, 'blogs']);
+//Route for Get Blog by Slug
 Route::post('getblog', [BlogController::class, 'blog']);
-
-//Route For Get Cart Items
-Route::post('getCartItems', [CartController::class, 'getCartItems']);
 
 //Route For Getting Page Using slug
 Route::post('getPage', [PageController::class, 'index']);

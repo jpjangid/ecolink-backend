@@ -28,7 +28,7 @@
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label class="required form-label" for="name">Coupon Name</label>
+                            <label class="required form-label" for="name"><span style="color: red;">* </span>Coupon Name</label>
                             <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="name" id="name" placeholder="Please Enter Coupon Name" value="{{ $coupon->name }}">
                             @error('name')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -38,7 +38,7 @@
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label class="required form-label" for="code">Coupon Code</label>
+                            <label class="required form-label" for="code"><span style="color: red;">* </span>Coupon Code</label>
                             <input type="text" class="form-control form-control-solid @error('code') is-invalid @enderror" name="code" id="code" placeholder="Please Enter Coupon Code" value="{{ $coupon->code }}">
                             @error('code')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -48,7 +48,7 @@
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label class="required form-label" for="type">Coupon Type</label>
+                            <label class="required form-label" for="type"><span style="color: red;">* </span>Coupon Type</label>
                             <select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
                                 <option value="">Select Type</option>
                                 <option value="cart_value_discount" {{ $coupon->type == 'cart_value_discount' ? 'selected' : '' }}>Cart Value Discount</option>
@@ -82,7 +82,7 @@
                             <select name="product_id" class="form-control">
                                 <option value="">Select Product</option>
                                 @foreach($products as $product)
-                                <option value="{{ $product->id }}" {{ $coupon->product_id == $product->id ? 'selected' : '' }}>{{ $cat->name }}>{{ $product->item_shade_name }}</option>
+                                <option value="{{ $product->id }}" {{ $coupon->product_id == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -147,7 +147,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="coupon_limit">Coupon Limit</label>
-                            <input type="text" class="form-control form-control-solid" name="coupon_limit" id="coupon_limit" placeholder="Please Enter Offer End" value="{{ $coupon->coupon_limit }}">
+                            <input type="text" class="form-control form-control-solid" name="coupon_limit" id="coupon_limit" placeholder="Please Enter Coupon Limit" value="{{ $coupon->coupon_limit }}">
                         </div>
                     </div>
 
@@ -155,7 +155,7 @@
                         <div class="form-group">
                             <label class="form-label" for="disc_type">Discount Type</label>
                             <select name="disc_type" id="disc_type" class="form-control">
-                                <option value="">Select </option>
+                                <option value="">Select Type</option>
                                 <option value="percent" {{ $coupon->disc_type == 'percent' ? 'selected' : '' }}>In Percent</option>
                                 <option value="amount" {{ $coupon->disc_type == 'amount' ? 'selected' : '' }}>In Amount</option>
                             </select>
@@ -165,12 +165,12 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="discount">Discount</label>
-                            <input type="text" class="form-control form-control-solid" name="discount" id="discount" placeholder="Please Enter Offer End" value="{{ $coupon->discount }}">
+                            <input type="text" class="form-control form-control-solid" name="discount" id="discount" placeholder="Please Enter Discount" value="{{ $coupon->discount }}">
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <label class="form-label" for="show_in_front">Show In Front</label>
+                        <label class="form-label" for="show_in_front"><span style="color: red;">* </span>Show In Front</label>
                         <select class="form-control @error('show_in_front') is-invalid @enderror" name="show_in_front">
                             <option value="">Select Status</option>
                             <option value="1" {{ $coupon->show_in_front == '1' ? 'selected' : '' }}>Yes</option>

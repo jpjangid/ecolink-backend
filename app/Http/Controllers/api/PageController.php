@@ -25,7 +25,7 @@ class PageController extends Controller
         if (!empty($page)) {
             return response()->json(['message' => 'Data fetched Successfully', 'data' => $page], 200);
         } else {
-            return response()->json(['message' => 'No Data Found'], 400);
+            return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
 }
