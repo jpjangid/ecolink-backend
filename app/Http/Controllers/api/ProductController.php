@@ -21,6 +21,8 @@ class ProductController extends Controller
         $product = DB::table('products')->where(['slug' => $request->slug, 'status' => 1])->first();
 
         if(!empty($product)){
+            $product->image = asset('storage/products/'.$product->image);
+
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $product], 200);
         }else{
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);

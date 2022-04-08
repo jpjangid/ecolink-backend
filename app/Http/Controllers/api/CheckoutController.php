@@ -13,21 +13,24 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        $carts = Cart::where('user_id', $request->user_id)->with('product:id,name,sale_price,regular_price,image')->get();
+        $carts = Cart::select('id','user_id','product_id','quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
         
-        $user = DB::table('users')->find($request->user_id);
+        $user = DB::table('users')->select('id','name','email','address','city','state','country','pincode','mobile')->find($request->user_id);
 
         $order_total = 0;
         $payable = 0;
         $total_discount = 0;
         $product_count = 0;
         $discount = 0;
-        foreach($carts as $cart){
-            $payable += $cart->product->sale_price * $cart->quantity;
-            $order_total += $cart->product->regular_price * $cart->quantity;
-            $discount = $cart->product->regular_price - $cart->product->sale_price;
-            $total_discount += $discount * $cart->quantity;
-            $product_count +=  $cart->quantity;
+        if($carts->isNotEmpty()){
+            foreach($carts as $cart){
+                $cart->product->image = asset('storage/products/'.$cart->product->image);
+                $payable += $cart->product->sale_price * $cart->quantity;
+                $order_total += $cart->product->regular_price * $cart->quantity;
+                $discount = $cart->product->regular_price - $cart->product->sale_price;
+                $total_discount += $discount * $cart->quantity;
+                $product_count +=  $cart->quantity;
+            }
         }
 
         $current = date('Y-m-d H:i:s');

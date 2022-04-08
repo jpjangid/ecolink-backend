@@ -12,9 +12,13 @@ class CartController extends Controller
     public function getCartItems(Request $request)
     {
         //Get Cart Items By User id with Product Detail
-        $carts = Cart::where('user_id', $request->user_id)->with('user', 'product')->get();
+        $carts = Cart::select('id','user_id','product_id','quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
 
         if($carts->isNotEmpty()){
+            foreach($carts as $cart){
+                $cart->product->image = asset('storage/products/'.$cart->product->image);
+            }
+
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $carts], 200);
         }else{
             return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);

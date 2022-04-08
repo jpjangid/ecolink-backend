@@ -19,14 +19,29 @@ class HomeController extends Controller
 
         $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->get();
 
-        $blogs = DB::table('blogs')->select('id', 'title', 'slug', 'description', 'publish_date', 'status', 'image', 'alt')->where('status', 1)->get();
+        if($categories->isNotEmpty()){
+            foreach($categories as $category){
+                $category->image = asset('storage/category/'.$category->image);
+            }
+        }
 
-        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug')->with('ratings:id,rating,product_id')->where(['status' => 1])->get();
+        $blogs = DB::table('blogs')->select('id', 'title', 'slug', 'description', 'publish_date', 'status', 'image', 'alt')->where('status', 1)->orderby('id','desc')->get();
 
-        foreach ($products as $product) {
-            $rate = $product->ratings->avg('rating');
-            $product->rating = number_format((float)$rate, 2, '.', '');
-            unset($product->ratings);
+        if($blogs->isNotEmpty()){
+            foreach($blogs as $blog){
+                $blog->image = asset('storage/blogs/'.$blog->image);
+            }
+        }
+
+        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->with('ratings:id,rating,product_id')->where(['status' => 1])->get();
+
+        if($products->isNotEmpty()){
+            foreach ($products as $product) {
+                $product->image = asset('storage/products/'.$product->image);
+                $rate = $product->ratings->avg('rating');
+                $product->rating = number_format((float)$rate, 2, '.', '');
+                unset($product->ratings);
+            }
         }
 
         $cart = Cart::where('user_id', $request->user_id)->get();

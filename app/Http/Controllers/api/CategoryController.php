@@ -12,9 +12,13 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = DB::table('categories')->select('id','name','slug','image','alt')->where('parent_id',NULL)->get();
+        $categories = DB::table('categories')->select('id','name','slug','short_desc','image','alt')->where('parent_id',NULL)->get();
 
         if($categories->isNotEmpty()){
+            foreach($categories as $category){
+                $category->image = asset('storage/category/'.$category->image);
+            }
+
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $categories], 200);
         }else{
             return response()->json(['message' => 'No Data found', 'code' => 400], 400);
@@ -32,9 +36,12 @@ class CategoryController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $category = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['slug' => $request->slug,'flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt')->first();
+        $category = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt','og_image')->where(['slug' => $request->slug,'flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt')->first();
 
         if(!empty($category)){
+            $category->image = asset('storage/category/'.$category->image);
+            $category->og_image = asset('storage/category/og_image/'.$category->og_image);
+            
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $category], 200);
         }else{
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);

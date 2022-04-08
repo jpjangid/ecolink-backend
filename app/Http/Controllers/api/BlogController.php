@@ -14,9 +14,12 @@ class BlogController extends Controller
     public function blogs()
     {
         /* Getting all records */
-        $blogs = DB::table('blogs')->where('flag', 0)->get();
+        $blogs = DB::table('blogs')->select('id','slug','title','image','alt')->where('flag', 0)->get();
 
         if($blogs->isNotEmpty()){
+            foreach($blogs as $blog){
+                $blog->image = url('storage/blogs',$blog->image);
+            }
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs], 200);
         }else{
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
@@ -37,6 +40,8 @@ class BlogController extends Controller
         $blog = DB::table('blogs')->where(['slug' => $request->slug, 'status' => 1])->first();
 
         if(!empty($blog)){
+            $blog->image = asset('storage/blogs/'.$blog->image);
+            $blog->og_image = asset('storage/blogs/og_image/'.$blog->og_image);
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blog], 200);
         }else{
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
