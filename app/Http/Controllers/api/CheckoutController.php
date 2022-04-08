@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Coupon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $carts = Cart::where('user_id', $request->user_id)->with('product:id,name,sale_price,regular_price,image')->get();
+        
         $user = DB::table('users')->find($request->user_id);
 
         $order_total = 0;
@@ -28,7 +30,11 @@ class CheckoutController extends Controller
             $product_count +=  $cart->quantity;
         }
 
-        $data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count]);
+        $current = date('Y-m-d H:i:s');
+
+        $coupons = Coupon::select('id','name','code','disc_type','discount')->where(['flag' => 0])->where([['offer_start','<=',$current],['offer_end','>=',$current]])->orWhere('user_id',$request->user_id)->get();
+
+        $data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons]);
 
         return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
     }
