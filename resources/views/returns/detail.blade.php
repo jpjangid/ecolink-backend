@@ -72,7 +72,7 @@
                     </table>
                 </div>
 
-                <hr>
+                <!-- <hr>
                 <h4>Shiprocket Tracking Details</h4>
                 <div class="col-md-12 mb-4">
                     <table class="table table-row-bordered table-hover text-nowrap">
@@ -89,7 +89,7 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div> -->
 
                 <hr>
                 <h4>Address Information</h4>

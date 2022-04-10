@@ -42,10 +42,12 @@ class CreateOrdersTable extends Migration
             $table->string('shipping_zip');
             $table->string('shipping_landmark')->nullable();
             $table->string('order_status');
-            $table->string('payment_mode')->nullable();
+            $table->string('payment_via')->nullable();
             $table->float('payment_amount')->nullable();
             $table->string('payment_currency')->nullable();
             $table->string('payment_status')->nullable();
+            $table->string('shippment_via')->nullable();
+            $table->string('shippment_status')->nullable();
             $table->text('order_comments')->nullable();
             $table->float('wallet_amount')->nullable();
             $table->string('coupon_id')->nullable();

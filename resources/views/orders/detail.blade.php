@@ -111,26 +111,26 @@
                     <table class="table table-row-bordered table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Payment Mode</th>
+                                <th>Payment Via</th>
                                 <th>Payment Status</th>
-                                <th>TOTAL AMOUNT</th>
+                                <th>Total Amount</th>
                                 <th>Coupon Discount</th>
                                 <th>Shipping Charge</th>
                                 <th>Wallet Amount</th>
                                 <th>Paid Amount</th>
-                                <th>Action</th>
+                                <!-- <th>Action</th> -->
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ strtoupper($order->payment_mode) }}</td>
+                                <td>{{ strtoupper($order->payment_via) }}</td>
                                 <td>{{ strtoupper($order->payment_status) }}</td>
-                                <td>{{ $order->order_amount }}</td>
-                                <td>{{ $order->coupon_discount }}</td>
-                                <td>{{ $order->service_charge_applied }}</td>
-                                <td>{{ $order->wallet_amount }}</td>
-                                <td>{{ $order->total_amount }}</td>
-                                <td></td>
+                                <td>{{ !empty($order->order_amount) ? $order->order_amount : 0 }}</td>
+                                <td>{{ !empty($order->coupon_discount) ? $order->coupon_discount : 0 }}</td>
+                                <td>{{ !empty($order->service_charge_applied) ? $order->service_charge_applied : 0 }}</td>
+                                <td>{{ !empty($order->wallet_amount) ? $order->wallet_amount : 0 }}</td>
+                                <td>{{ !empty($order->total_amount) ? $order->total_amount : 0 }}</td>
+                                <!-- <td></td> -->
                             </tr>
                         </tbody>
                     </table>

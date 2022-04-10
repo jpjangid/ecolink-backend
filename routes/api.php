@@ -14,6 +14,7 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\CheckoutController;
 use App\Http\Controllers\api\WishlistController;
 use App\Http\Controllers\api\UserAddressController;
+use App\Http\Controllers\api\OrderController;
 
 //Route for register new user
 Route::post('/register', [UserController::class, 'register']);
@@ -24,7 +25,7 @@ Route::post('login', [UserController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route for logout user
     Route::post('/logout', [UserController::class, 'logout']);
-    
+
     //Route For Get Wishlist Items
     Route::post('getWishlistItems', [WishlistController::class, 'getWishlistItems']);
     //Route For Add Wishlist Items
@@ -36,12 +37,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('addCartItems', [CartController::class, 'addCartItems']);
     //Route For Checkout
     Route::post('checkout', [CheckoutController::class, 'index']);
+
     //Route For Get UserAddresses
     Route::post('getUserAddresses', [UserAddressController::class, 'index']);
     //Route For Add UserAddresses
     Route::post('addUserAddresses', [UserAddressController::class, 'store']);
     //Route For Edit UserAddresses
     Route::post('editUserAddresses', [UserAddressController::class, 'update']);
+
+    //Route For Storing for Order Data
+    Route::post('order', [OrderController::class, 'index']);
 });
 
 //Route for Get All Blogs
