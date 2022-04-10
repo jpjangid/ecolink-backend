@@ -128,7 +128,6 @@ class ProductController extends Controller
             'image'                 =>  $image,
             'alt'                   =>  $request->alt,
             'hsn'                   =>  $request->hsn,
-            'gst'                   =>  $request->gst,
             'tag'                   =>  $request->tag,
             'short_desc'            =>  $request->short_desc, 
             'tax_status'            =>  $request->tax_status, 
@@ -220,7 +219,6 @@ class ProductController extends Controller
         $product->description           =  $request->description;
         $product->alt                   =  $request->alt;
         $product->hsn                   =  $request->hsn;
-        $product->gst                   =  $request->gst;
         $product->meta_title            =  $request->meta_title;
         $product->meta_keyword          =  $request->meta_keyword;
         $product->meta_description      =  $request->meta_description;

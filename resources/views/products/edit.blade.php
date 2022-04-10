@@ -94,14 +94,6 @@
                         </div>
                     </div>
 
-                    <!-- GST % -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="form-label" for="gst"><span style="color: red;">* </span>GST %</label>
-                            <input type="number" step=".01" class="form-control" name="gst" id="gst" placeholder="Please Enter GST %" value="{{ $product->gst }}">
-                        </div>
-                    </div>
-
                     <!-- Product Discount Type -->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -431,18 +423,9 @@
         discount_amt(dis_type, dis, price);
     });
 
-    $(document).on('change', '#gst', function() {
-        var dis_type = $('#dis_type').val();
-        var dis = $('#discount').val();
-        var price = $('#regular_price').val();
-        discount_amt(dis_type, dis, price);
-    });
-
     function discount_amt(dis_type, dis, price) {
         var amt = 0;
-        var gst = $('#gst').val();
-        var gst_amt = ((price * gst) / 100)
-        price = parseFloat(price) + parseFloat(gst_amt);
+        price = parseFloat(price);
 
         if (dis_type != '' && dis != '' && price != '') {
             if (dis_type == 'percentage') {

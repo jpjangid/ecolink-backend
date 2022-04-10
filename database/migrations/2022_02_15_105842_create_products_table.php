@@ -21,7 +21,6 @@ class CreateProductsTable extends Migration
             $table->string('slug')->nullable();
             $table->string('sku')->nullable();
             $table->string('hsn')->nullable();
-            $table->integer('gst')->nullable();
             $table->text('short_desc')->nullable();
             $table->longtext('description')->nullable();
             $table->string('discount_type')->nullable();
