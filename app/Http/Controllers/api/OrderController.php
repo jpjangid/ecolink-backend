@@ -15,7 +15,32 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+
     public function index(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id'               =>  'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $orders = Order::where('user_id', $request->user_id)->with('items.product')->get();
+
+        if($orders->isNotEmpty()){
+            foreach($orders as $order){
+                foreach($order->items as $item){
+                    $item->product->image = url('storage/products',$item->product->image);
+                }
+            }
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $orders], 200);
+        }else{
+            return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
+        }
+    }
+
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'user_id'               =>  'required',

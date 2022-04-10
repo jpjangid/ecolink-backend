@@ -15,6 +15,7 @@ use App\Http\Controllers\api\CheckoutController;
 use App\Http\Controllers\api\WishlistController;
 use App\Http\Controllers\api\UserAddressController;
 use App\Http\Controllers\api\OrderController;
+use App\Http\Controllers\api\ReturnController;
 
 //Route for register new user
 Route::post('/register', [UserController::class, 'register']);
@@ -45,8 +46,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route For Edit UserAddresses
     Route::post('editUserAddresses', [UserAddressController::class, 'update']);
 
+    //Route For Get Orders
+    Route::post('getOrder', [OrderController::class, 'index']);
     //Route For Storing for Order Data
-    Route::post('order', [OrderController::class, 'index']);
+    Route::post('storeOrder', [OrderController::class, 'store']);
+
+    //Route For Get Return Orders
+    Route::post('getReturnOrder', [ReturnController::class, 'index']);
+    //Route For Storing for Return Order Data
+    Route::post('storeReturnOrder', [ReturnController::class, 'store']);
 });
 
 //Route for Get All Blogs
