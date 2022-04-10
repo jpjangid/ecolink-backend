@@ -139,7 +139,8 @@
   <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
 
   <script type="text/javascript">
-    var editor = new FroalaEditor('#wysiwyg');
+    // var editor = new FroalaEditor('#wysiwyg');
+    $('#wysiwyg').summernote();
     $(function() {
       $('.select2bs4').select2({
         theme: 'bootstrap4'
