@@ -225,6 +225,22 @@
 				</li>
 
 				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/wishlists') }}" class="nav-link">
+						<p>
+							Wish List
+						</p>
+					</a>
+				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/addresses') }}" class="nav-link">
+						<p>
+							User Addresses
+						</p>
+					</a>
+				</li>
+
+				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/orders') }}" class="nav-link">
 						<p>
 							Orders

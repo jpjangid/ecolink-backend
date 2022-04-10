@@ -18,6 +18,8 @@ use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\RequestProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\UserAddressController;
 
 
 /*
@@ -176,11 +178,17 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('carts')->group(function () {
         Route::get('/', [CartController::class, 'index']);
-        Route::get('/create', [CartController::class, 'create']);
-        Route::post('/store', [CartController::class, 'store']);
-        Route::get('/edit/{id}', [CartController::class, 'edit']);
-        Route::put('/update/{id}', [CartController::class, 'update']);
         Route::get('/delete/{id}', [CartController::class, 'destroy']);
+    });
+
+    Route::prefix('wishlists')->group(function () {
+        Route::get('/', [WishlistController::class, 'index']);
+        Route::get('/delete/{id}', [WishlistController::class, 'destroy']);
+    });
+
+    Route::prefix('addresses')->group(function () {
+        Route::get('/', [UserAddressController::class, 'index']);
+        Route::get('/delete/{id}', [UserAddressController::class, 'destroy']);
     });
 });
 

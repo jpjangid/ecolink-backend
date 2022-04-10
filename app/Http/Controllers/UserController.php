@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Location;
+use App\Models\UserAddress;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +72,7 @@ class UserController extends Controller
             'state'         =>  'required',
             'city'          =>  'required',
             'pincode'       =>  'required',
+            'country'       =>  'required',
             'password'      =>  'required|min:8',
             'role_id'       =>  'required',
         ], [
@@ -78,9 +80,10 @@ class UserController extends Controller
             'email.required'        =>  'Please Enter Email',
             'mobile.required'       =>  'Please Enter Mobile No.',
             'address.required'      =>  'Please Enter Address',
-            'state.required'        =>  'Please Select State',
-            'city.required'         =>  'Please Select City',
-            'pincode.required'      =>  'Please Select Pincode',
+            'state.required'        =>  'Please Enter State',
+            'city.required'         =>  'Please Enter City',
+            'pincode.required'      =>  'Please Enter Pincode',
+            'country.required'      =>  'Please Enter Country',
             'role_id.required'      =>  'Please Select Role',
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
             'password.required'     =>  'Please Enter Password',
@@ -103,7 +106,7 @@ class UserController extends Controller
         $pass = Hash::make($request['password']);
 
         /* Storing Data in Table */
-        User::create([
+        $user = User::create([
             'name'                  =>  $request['name'],
             'email'                 =>  $request['email'],
             'mobile'                =>  $request['mobile'],
@@ -115,6 +118,17 @@ class UserController extends Controller
             'password'              =>  $pass,
             'role_id'               =>  $request['role_id'],
             'profile_image'         =>  $image_name,
+        ]);
+
+        UserAddress::create([
+            'user_id'       =>  $user->id,
+            'email'         =>  $request['email'],
+            'mobile'        =>  $request['mobile'],
+            'address'       =>  $request['address'],
+            'country'       =>  $request['country'],
+            'state'         =>  $request['state'],
+            'city'          =>  $request['city'],
+            'zip'           =>  $request['pincode'],
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -140,6 +154,7 @@ class UserController extends Controller
             'address'       =>  'required',
             'state'         =>  'required',
             'city'          =>  'required',
+            'country'       =>  'required',
             'pincode'       =>  'required',
             'role'          =>  'required',
         ], [
@@ -150,6 +165,7 @@ class UserController extends Controller
             'state.required'        =>  'Please Select State',
             'city.required'         =>  'Please Select City',
             'pincode.required'      =>  'Please Select Pincode',
+            'country.required'      =>  'Please Select Country',
             'role.required'         =>  'Please Select Role',
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
         ]);

@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $pagecategories = LinkCategory::select('id', 'name', 'slug')->with('sublink:id,category,title,slug')->get();
 
@@ -44,10 +44,7 @@ class HomeController extends Controller
             }
         }
 
-        $cart = Cart::where('user_id', $request->user_id)->get();
-        $cart_count = count($cart);
-
-        $data = collect(['pagecategories' => $pagecategories, 'categories' => $categories, 'blogs' => $blogs, 'products' => $products, 'cart_count' => $cart_count]);
+        $data = collect(['pagecategories' => $pagecategories, 'categories' => $categories, 'blogs' => $blogs, 'products' => $products]);
 
         if($data->isNotEmpty()){
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);

@@ -10,7 +10,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Collection;
+use App\Models\UserAddress;
 class UserController extends Controller
 {
     public function register(Request $request)
@@ -72,10 +73,26 @@ class UserController extends Controller
             'profile_image'         =>  $image_name,
          ]);
 
+         UserAddress::create([
+             'user_id'       =>  $user->id,
+             'email'         =>  $request['email'],
+             'mobile'        =>  $request['mobile'],
+             'address'       =>  $request['address'],
+             'country'       =>  $request['country'],
+             'state'         =>  $request['state'],
+             'city'          =>  $request['city'],
+             'zip'           =>  $request['pincode'],
+         ]);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()
-            ->json(['data' => $user,'access_token' => $token, 'token_type' => 'Bearer', ]);
+        $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id]);
+
+        if(!empty($user)){
+            return response()->json(['message' => 'Hi '.$user->name.', welcome to home','code' => 200, 'data' => $data], 200);
+        }else{
+            return response()->json(['message' => 'Credentials Invalid','code' => 400], 400);
+        }
     }
 
     public function login(Request $request)
@@ -90,8 +107,13 @@ class UserController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()
-            ->json(['message' => 'Hi '.$user->name.', welcome to home','access_token' => $token, 'token_type' => 'Bearer', ]);
+        $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id]);
+
+        if(!empty($user)){
+            return response()->json(['message' => 'Hi '.$user->name.', welcome to home','code' => 200, 'data' => $data], 200);
+        }else{
+            return response()->json(['message' => 'Credentials Invalid','code' => 400], 400);
+        }
     }
 
     // method for user logout and delete token
