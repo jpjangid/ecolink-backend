@@ -84,7 +84,7 @@ class UserController extends Controller
              'zip'           =>  $request['pincode'],
          ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('MyApp')->accessToken;
 
         $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id]);
 
@@ -97,22 +97,22 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        if (!Auth::attempt($request->only('email', 'password')))
-        {
-            return response()
-                ->json(['message' => 'Unauthorized'], 401);
+        $login_credentials=[
+            'email'=>$request->email,
+            'password'=>$request->password,
+        ];
+
+        if(auth()->attempt($login_credentials)){
+            //generate the token for the user
+            $token = auth()->user()->createToken('MyApp')->accessToken;
+
+            $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => auth()->user()->id]);
+            //now return this token on success login attempt
+            return response()->json(['message' => 'Hi '.auth()->user()->name.', welcome to home','code' => 200, 'data' => $data], 200);
         }
-
-        $user = User::where('email', $request['email'])->firstOrFail();
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id]);
-
-        if(!empty($user)){
-            return response()->json(['message' => 'Hi '.$user->name.', welcome to home','code' => 200, 'data' => $data], 200);
-        }else{
-            return response()->json(['message' => 'Credentials Invalid','code' => 400], 400);
+        else{
+            //wrong login credentials, return, user not authorised to our system, return error code 401
+            return response()->json(['error' => 'UnAuthorised Access'], 401);
         }
     }
 
