@@ -107,4 +107,25 @@ class UserAddressController extends Controller
             return response()->json(['message' => 'Something went wrong', 'code' => 400], 400);
         }
     }
+
+    public function delete(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'address_id'    => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $address = UserAddress::find($request->address_id);
+
+        if(!empty($address)){
+            $address->delete();
+
+            return response()->json(['message' => 'Address deleted successfully', 'code' => 200, 'data' => $address], 200);
+        }else{
+            return response()->json(['message' => 'No address found', 'code' => 400], 400);
+        }
+    }
 }

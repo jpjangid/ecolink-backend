@@ -52,6 +52,8 @@ Route::middleware('auth:api')->group(function(){
     Route::post('addUserAddresses', [UserAddressController::class, 'store']);
     //Route For Edit UserAddresses
     Route::post('editUserAddresses', [UserAddressController::class, 'update']);
+    //Route For Delete UserAddresses
+    Route::post('deleteUserAddresses', [UserAddressController::class, 'delete']);
 
     //Route For Get Orders
     Route::post('getOrder', [OrderController::class, 'index']);
