@@ -122,6 +122,7 @@ class UserController extends Controller
 
         UserAddress::create([
             'user_id'       =>  $user->id,
+            'name'          =>  $request['name'],
             'email'         =>  $request['email'],
             'mobile'        =>  $request['mobile'],
             'address'       =>  $request['address'],

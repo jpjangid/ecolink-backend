@@ -14,14 +14,14 @@ class UserAddressController extends Controller
     {
         if (request()->ajax()) {
             /* Getting all records */
-            $alladdresses = UserAddress::select('id', 'user_id', 'email', 'address', 'mobile', 'city', 'state', 'zip')->with('user:id,name')->get();
+            $alladdresses = UserAddress::select('id', 'user_id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'zip')->get();
 
             /* Converting Selected Data into desired format */
             $addresses = new Collection;
             foreach ($alladdresses as $address) {
                 $addresses->push([
                     'id'            =>  $address->id,
-                    'name'          =>  $address->user->name,
+                    'name'          =>  $address->name,
                     'email'         =>  $address->email,
                     'address'       =>  $address->address,
                     'mobile'        =>  $address->mobile,

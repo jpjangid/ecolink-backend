@@ -34,6 +34,7 @@ class UserAddressController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id'   => 'required',
+            'name'      => 'required',
             'email'     => 'required',
             'mobile'    => 'required',
             'address'   => 'required',
@@ -50,6 +51,7 @@ class UserAddressController extends Controller
 
         $address = UserAddress::create([
             'user_id'       =>  $request->user_id,
+            'name'          =>  $request['name'],
             'email'         =>  $request['email'],
             'mobile'        =>  $request['mobile'],
             'address'       =>  $request['address'],
@@ -88,6 +90,7 @@ class UserAddressController extends Controller
 
         $address = UserAddress::where('id', $request->address_id)->update([
             'user_id'       =>  $request->user_id,
+            'name'          =>  $request['name'],
             'email'         =>  $request['email'],
             'mobile'        =>  $request['mobile'],
             'address'       =>  $request['address'],

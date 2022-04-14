@@ -17,6 +17,8 @@ class CheckoutController extends Controller
         
         $user = DB::table('users')->select('id','name','email','address','city','state','country','pincode','mobile')->find($request->user_id);
 
+        $addresses = DB::table('user_addresses')->where('user_id', $request->user_id)->get();
+
         $order_total = 0;
         $payable = 0;
         $total_discount = 0;
@@ -37,7 +39,7 @@ class CheckoutController extends Controller
 
         $coupons = Coupon::select('id','name','code','disc_type','discount')->where(['flag' => 0])->where([['offer_start','<=',$current],['offer_end','>=',$current]])->orWhere('user_id',$request->user_id)->get();
 
-        $data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons]);
+        $data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons,'addresses' => $addresses]);
 
         return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
     }
