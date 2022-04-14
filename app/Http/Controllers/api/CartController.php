@@ -54,4 +54,26 @@ class CartController extends Controller
 
         return response()->json(['message' => 'Item added in cart successfully', 'code' => 200], 200);
     }
+
+    public function deleteCartItems(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id'       => 'required',
+            'product_id'    => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
+
+        if(!empty($cart)){
+            $cart->delete();
+            
+            return response()->json(['message' => 'Product delete from cart successfully', 'code' => 200], 200);
+        }else{
+            return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);
+        }
+    }
 }

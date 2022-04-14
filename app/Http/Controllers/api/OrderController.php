@@ -28,14 +28,14 @@ class OrderController extends Controller
 
         $orders = Order::where('user_id', $request->user_id)->with('items.product')->get();
 
-        if($orders->isNotEmpty()){
-            foreach($orders as $order){
-                foreach($order->items as $item){
-                    $item->product->image = url('storage/products',$item->product->image);
+        if ($orders->isNotEmpty()) {
+            foreach ($orders as $order) {
+                foreach ($order->items as $item) {
+                    $item->product->image = url('storage/products', $item->product->image);
                 }
             }
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $orders], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
@@ -68,6 +68,10 @@ class OrderController extends Controller
             'payment_via'           =>  'required',
             'shippment_via'         =>  'required'
         ]);
+
+        // $response = $this->shipViaSaia($request->user_id,$request->shipping_zip,$request->shipping_country);
+
+        // dd($response);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
@@ -169,13 +173,13 @@ class OrderController extends Controller
 
                 $couponUsed = CouponUsedBy::where('coupon_id', $coupon->id)->get();
 
-                if($coupon->coupon_limit == count($couponUsed)){
+                if ($coupon->coupon_limit == count($couponUsed)) {
                     $coupon->status = 1;
                     $coupon->update();
                 }
             } else {
                 $coupon->times_applied  = $coupon->times_applied + 1;
-                if($coupon->coupon_limit == $coupon->times_applied + 1){
+                if ($coupon->coupon_limit == $coupon->times_applied + 1) {
                     $coupon->status = 1;
                 }
                 $coupon->update();
@@ -225,5 +229,74 @@ class OrderController extends Controller
         } else {
             return $no;
         }
+    }
+
+    public function shipViaSaia($user_id, $zip, $country)
+    {
+
+        $cartItems = Cart::where('user_id', $user_id)->with('product')->get();
+
+        $detailItems = '';
+        foreach($cartItems as $item){
+            $detailItems .= '
+            <DetailItem>
+                <DestinationZipcode>'.$zip.'</DestinationZipcode>
+                <DestinationCountry>'.$country.'</DestinationCountry>
+                <Pieces>'.$item->quantity.'</Pieces>
+                <Package>BG</Package>
+                <Weight>'.$item->product->weight.'</Weight>
+                <Freezable>N</Freezable>
+                <SaiaGuaranteed>12</SaiaGuaranteed>
+            </DetailItem>';
+        }
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'www.saiasecure.com/webservice/pickup/soap.asmx',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '<?xml version="1.0" encoding="utf-8"?>
+            <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <Create xmlns="http://www.SaiaSecure.com/WebService/Pickup">
+                <request>
+                    <Details>'.$detailItems.'</Details>
+                    <UserID>ecolink</UserID>
+                    <Password>ecolink4</Password>
+                    <TestMode>Y</TestMode>
+                    <AccountNumber>0747932</AccountNumber>
+                    <CompanyName></CompanyName>
+                    <Street></Street>
+                    <Box></Box>
+                    <City></City>
+                    <State></State>
+                    <Zipcode></Zipcode>
+                    <ContactName>Rishabh Jain</ContactName>
+                    <ContactPhone>1234567890</ContactPhone>
+                    <PickupDate>2022-04-13</PickupDate>
+                    <ReadyTime>12:00:00</ReadyTime>
+                    <CloseTime>16:00:00</CloseTime>
+                    <SpecialInstructions>Test</SpecialInstructions>
+                </request>
+                </Create>
+            </soap:Body>
+            </soap:Envelope>',
+            CURLOPT_HTTPHEADER => array(
+                'SOAPAction: http://www.SaiaSecure.com/WebService/Pickup/Create',
+                'Content-Type: text/xml',
+                'Cookie: TS01cfb1b0=01dd6f358acb92572fa7f2a04989d7024383ad64fc5097445587857c2bc5ccd72cbf3131f66cb60ebd5310b3952f1d4080dcb7b944'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return $response;
     }
 }

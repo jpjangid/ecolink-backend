@@ -119,10 +119,53 @@ class UserController extends Controller
     // method for user logout and delete token
     public function logout()
     {
-        auth()->user()->tokens()->delete();
+        if (Auth::check()) {
+            Auth::user()->AauthAcessToken()->delete();
+         }
+    }
 
-        return [
-            'message' => 'You have successfully logged out and the token was successfully deleted'
-        ];
+    //method for user info
+    public function userInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id'       => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $user = User::find($request->user_id);
+
+        if(!empty($user)){
+            return response()->json(['message' => 'User Info fetched successfully', 'code' => 200, 'data' => $user], 200);
+        }else{
+            return response()->json(['message' => 'No User Found', 'code' => 400], 400);
+        }
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'         => 'required|email',
+            'password'      => 'required|confirmed|min:8'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $user = User::where('email',$request->email)->first();
+
+        if(!empty($user)){
+            $user->password = Hash::make($request->password);
+            $user->update();
+
+            Auth::user()->AauthAcessToken()->delete();
+
+            return response()->json(['message' => 'User password changed successfully', 'code' => 200, 'data' => $user], 200);
+        }else{
+            return response()->json(['message' => 'No User Found', 'code' => 400], 400);
+        }
     }
 }

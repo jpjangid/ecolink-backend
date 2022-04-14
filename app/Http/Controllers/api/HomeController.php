@@ -10,7 +10,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
-
+use Illuminate\Support\Facades\Validator;
 class HomeController extends Controller
 {
     public function index()
@@ -51,5 +51,90 @@ class HomeController extends Controller
         }else{
             return response()->json(['message' => 'No Data found', 'code' => 400], 400);
         }
+    }
+
+    public function globalSearch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name'         => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $name = str_replace(" ","%",$request->name);
+        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->where('name','like','%' . $name . '%')->where(['status' => 1])->with('ratings:id,rating,product_id')->get();
+
+        if($products->isNotEmpty()){
+            foreach ($products as $product) {
+                $product->image = asset('storage/products/'.$product->image);
+                $rate = $product->ratings->avg('rating');
+                $product->rating = number_format((float)$rate, 2, '.', '');
+                unset($product->ratings);
+            }
+
+            return response()->json(['message' => 'Product search successfully', 'code' => 200, 'data' => $products], 200);
+        }else{
+            return response()->json(['message' => 'No Products Found', 'code' => 400], 400);
+        }
+    }
+
+    public function filterProduct(Request $request)
+    {
+        if(!empty($request->category)){
+            $categories = DB::table('categories')->select('id')->whereIn('id',$request->category)->orWhereIn('parent_id',$request->category)->get();
+        }else{
+            $categories = DB::table('categories')->select('id','parent_id')->get();
+        }
+
+        $category_ids = [];
+        foreach($categories as $category){
+            array_push($category_ids,$category->id);
+        }
+
+        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->with('ratings:id,rating,product_id')->whereIn('parent_id', $category_ids)->where(['status' => 1])->get();
+
+        if($products->isNotEmpty()){
+            foreach ($products as $product) {
+                $product->image = asset('storage/products/'.$product->image);
+                $rate = $product->ratings->avg('rating');
+                $product->rating = number_format((float)$rate, 2, '.', '');
+                unset($product->ratings);
+            }
+        }
+
+        if(!empty($request->rating)){
+            $products = $products->whereIn('rating', $request->rating);
+        }
+
+        if(!empty($request->price_from) && !empty($request->price_to)){
+            $products = $products->where('sale_price','>=', $request->price_from)->where('sale_price','<=', $request->price_to);
+        }
+
+        if(!empty($request->sortby)){
+            if($request->sortby == 'lowtohigh'){
+                $products = $products->sortBy([
+                    fn ($a, $b) => $a['sale_price'] <=> $b['sale_price']
+                ]);
+            }
+            if($request->sortby == 'hightolow'){
+                $products = $products->sortBy([
+                    fn ($a, $b) => $b['sale_price'] <=> $a['sale_price']
+                ]);
+            }
+            if($request->sortby == 'popularity'){
+                $products = $products->sortBy([
+                    fn ($a, $b) => $b['rating'] <=> $a['rating']
+                ]);
+            }
+            if($request->sortby == 'name'){
+                $products = $products->sortBy([
+                    fn ($a, $b) => $a['name'] <=> $b['name']
+                ]);
+            }
+        }
+
+        return response($products);
     }
 }

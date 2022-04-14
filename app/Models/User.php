@@ -55,4 +55,8 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Models\Location', 'pincode', 'pincode');
     }
+
+    public function AauthAcessToken(){
+        return $this->hasMany('App\Models\OauthAccessToken');
+    }
 }

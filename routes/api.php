@@ -18,14 +18,18 @@ use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\ReturnController;
 
 //Route for register new user
-Route::post('/register', [UserController::class, 'register']);
+Route::post('register', [UserController::class, 'register']);
 
 //Route for login user
 Route::post('login', [UserController::class, 'login']);
 
 Route::middleware('auth:api')->group(function(){
     //Route for logout user
-    Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('logout', [UserController::class, 'logout']);
+    //Route for Getting user info
+    Route::post('userInfo', [UserController::class, 'userInfo']);
+    //Route for Forgot password
+    Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
 
     //Route For Get Wishlist Items
     Route::post('getWishlistItems', [WishlistController::class, 'getWishlistItems']);
@@ -36,6 +40,9 @@ Route::middleware('auth:api')->group(function(){
     Route::post('getCartItems', [CartController::class, 'getCartItems']);
     //Route For Add Cart Items
     Route::post('addCartItems', [CartController::class, 'addCartItems']);
+    //Route For Delete Cart Items
+    Route::post('deleteCartItems', [CartController::class, 'deleteCartItems']);
+
     //Route For Checkout
     Route::post('checkout', [CheckoutController::class, 'index']);
 
@@ -55,6 +62,11 @@ Route::middleware('auth:api')->group(function(){
     Route::post('getReturnOrder', [ReturnController::class, 'index']);
     //Route For Storing for Return Order Data
     Route::post('storeReturnOrder', [ReturnController::class, 'store']);
+    
+    //Route for Global Search
+    Route::post('globalSearch', [HomeController::class, 'globalSearch']);
+    //Route for Filter Product
+    Route::post('filterProduct', [HomeController::class, 'filterProduct']);
 });
 
 //Route for Get All Blogs
