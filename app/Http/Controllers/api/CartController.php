@@ -32,6 +32,7 @@ class CartController extends Controller
             'user_id'       => 'required',
             'product_id'    => 'required',
             'quantity'      => 'required',
+            'action'        => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -41,9 +42,15 @@ class CartController extends Controller
         $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
 
         if(!empty($cart)){
-            Cart::where('id',$cart->id)->update([
-                'quantity'      =>  $cart->quantity + $request->quantity,
-            ]);
+            if($request->action == 'add'){
+                Cart::where('id',$cart->id)->update([
+                    'quantity'      =>  $cart->quantity + $request->quantity,
+                ]);
+            }else{
+                Cart::where('id',$cart->id)->update([
+                    'quantity'      =>  $cart->quantity - $request->quantity,
+                ]);
+            }
         }else{
             Cart::create([
                 'user_id'       =>  $request->user_id,
