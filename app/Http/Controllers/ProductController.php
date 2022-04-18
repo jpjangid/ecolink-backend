@@ -136,11 +136,16 @@ class ProductController extends Controller
             'stock'                 =>  $request->stock, 
             'low_stock'             =>  $request->low_stock, 
             'sold_individually'     =>  $request->sold_individually, 
+            'minimum_qty'           =>  $request->minimum_qty,
             'weight'                =>  $request->weight, 
             'lenght'                =>  $request->lenght, 
             'width'                 =>  $request->width, 
             'height'                =>  $request->height, 
             'shipping_class'        =>  $request->shipping_class,
+            'insurance'             =>  $request->insurance,
+            'hazardous'             =>  $request->hazardous,
+            'head_schema'           =>  $request->head_schema,
+            'body_schema'           =>  $request->body_schema,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -241,11 +246,16 @@ class ProductController extends Controller
         $product->stock                 =  $request->stock; 
         $product->low_stock             =  $request->low_stock; 
         $product->sold_individually     =  $request->sold_individually; 
+        $product->minimum_qty           =  $request->minimum_qty; 
         $product->weight                =  $request->weight; 
         $product->lenght                =  $request->lenght; 
         $product->width                 =  $request->width; 
         $product->height                =  $request->height; 
         $product->shipping_class        =  $request->shipping_class;
+        $product->insurance             =  $request->insurance;
+        $product->hazardous             =  $request->hazardous;
+        $product->head_schema           =  $request->head_schema;
+        $product->body_schema           =  $request->body_schema;
         $product->update();
 
         /* After successfull update of data redirecting to index page with message */

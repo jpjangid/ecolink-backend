@@ -123,6 +123,28 @@
                             @enderror
                         </div>
                     </div>
+
+                    <!-- Head Schema -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="head_schema">Head Schema</label>
+                            <textarea class="form-control @error('head_schema') is-invalid @enderror" name="head_schema" placeholder="Please Enter Schema"><?php echo old('head_schema'); ?></textarea>
+                            @error('head_schema')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Body Schema -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="body_schema">Body Schema</label>
+                            <textarea class="form-control @error('body_schema') is-invalid @enderror" name="body_schema" placeholder="Please Enter Schema"><?php echo old('body_schema'); ?></textarea>
+                            @error('body_schema')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row" style="border: 1px solid gray;border-radius: 10px;">

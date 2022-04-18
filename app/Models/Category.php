@@ -10,7 +10,7 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'parent_id', 'description', 'image', 'meta_title', 'meta_description', 'keywords', 'alt', 'status', 'flag', 'og_title', 'og_description', 'og_image', 'og_alt', 'type', 'short_desc'
+        'name', 'slug', 'parent_id', 'description', 'image', 'meta_title', 'meta_description', 'keywords', 'alt', 'status', 'flag', 'og_title', 'og_description', 'og_image', 'og_alt', 'type', 'short_desc', 'head_schema', 'body_schema'
     ];
 
     public function subcategory()

@@ -18,18 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'address',
-        'country',
-        'state',
-        'city',
-        'pincode',
-        'mobile',
-        'profile_image',
-        'role_id',
-        'flag'
+        'name', 'email', 'password', 'address', 'country', 'state', 'city', 'pincode', 'mobile', 'profile_image', 'role_id', 'flag', 'tax_exempt'
     ];
 
     /**
@@ -56,7 +45,8 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\Location', 'pincode', 'pincode');
     }
 
-    public function AauthAcessToken(){
+    public function AauthAcessToken()
+    {
         return $this->hasMany('App\Models\OauthAccessToken');
     }
 }

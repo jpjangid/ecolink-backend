@@ -279,6 +279,14 @@
 						</p>
 					</a>
 				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/notices') }}" class="nav-link">
+						<p>
+							Notice
+						</p>
+					</a>
+				</li>
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

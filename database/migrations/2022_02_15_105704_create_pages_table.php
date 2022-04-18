@@ -29,6 +29,8 @@ class CreatePagesTable extends Migration
             $table->text('og_title')->nullable();
             $table->text('og_description')->nullable();
             $table->text('og_image')->nullable();
+            $table->text('head_schema')->nullable();
+            $table->text('body_schema')->nullable();
             $table->tinyInteger('status')->default('0');
             $table->tinyInteger('flag')->default('0');
             $table->timestamps();

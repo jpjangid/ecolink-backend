@@ -10,9 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
-class BlogController extends
-
-Controller
+class BlogController extends Controller
 {
     public function index()
     {
@@ -120,6 +118,8 @@ Controller
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
+            'head_schema'               =>  $request->head_schema,
+            'body_schema'               =>  $request->body_schema,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -200,6 +200,8 @@ Controller
         $blog->og_title                 =  $request->og_title;
         $blog->og_description           =  $request->og_description;
         $blog->og_image                 =  $og_image;
+        $blog->head_schema              =  $request->head_schema;
+        $blog->body_schema              =  $request->body_schema;
         $blog->update();
 
         /* After successfull update of data redirecting to index page with message */

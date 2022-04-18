@@ -148,6 +148,8 @@ class PageController extends Controller
             'og_image'                  =>  $og_image,
             'category'                  =>  $request->category,
             'parent_id'                 =>  $request->parent_id,
+            'head_schema'               =>  $request->head_schema,
+            'body_schema'               =>  $request->body_schema,
         ]);
 
         /* Storing links related to this Page in Table */
@@ -248,6 +250,8 @@ class PageController extends Controller
         $page->og_image                 =  $og_image;
         $page->category                 =  $request->category;
         $page->parent_id                =  $request->parent_id;
+        $page->head_schema              =  $request->head_schema;
+        $page->body_schema              =  $request->body_schema;
         $page->update();
 
         if (!empty($request->pagelinks)) {

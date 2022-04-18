@@ -36,11 +36,16 @@ class CreateProductsTable extends Migration
             $table->unsignedInteger('stock')->nullable();
             $table->unsignedInteger('low_stock')->nullable();
             $table->unsignedInteger('sold_individually')->nullable();
+            $table->unsignedInteger('minimum_qty')->nullable();
             $table->float('weight')->nullable();
             $table->float('lenght')->nullable();
             $table->float('width')->nullable();
             $table->float('height')->nullable();
             $table->string('shipping_class')->nullable();
+            $table->tinyInteger('insurance')->default('0');
+            $table->tinyInteger('hazardous')->default('0');
+            $table->text('head_schema')->nullable();
+            $table->text('body_schema')->nullable();
             $table->string('meta_title')->nullable();
             $table->text('meta_keyword')->nullable();
             $table->text('meta_description')->nullable();

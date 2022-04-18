@@ -29,6 +29,8 @@ class CreateBlogsTable extends Migration
             $table->text('og_image')->nullable();
             $table->date('publish_date')->nullable();
             $table->string('category')->nullable();
+            $table->text('head_schema')->nullable();
+            $table->text('body_schema')->nullable();
             $table->tinyInteger('status')->default('0');
             $table->tinyInteger('flag')->default('0');
             $table->timestamps();

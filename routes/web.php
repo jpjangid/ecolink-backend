@@ -20,6 +20,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\UserAddressController;
+use App\Http\Controllers\NoticeController;
 
 
 /*
@@ -190,6 +191,13 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     Route::prefix('addresses')->group(function () {
         Route::get('/', [UserAddressController::class, 'index']);
         Route::get('/delete/{id}', [UserAddressController::class, 'destroy']);
+    });
+
+    Route::prefix('notices')->group(function () {
+        Route::get('/', [NoticeController::class, 'index']);
+        Route::get('/edit/{id}', [NoticeController::class, 'edit']);
+        Route::put('/update/{id}', [NoticeController::class, 'update']);
+        Route::post('/update_status', [NoticeController::class, 'update_status']);
     });
 });
 

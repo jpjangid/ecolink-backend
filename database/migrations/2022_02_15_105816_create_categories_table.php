@@ -22,6 +22,8 @@ class CreateCategoriesTable extends Migration
             $table->string('short_desc')->nullable();
             $table->text('image')->nullable();
             $table->string('alt')->nullable();
+            $table->text('head_schema')->nullable();
+            $table->text('body_schema')->nullable();
             $table->text('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->text('keywords')->nullable();

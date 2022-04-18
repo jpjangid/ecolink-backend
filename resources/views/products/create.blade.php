@@ -266,6 +266,36 @@
                         </div>
                     </div>
 
+                    <!-- Product is Hazardous -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="hazardous">Hazardous</label>
+                            <select class="form-control @error('hazardous') is-invalid @enderror" name="hazardous">
+                                <option value="0" {{ old('hazardous') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('hazardous') == '1' ? 'selected' : '' }}>Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Product has Insurance -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="insurance">Insurance</label>
+                            <select class="form-control @error('insurance') is-invalid @enderror" name="insurance">
+                                <option value="0" {{ old('insurance') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('insurance') == '1' ? 'selected' : '' }}>Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Product Minimum Quantity-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="minimum_qty">Product Minimum Quantity</label>
+                            <input type="number" step=".01" class="form-control @error('minimum_qty') is-invalid @enderror" name="minimum_qty" id="minimum_qty" placeholder="Please Enter Product Minimum Quantity" value="{{ old('minimum_qty') }}">
+                        </div>
+                    </div>
+
                     <!-- Product Short Description -->
                     <div class="col-md-12">
                         <div class="form-group">
@@ -283,6 +313,28 @@
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
                             <textarea id="wysiwyg" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo old('description'); ?></textarea>
                             @error('description')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Head Schema -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="head_schema">Head Schema</label>
+                            <textarea class="form-control @error('head_schema') is-invalid @enderror" name="head_schema" placeholder="Please Enter Schema"><?php echo old('head_schema'); ?></textarea>
+                            @error('head_schema')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Body Schema -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="body_schema">Body Schema</label>
+                            <textarea class="form-control @error('body_schema') is-invalid @enderror" name="body_schema" placeholder="Please Enter Schema"><?php echo old('body_schema'); ?></textarea>
+                            @error('body_schema')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
@@ -323,7 +375,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="border: 1px solid gray;border-radius: 10px;">
+                <div class="row mt-2" style="border: 1px solid gray;border-radius: 10px;">
 
                     <!-- OG Title -->
                     <div class="col-md-6">

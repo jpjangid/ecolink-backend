@@ -194,61 +194,61 @@
     //notification js
 
 
-    $(document).ready(function() {
-      //getting notifications from backend on click
-      $('#getNotification').click(function(e) {
-        e.preventDefault();
-        $.ajax({
-          url: "{{url('getnotifications')}}",
-          type: "GET",
-          dataType: 'json',
-          success: function(result) {
-            $('.notificationMessages').empty();
-            if (result.notification != "") {
-              $.each(result.notification, function(key, value) {
-                $('.notificationMessages').append(`<a href="#" class="dropdown-item">
-                      <i class="fas fa-envelope mr-2"></i>` + value.notification.title + ` 
-                      <span class="float-right text-muted text-sm">` + value.created_at + `</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                `);
-              });
-            } else {
-              $('.notificationMessages').append(`<span class="dropdown-item text-center">
-                      No Notifications 
-                      <span class="float-right text-muted text-sm"></span>
-                    </span>
-                    <div class="dropdown-divider"></div>
-                `);
-            }
+    // $(document).ready(function() {
+    //   //getting notifications from backend on click
+    //   $('#getNotification').click(function(e) {
+    //     e.preventDefault();
+    //     $.ajax({
+    //       url: "{{url('getnotifications')}}",
+    //       type: "GET",
+    //       dataType: 'json',
+    //       success: function(result) {
+    //         $('.notificationMessages').empty();
+    //         if (result.notification != "") {
+    //           $.each(result.notification, function(key, value) {
+    //             $('.notificationMessages').append(`<a href="#" class="dropdown-item">
+    //                   <i class="fas fa-envelope mr-2"></i>` + value.notification.title + ` 
+    //                   <span class="float-right text-muted text-sm">` + value.created_at + `</span>
+    //                 </a>
+    //                 <div class="dropdown-divider"></div>
+    //             `);
+    //           });
+    //         } else {
+    //           $('.notificationMessages').append(`<span class="dropdown-item text-center">
+    //                   No Notifications 
+    //                   <span class="float-right text-muted text-sm"></span>
+    //                 </span>
+    //                 <div class="dropdown-divider"></div>
+    //             `);
+    //         }
 
-          }
-        });
-      });
+    //       }
+    //     });
+    //   });
 
-      //count of notification
-      function countNotification() {
-        $.ajax({
-          url: "{{url('getnotifications/count')}}",
-          type: "GET",
-          dataType: 'json',
-          success: function(result) {
-            console.log(result);
-            setTimeout(function() {
-              countNotification();
-            }, 10000);
-            $('.notificationCount').empty();
-            if (result.notificationCount != "") {
-              $('.notificationCount').text(result.notificationCount);
-            } else {
-              $('.notificationCount').text('0');
-            }
-          }
-        });
-      }
+    //   //count of notification
+    //   function countNotification() {
+    //     $.ajax({
+    //       url: "{{url('getnotifications/count')}}",
+    //       type: "GET",
+    //       dataType: 'json',
+    //       success: function(result) {
+    //         console.log(result);
+    //         setTimeout(function() {
+    //           countNotification();
+    //         }, 10000);
+    //         $('.notificationCount').empty();
+    //         if (result.notificationCount != "") {
+    //           $('.notificationCount').text(result.notificationCount);
+    //         } else {
+    //           $('.notificationCount').text('0');
+    //         }
+    //       }
+    //     });
+    //   }
 
-      countNotification();
-    });
+    //   countNotification();
+    // });
   </script>
   <script>
     // Get the modal

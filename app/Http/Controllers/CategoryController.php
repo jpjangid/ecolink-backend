@@ -114,6 +114,8 @@ class CategoryController extends Controller
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
+            'head_schema'               =>  $request->head_schema,
+            'body_schema'               =>  $request->body_schema,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -177,6 +179,8 @@ class CategoryController extends Controller
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image != '' ? $og_image : $request->og_image,
+            'head_schema'               =>  $request->head_schema,
+            'body_schema'               =>  $request->body_schema,
         ]);
 
         /* After successfull update of data redirecting to index page with message */
@@ -310,6 +314,8 @@ class CategoryController extends Controller
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
+            'head_schema'               =>  $request->head_schema,
+            'body_schema'               =>  $request->body_schema,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -375,6 +381,8 @@ class CategoryController extends Controller
             'og_title'                  =>  $request->og_title,
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
+            'head_schema'               =>  $request->head_schema,
+            'body_schema'               =>  $request->body_schema,
         ]);
 
         /* After successfull update of data redirecting to index page with message */
