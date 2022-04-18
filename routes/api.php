@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\BlogController;
 use App\Http\Controllers\api\CartController;
+use App\Http\Controllers\api\CouponController;
 use App\Http\Controllers\api\ContactController;
 use App\Http\Controllers\api\PageController;
 use App\Http\Controllers\api\HomeController;
@@ -23,11 +24,13 @@ Route::post('register', [UserController::class, 'register']);
 //Route for login user
 Route::post('login', [UserController::class, 'login']);
 
-Route::middleware('auth:api')->group(function(){
+Route::middleware('auth:api')->group(function () {
     //Route for logout user
     Route::post('logout', [UserController::class, 'logout']);
     //Route for Getting user info
     Route::post('userInfo', [UserController::class, 'userInfo']);
+    //Route for Edit user info
+    Route::post('editUserInfo', [UserController::class, 'editUserInfo']);
     //Route for Forgot password
     Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
 
@@ -35,6 +38,11 @@ Route::middleware('auth:api')->group(function(){
     Route::post('getWishlistItems', [WishlistController::class, 'getWishlistItems']);
     //Route For Add Wishlist Items
     Route::post('addWishlistItems', [WishlistController::class, 'addWishlistItems']);
+    //Route For Delete Wishlist Items
+    Route::post('deleteWishlistItems', [WishlistController::class, 'deleteWishlistItems']);
+
+    //Route For Checking Coupon Validity and Calculating Coupon Discount
+    Route::post('checkCoupon', [CouponController::class, 'index']);
 
     //Route For Get Cart Items
     Route::post('getCartItems', [CartController::class, 'getCartItems']);
@@ -64,11 +72,6 @@ Route::middleware('auth:api')->group(function(){
     Route::post('getReturnOrder', [ReturnController::class, 'index']);
     //Route For Storing for Return Order Data
     Route::post('storeReturnOrder', [ReturnController::class, 'store']);
-    
-    //Route for Global Search
-    Route::post('globalSearch', [HomeController::class, 'globalSearch']);
-    //Route for Filter Product
-    Route::post('filterProduct', [HomeController::class, 'filterProduct']);
 });
 
 //Route for Get All Blogs
@@ -96,3 +99,8 @@ Route::get('getCategories', [CategoryController::class, 'index']);
 
 //Route For Getting Category Using slug
 Route::post('getCategory', [CategoryController::class, 'category']);
+
+//Route for Global Search
+Route::post('globalSearch', [HomeController::class, 'globalSearch']);
+//Route for Filter Product
+Route::post('filterProduct', [HomeController::class, 'filterProduct']);

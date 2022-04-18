@@ -17,6 +17,7 @@ class CreatePagesTable extends Migration
             $table->id();
             $table->text('slug');
             $table->string('title')->unique();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedInteger('category')->nullable();
             $table->longText('description')->nullable();
             $table->text('image')->nullable();

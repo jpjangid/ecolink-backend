@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Edit Page')
+@section('title', 'Add Page')
 
 @section('content')
 <div class="content">
@@ -8,7 +8,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Edit Page</h1>
+                    <h1 class="m-0 text-dark">Add Page</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -21,8 +21,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/pages/update', $id) }}" method="post" enctype="multipart/form-data">
-                @method('PUT')
+            <form action="{{ url('admin/pages/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
 
@@ -212,7 +211,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 mt-2">
-                        <button type="submit" class="btn btn-info">Update</button>
+                        <button type="submit" class="btn btn-info">Add</button>
                     </div>
                 </div>
             </form>
@@ -221,24 +220,4 @@
 </div>
 @endsection
 @section('js')
-
-<!-- Page specific script -->
-<!-- <script type="text/javascript">
-    $(document).on('keydown', '#keywords', function() {
-        if ($('#keywords').val() != "") {
-            var keywords = $('#keywords').val();
-            keywords = keywords.replace(/\s/g, ",");
-            $('#keywords').val(keywords);
-        }
-    });
-
-    $(document).on('keydown', '#tags', function() {
-        if ($('#tags').val() != "") {
-            var tags = $('#tags').val();
-            tags = tags.replace(/\s/g, ",");
-            $('#tags').val(tags);
-        }
-    });
-</script> -->
-
 @endsection

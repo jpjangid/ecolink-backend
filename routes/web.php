@@ -118,6 +118,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/edit/{id}', [PageController::class, 'edit']);
         Route::put('/update/{id}', [PageController::class, 'update']);
         Route::get('/delete/{id}', [PageController::class, 'destroy']);
+        Route::get('/copy/{id}', [PageController::class, 'copy']);
         Route::post('/update_status', [PageController::class, 'update_status']);
     });
 

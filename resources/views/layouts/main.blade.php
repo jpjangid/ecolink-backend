@@ -143,6 +143,7 @@
     $('#wysiwyg').summernote();
     $(function() {
       $('.select2bs4').select2({
+        placeholder: "Please select Options",
         theme: 'bootstrap4'
       });
     });

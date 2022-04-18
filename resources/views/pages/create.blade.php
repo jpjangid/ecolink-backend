@@ -48,13 +48,26 @@
                     </div>
 
                     <!-- page category -->
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="category"><span style="color: red;">* </span>Page Category</label>
-                            <select class="form-control form-control-solid @error('category') is-invalid @enderror" name="category" >
+                            <label class="required form-label" for="category">Page Category</label>
+                            <select class="form-control form-control-solid @error('category') is-invalid @enderror" name="category">
                                 <option value="">Select Page Category</option>
                                 @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div> -->
+
+                    <!-- Parent Page -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="parent_id">Parent Page</label>
+                            <select class="form-control form-control-solid @error('parent_id') is-invalid @enderror" name="parent_id">
+                                <option value="">Select Parent Page</option>
+                                @foreach($parentpages as $parentpage)
+                                <option value="{{ $parentpage->id }}">{{ $parentpage->title }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -63,7 +76,7 @@
                     <!-- Page image -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="image"><span style="color: red;">* </span>Featured Image:</label>
+                            <label for="image">Featured Image:</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
@@ -77,7 +90,7 @@
                     <!-- alt title-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="alt_title"><span style="color: red;">* </span>Alt Title</label>
+                            <label class="required form-label" for="alt_title">Alt Title</label>
                             <input type="text" class="form-control form-control-solid @error('alt_title') is-invalid @enderror" name="alt" id="alt_title" placeholder="Please Enter Alt Title" value="{{ old('alt') }}">
                             @error('meta_description')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -185,6 +198,18 @@
                     </div>
                 </div>
                 <div class="row">
+                    <!-- Links For Page -->
+                    <div class="col-md-12 mt-2">
+                        <div class="form-group">
+                            <label class="required form-label" for="pagelinks">Links For Page</label>
+                            <select class="form-control form-control-solid @error('pagelinks') is-invalid @enderror select2bs4" multiple="multiple" name="pagelinks[]">
+                                <option value="">Select Links</option>
+                                @foreach($links as $link)
+                                <option value="{{ $link->id }}">{{ $link->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-12 mt-2">
                         <button type="submit" class="btn btn-info">Add</button>
                     </div>
@@ -195,24 +220,4 @@
 </div>
 @endsection
 @section('js')
-
-<!-- Page specific script -->
-<!-- <script type="text/javascript">
-    $(document).on('keydown', '#keywords', function() {
-        if ($('#keywords').val() != "") {
-            var keywords = $('#keywords').val();
-            keywords = keywords.replace(/\s/g, ",");
-            $('#keywords').val(keywords);
-        }
-    });
-
-    $(document).on('keydown', '#tags', function() {
-        if ($('#tags').val() != "") {
-            var tags = $('#tags').val();
-            tags = tags.replace(/\s/g, ",");
-            $('#tags').val(tags);
-        }
-    });
-</script> -->
-
 @endsection

@@ -21,18 +21,24 @@ class CheckoutController extends Controller
 
         $order_total = 0;
         $payable = 0;
+        $product_discount = 0;
+        $coupon_discount = 0;
         $total_discount = 0;
         $product_count = 0;
-        $discount = 0;
         if($carts->isNotEmpty()){
             foreach($carts as $cart){
+                if(!isset($cart->product->coupon_discount)){
+                    $cart->product->coupon_discount = 0;
+                }
                 $cart->product->image = asset('storage/products/'.$cart->product->image);
-                $payable += $cart->product->sale_price * $cart->quantity;
-                $order_total += $cart->product->regular_price * $cart->quantity;
-                $discount = $cart->product->regular_price - $cart->product->sale_price;
-                $total_discount += $discount * $cart->quantity;
+                $product_discount = $cart->product->regular_price - $cart->product->sale_price;
+                $product_discount = $product_discount * $cart->quantity;
+                $order_total += $cart->product->sale_price * $cart->quantity;
+                $coupon_discount += $cart->product->coupon_discount * $cart->quantity;
+                $total_discount += $product_discount + $coupon_discount;
                 $product_count +=  $cart->quantity;
             }
+            $payable = $order_total - $coupon_discount;
         }
 
         $current = date('Y-m-d H:i:s');

@@ -168,4 +168,74 @@ class UserController extends Controller
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }
+
+    public function editUserInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'name'          =>  'required|string|max:255',
+            'email'         =>  'required|email|unique:users,email,' . $request->user_id,
+            'password'      =>  'required|string|min:8',
+            'mobile'        =>  'required|digits:10|unique:users,mobile,' . $request->user_id,
+            'address'       =>  'required',
+            'state'         =>  'required',
+            'city'          =>  'required',
+            'pincode'       =>  'required',
+            'user_id'       =>  'required',
+        ], [
+            'name.required'         =>  'Please Enter Name',
+            'email.required'        =>  'Please Enter Email',
+            'mobile.required'       =>  'Please Enter Mobile No.',
+            'address.required'      =>  'Please Enter Address',
+            'state.required'        =>  'Please Select State',
+            'city.required'         =>  'Please Select City',
+            'pincode.required'      =>  'Please Select Pincode',
+            'mobile.numeric'        =>  'The Mobile No. must be numeric',
+            'password.required'     =>  'Please Enter Password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $user = User::find($request->user_id);
+
+        if(!empty($user)){
+            /* Storing Featured Image on local disk */
+            $image_name = $user->profile_image;
+            if ($request->hasFile('profile_image')) {
+                $request->validate([
+                    'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                ]);
+                if ($request->hasFile('profile_image')) {
+                    $file = $request->file('profile_image');
+                    $image_name = $file->getClientOriginalName();
+                    $path = Storage::putFileAs('public/profile_image/', $file, $image_name);
+                }
+            }
+    
+            $pass = $user->password;
+            if (!empty($request['password'])) {
+                $pass = Hash::make($request['password']);
+            }
+    
+            /* Updating Data fetched by Id */
+            $user->name             =   $request['name'];
+            $user->email            =   $request['email'];
+            $user->mobile           =   $request['mobile'];
+            $user->address          =   $request['address'];
+            $user->country          =   $request['country'];
+            $user->state            =   $request['state'];
+            $user->city             =   $request['city'];
+            $user->pincode          =   $request['pincode'];
+            $user->password         =   $pass;
+            $user->role             =   $request['role'];
+            $user->profile_image    =   $image_name;
+            $user->save();
+
+            return response()->json(['message' => 'User info update successfully', 'code' => 200, 'data' => $user], 200);
+        }else{
+            return response()->json(['message' => 'No User Found', 'code' => 400], 400);
+        }
+
+    }
 }

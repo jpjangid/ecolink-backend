@@ -50,4 +50,27 @@ class WishlistController extends Controller
 
         return response()->json(['message' => 'Item added in Wishlist successfully', 'code' => 200], 200);
     }
+
+    public function deleteWishlistItems(Request $request)
+    {
+        /* Deleting wishlist Items */
+        $validator = Validator::make($request->all(), [
+            'user_id'       => 'required',
+            'product_id'    => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $wishlist = Wishlist::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
+
+        if(!empty($wishlist)){
+            $wishlist->delete();
+
+            return response()->json(['message' => 'Item deleted from Wishlist', 'code' => 200], 200);
+        }else{
+            return response()->json(['message' => 'No item found in wishlist', 'code' => 400], 400);
+        }
+    }
 }

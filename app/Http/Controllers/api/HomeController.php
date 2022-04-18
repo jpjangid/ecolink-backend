@@ -104,37 +104,47 @@ class HomeController extends Controller
             }
         }
 
-        if(!empty($request->rating)){
-            $products = $products->whereIn('rating', $request->rating);
-        }
-
-        if(!empty($request->price_from) && !empty($request->price_to)){
-            $products = $products->where('sale_price','>=', $request->price_from)->where('sale_price','<=', $request->price_to);
-        }
-
-        if(!empty($request->sortby)){
-            if($request->sortby == 'lowtohigh'){
-                $products = $products->sortBy([
-                    fn ($a, $b) => $a['sale_price'] <=> $b['sale_price']
-                ]);
-            }
-            if($request->sortby == 'hightolow'){
-                $products = $products->sortBy([
-                    fn ($a, $b) => $b['sale_price'] <=> $a['sale_price']
-                ]);
-            }
-            if($request->sortby == 'popularity'){
-                $products = $products->sortBy([
-                    fn ($a, $b) => $b['rating'] <=> $a['rating']
-                ]);
-            }
-            if($request->sortby == 'name'){
-                $products = $products->sortBy([
-                    fn ($a, $b) => $a['name'] <=> $b['name']
-                ]);
+        if($products->isNotEmpty()){
+            if(!empty($request->rating)){
+                $products = $products->whereIn('rating', $request->rating);
             }
         }
 
-        return response($products);
+        if($products->isNotEmpty()){
+            if(!empty($request->price_from) && !empty($request->price_to)){
+                $products = $products->where('sale_price','>=', $request->price_from)->where('sale_price','<=', $request->price_to);
+            }
+        }
+
+        if($products->isNotEmpty()){
+            if(!empty($request->sortby)){
+                if($request->sortby == 'lowtohigh'){
+                    $products = $products->sort(function($a, $b) {
+                        return strcmp($a->sale_price, $b->sale_price);
+                    });
+                }
+                if($request->sortby == 'hightolow'){
+                    $products = $products->sort(function($a, $b) {
+                        return strcmp($b->sale_price, $a->sale_price);
+                    });
+                }
+                if($request->sortby == 'popularity'){
+                    $products = $products->sort(function($a, $b) {
+                        return strcmp($b->rating, $a->rating);
+                    });
+                }
+                if($request->sortby == 'name'){
+                    $products = $products->sort(function($a, $b) {
+                        return strcmp($b->name, $a->name);
+                    });
+                }
+            }
+        }
+
+        if($products->isNotEmpty()){
+            return response()->json(['message' => 'Product filtered successfully', 'code' => 200, 'data' => $products], 200);
+        }else{
+            return response()->json(['message' => 'No Products Found', 'code' => 400], 400);
+        }
     }
 }

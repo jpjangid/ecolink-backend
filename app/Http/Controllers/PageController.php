@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LinkCategory;
+use App\Models\LinksOnPage;
 use Illuminate\Http\Request;
 use App\Models\Page;
 use Illuminate\Support\Str;
@@ -47,7 +48,9 @@ class PageController extends Controller
                 ->addColumn('action', function ($row) {
                     $delete_url = url('admin/pages/delete', $row['id']);
                     $edit_url = url('admin/pages/edit', $row['id']);
+                    $copy_url = url('admin/pages/copy', $row['id']);
                     $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                    $btn .= '<a class="btn btn-info btn-xs ml-1" href="' . $copy_url . '"><i class="fa fa-clone"></i></a>';
                     $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
@@ -62,22 +65,50 @@ class PageController extends Controller
     {
         /* Getting All Link Categories */
         $categories = LinkCategory::all();
-        
+        /* Getting Parent Pages Data */
+        $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
+        /* Getting All Pages */
+        $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
+
         /* Loading Create Page */
-        return view('pages.create', compact('categories'));
+        return view('pages.create', compact('categories', 'links', 'parentpages'));
+    }
+
+    public function copy($id)
+    {
+        /* Getting All Link Categories */
+        $categories = LinkCategory::all();
+        /* Getting Page data for edit using Id */
+        $page = DB::table('pages')->find($id);
+        /* Getting Parent Pages Data */
+        $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
+        /* Getting All Pages */
+        $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
+        /* Getting All Saved Page Links */
+        $pagelinksobject = DB::table('links_on_pages')->select('id', 'link_id')->where('page_id', $id)->get();
+
+        $pagelinks = array();
+        foreach ($pagelinksobject as $value) {
+            array_push($pagelinks, $value->link_id);
+        }
+
+        return view('pages.copy', compact('page', 'id', 'categories', 'links', 'parentpages', 'pagelinks'));
     }
 
     public function store(Request $request)
     {
+        dd($request->all());
         /* Validating Input fields */
         $request->validate([
             'title'                 =>  'required',
             'description'           =>  'required',
             'slug'                  =>  'required',
+            'status'                =>  'required',
         ], [
             'title.required'                =>  'Page Title is required',
             'description.required'          =>  'Page Description is required',
             'slug.required'                 =>  'Page Slug is required',
+            'status.required'               =>  'Page Status is required',
         ]);
 
         /* Storing Featured Image on local disk */
@@ -101,7 +132,7 @@ class PageController extends Controller
         }
 
         /* Storing Data in Table */
-        Page::create([
+        $page = Page::create([
             'slug'                      =>  $request->slug,
             'title'                     =>  $request->title,
             'description'               =>  $request->description,
@@ -116,7 +147,18 @@ class PageController extends Controller
             'og_description'            =>  $request->og_description,
             'og_image'                  =>  $og_image,
             'category'                  =>  $request->category,
+            'parent_id'                 =>  $request->parent_id,
         ]);
+
+        /* Storing links related to this Page in Table */
+        if (!empty($request->pagelinks)) {
+            foreach ($request->pagelinks as $pagelink) {
+                LinksOnPage::create([
+                    'page_id'   =>  $page->id,
+                    'link_id'   =>  $pagelink,
+                ]);
+            }
+        }
 
         /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/pages')->with('success', 'Page Created Successfully');
@@ -136,10 +178,20 @@ class PageController extends Controller
     {
         /* Getting All Link Categories */
         $categories = LinkCategory::all();
-        /* Getting Blog data for edit using Id */
+        /* Getting Page data for edit using Id */
         $page = DB::table('pages')->find($id);
+        /* Getting Parent Pages Data */
+        $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
+        /* Getting All Pages */
+        $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
+        /* Getting All Saved Page Links */
+        $pagelinksobject = DB::table('links_on_pages')->select('id', 'link_id')->where('page_id', $id)->get();
+        $pagelinks = array();
+        foreach ($pagelinksobject as $value) {
+            array_push($pagelinks, $value->link_id);
+        }
 
-        return view('pages.edit', compact('page', 'id', 'categories'));
+        return view('pages.edit', compact('page', 'id', 'categories', 'links', 'parentpages', 'pagelinks'));
     }
 
     public function update(Request $request, $id)
@@ -149,10 +201,12 @@ class PageController extends Controller
             'title'                 =>  'required',
             'description'           =>  'required',
             'slug'                  =>  'required',
+            'status'                =>  'required',
         ], [
             'title.required'                =>  'Page Title is required',
             'description.required'          =>  'Page Description is required',
-            'slug'                          =>  'Page Slug is required',
+            'slug.required'                 =>  'Page Slug is required',
+            'status.required'               =>  'Page Status is required',
         ]);
 
         /* Fetching Blog Data using Id */
@@ -193,7 +247,25 @@ class PageController extends Controller
         $page->og_description           =  $request->og_description;
         $page->og_image                 =  $og_image;
         $page->category                 =  $request->category;
+        $page->parent_id                =  $request->parent_id;
         $page->update();
+
+        if (!empty($request->pagelinks)) {
+            /* Find All Links related to page stored in table */
+            $oldpagelinks = LinksOnPage::where('page_id', $id)->get();
+            foreach ($oldpagelinks as $link) {
+                /* Deleting Old links */
+                $link->delete();
+            }
+
+            /* Storing New links related to this Page in Table */
+            foreach ($request->pagelinks as $pagelink) {
+                LinksOnPage::create([
+                    'page_id'   =>  $id,
+                    'link_id'   =>  $pagelink,
+                ]);
+            }
+        }
 
         /* After successfull update of data redirecting to index page with message */
         return redirect('admin/pages')->with('success', 'Page Updated Successfully');
