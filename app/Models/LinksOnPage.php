@@ -10,4 +10,9 @@ class LinksOnPage extends Model
     use HasFactory;
 
     protected $fillable = ['page_id', 'link_id'];
+    
+    public function relatedPage()
+    {
+        return $this->belongsTo('App\Models\Page', 'link_id');
+    }
 }

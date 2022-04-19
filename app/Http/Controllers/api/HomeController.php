@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\LinkCategory;
+use App\Models\Page;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,8 @@ class HomeController extends Controller
     public function index()
     {
         $pagecategories = LinkCategory::select('id', 'name', 'slug')->with('sublink:id,category,title,slug')->get();
+
+        $pages = Page::select('id','title','slug')->with('links:page_id,link_id','links.relatedPage:id,title,slug')->get();
 
         $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->get();
 
@@ -44,7 +47,7 @@ class HomeController extends Controller
             }
         }
 
-        $data = collect(['pagecategories' => $pagecategories, 'categories' => $categories, 'blogs' => $blogs, 'products' => $products]);
+        $data = collect(['pagecategories' => $pagecategories, 'categories' => $categories, 'blogs' => $blogs, 'products' => $products, 'pages' => $pages]);
 
         if($data->isNotEmpty()){
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);

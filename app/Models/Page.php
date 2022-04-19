@@ -17,4 +17,10 @@ class Page extends Model
     {
         return $this->belongsTo('App\Models\LinkCategory', 'category');
     }
+
+    public function links()
+    {
+        return $this->hasMany('App\Models\LinksOnPage', 'page_id', 'id');
+    
+    }
 }
