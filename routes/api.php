@@ -94,6 +94,8 @@ Route::post('contact', [ContactController::class, 'contact']);
 
 //Route For Getting Product Using slug
 Route::post('getProduct', [ProductController::class, 'index']);
+//Route For Getting Product Using Id
+Route::post('getProductById', [ProductController::class, 'getProductById']);
 
 //Route For Getting Categories
 Route::get('getCategories', [CategoryController::class, 'index']);

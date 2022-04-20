@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +21,7 @@ class PageController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $page = DB::table('pages')->where(['status' => 1, 'slug' => $request->slug])->first();
+        $page = Page::where(['status' => 1, 'slug' => $request->slug])->with('links:page_id,link_id','links.relatedPage:id,title,slug')->first();
 
         if (!empty($page)) {
             $page->image = asset('storage/pages/'.$page->image);

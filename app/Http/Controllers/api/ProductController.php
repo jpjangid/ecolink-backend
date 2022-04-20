@@ -30,4 +30,27 @@ class ProductController extends Controller
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
+
+    public function getProductById(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $product = DB::table('products')->where(['id' => $request->product_id, 'status' => 1])->first();
+
+        $related_products = collect();
+
+        if(!empty($product)){
+            $product->image = asset('storage/products/'.$product->image);
+
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $product], 200);
+        }else{
+            return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
+        }
+    }
 }
