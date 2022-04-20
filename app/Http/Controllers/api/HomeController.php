@@ -20,7 +20,7 @@ class HomeController extends Controller
 
         // $pages = Page::select('id','title','slug')->with('links:page_id,link_id','links.relatedPage:id,title,slug')->get();
 
-        $pages = Page::select('id','title','slug')->where('parent_id',NULL)->with('subpage:id,title,slug,parent_id')->get();
+        $pages = Page::select('id','title','slug')->where('parent_id',NULL)->with('subpage:id,title,slug,parent_id','subpage.subpage:id,title,slug,parent_id')->get();
 
         $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->get();
 
