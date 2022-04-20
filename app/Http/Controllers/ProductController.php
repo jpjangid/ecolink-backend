@@ -123,8 +123,8 @@ class ProductController extends Controller
             'sku'                   =>  $request->sku,
             'discount_type'         =>  $request->discount_type,
             'discount'              =>  $request->discount,
-            'regular_price'         =>  $request->regular_price,
-            'sale_price'            =>  $request->sale_price,
+            'regular_price'         =>  number_format((float)$request->regular_price, 2, '.', ''),
+            'sale_price'            =>  number_format((float)$request->sale_price, 2, '.', ''),
             'image'                 =>  $image,
             'alt'                   =>  $request->alt,
             'hsn'                   =>  $request->hsn,
@@ -235,8 +235,8 @@ class ProductController extends Controller
         $product->sku                   =  $request->sku;
         $product->discount_type         =  $request->discount_type;
         $product->discount              =  $request->discount;
-        $product->regular_price         =  $request->regular_price;
-        $product->sale_price            =  $request->sale_price;
+        $product->regular_price         =  number_format((float)$request->regular_price, 2, '.', '');
+        $product->sale_price            =  number_format((float)$request->sale_price, 2, '.', '');
         $product->image                 =  $image;
         $product->tag                   =  $request->tag;
         $product->short_desc            =  $request->short_desc; 
