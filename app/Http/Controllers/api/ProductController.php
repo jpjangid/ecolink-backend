@@ -20,6 +20,8 @@ class ProductController extends Controller
 
         $product = DB::table('products')->where(['slug' => $request->slug, 'status' => 1])->first();
 
+        $related_products = collect();
+
         if(!empty($product)){
             $product->image = asset('storage/products/'.$product->image);
 

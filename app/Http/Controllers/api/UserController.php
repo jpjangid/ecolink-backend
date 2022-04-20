@@ -121,6 +121,8 @@ class UserController extends Controller
     {
         if (Auth::check()) {
             Auth::user()->AauthAcessToken()->delete();
+
+            return response()->json(['message' => 'User Logout Successfully','code' => 200], 200);
          }
     }
 

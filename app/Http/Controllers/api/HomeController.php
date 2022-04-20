@@ -18,7 +18,9 @@ class HomeController extends Controller
     {
         $pagecategories = LinkCategory::select('id', 'name', 'slug')->with('sublink:id,category,title,slug')->get();
 
-        $pages = Page::select('id','title','slug')->with('links:page_id,link_id','links.relatedPage:id,title,slug')->get();
+        // $pages = Page::select('id','title','slug')->with('links:page_id,link_id','links.relatedPage:id,title,slug')->get();
+
+        $pages = Page::select('id','title','slug')->where('parent_id',NULL)->with('subpage:id,title,slug,parent_id')->get();
 
         $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->get();
 
@@ -67,7 +69,7 @@ class HomeController extends Controller
         }
 
         $name = str_replace(" ","%",$request->name);
-        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->where('name','like','%' . $name . '%')->where(['status' => 1])->with('ratings:id,rating,product_id')->get();
+        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt', 'parent_id')->where('name','like','%' . $name . '%')->where(['status' => 1])->with('ratings:id,rating,product_id','category:id,name,slug')->get();
 
         if($products->isNotEmpty()){
             foreach ($products as $product) {

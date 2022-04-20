@@ -31,8 +31,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('userInfo', [UserController::class, 'userInfo']);
     //Route for Edit user info
     Route::post('editUserInfo', [UserController::class, 'editUserInfo']);
-    //Route for Forgot password
-    Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
 
     //Route For Get Wishlist Items
     Route::post('getWishlistItems', [WishlistController::class, 'getWishlistItems']);
@@ -73,6 +71,9 @@ Route::middleware('auth:api')->group(function () {
     //Route For Storing for Return Order Data
     Route::post('storeReturnOrder', [ReturnController::class, 'store']);
 });
+
+//Route for Forgot password
+Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
 
 //Route for Get All Blogs
 Route::get('getallblogs', [BlogController::class, 'blogs']);

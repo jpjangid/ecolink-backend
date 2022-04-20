@@ -23,4 +23,9 @@ class Page extends Model
         return $this->hasMany('App\Models\LinksOnPage', 'page_id', 'id');
     
     }
+
+    public function subpage()
+    {
+        return $this->hasMany('App\Models\Page', 'parent_id', 'id');
+    }
 }
