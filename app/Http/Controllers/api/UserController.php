@@ -163,7 +163,7 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
             $user->update();
 
-            Auth::user()->AauthAcessToken()->delete();
+            // Auth::user()->AauthAcessToken()->delete();
 
             return response()->json(['message' => 'User password changed successfully', 'code' => 200, 'data' => $user], 200);
         }else{
