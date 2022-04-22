@@ -124,24 +124,16 @@ class HomeController extends Controller
         if($products->isNotEmpty()){
             if(!empty($request->sortby)){
                 if($request->sortby == 'lowtohigh'){
-                    $products = $products->sort(function($a, $b) {
-                        return strcmp($a->sale_price, $b->sale_price);
-                    });
+                    $products = $products->sortBy('sale_price');
                 }
                 if($request->sortby == 'hightolow'){
-                    $products = $products->sort(function($a, $b) {
-                        return strcmp($b->sale_price, $a->sale_price);
-                    });
+                    $products = $products->sortByDesc('sale_price');
                 }
                 if($request->sortby == 'popularity'){
-                    $products = $products->sort(function($a, $b) {
-                        return strcmp($b->rating, $a->rating);
-                    });
+                    $products = $products->sortBy('rating');
                 }
                 if($request->sortby == 'name'){
-                    $products = $products->sort(function($a, $b) {
-                        return strcmp($b->name, $a->name);
-                    });
+                    $products = $products->sortBy('name');
                 }
             }
         }
