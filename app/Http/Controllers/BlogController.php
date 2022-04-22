@@ -106,6 +106,7 @@ class BlogController extends Controller
             'slug'                      =>  $request->slug,
             'title'                     =>  $request->title,
             'description'               =>  $request->description,
+            'short_desc'                =>  $request->short_desc,
             'image'                     =>  $image,
             'meta_title'                =>  $request->meta_title,
             'meta_description'          =>  $request->meta_description,
@@ -188,6 +189,7 @@ class BlogController extends Controller
         $blog->slug                     =  $request->slug;
         $blog->title                    =  $request->title;
         $blog->description              =  $request->description;
+        $blog->short_desc               =  $request->short_desc;
         $blog->image                    =  $image;
         $blog->meta_title               =  $request->meta_title;
         $blog->meta_description         =  $request->meta_description;

@@ -14,7 +14,7 @@ class BlogController extends Controller
     public function blogs()
     {
         /* Getting all records */
-        $blogs = DB::table('blogs')->select('id','slug','title','image','alt')->where('flag', 0)->get();
+        $blogs = DB::table('blogs')->select('id','slug','title','image','alt', 'short_desc')->where('flag', 0)->get();
 
         if($blogs->isNotEmpty()){
             foreach($blogs as $blog){

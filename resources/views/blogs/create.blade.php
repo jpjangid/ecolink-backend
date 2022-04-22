@@ -114,6 +114,14 @@
                         </div>
                     </div>
 
+                    <!-- Blog Short Description -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="short_desc">Short Description</label>
+                            <textarea class="form-control form-control-solid @error('short_desc') is-invalid @enderror" name="short_desc" placeholder="Please Enter Short Description"><?php echo old('short_desc'); ?></textarea>
+                        </div>
+                    </div>
+
                     <!-- Blog Description -->
                     <div class="col-md-12">
                         <div class="form-group">
