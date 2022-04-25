@@ -176,7 +176,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(),[
             'name'          =>  'required|string|max:255',
             'email'         =>  'required|email|unique:users,email,' . $request->user_id,
-            'password'      =>  'required|string|min:8',
+            'password'      =>  'string|min:8',
             'mobile'        =>  'required|digits:10|unique:users,mobile,' . $request->user_id,
             'address'       =>  'required',
             'state'         =>  'required',
@@ -192,7 +192,6 @@ class UserController extends Controller
             'city.required'         =>  'Please Select City',
             'pincode.required'      =>  'Please Select Pincode',
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
-            'password.required'     =>  'Please Enter Password',
         ]);
 
         if ($validator->fails()) {
