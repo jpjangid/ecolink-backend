@@ -11,7 +11,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = DB::table('categories')->select('id','name','slug','short_desc','image','alt')->where('parent_id',NULL)->get();
+        $categories = DB::table('categories')->select('id','name','slug','short_desc','image','alt')->where('parent_id',NULL)->where('status',1)->get();
 
         if($categories->isNotEmpty()){
             foreach($categories as $category){

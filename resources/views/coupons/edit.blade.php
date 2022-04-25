@@ -165,7 +165,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="discount">Discount</label>
-                            <input type="text" class="form-control form-control-solid" name="discount" id="discount" placeholder="Please Enter Discount" value="{{ $coupon->discount }}">
+                            <input type="number" class="form-control form-control-solid" name="discount" id="discount" placeholder="Please Enter Discount" value="{{ $coupon->discount }}">
                         </div>
                     </div>
 

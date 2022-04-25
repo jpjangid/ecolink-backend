@@ -48,7 +48,7 @@ class CategoryController extends Controller
                     $delete_url = url('admin/categories/delete', $row['id']);
                     $edit_url = url('admin/categories/edit', $row['id']);
                     $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                    // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
                 ->rawColumns(['action', 'active'])
@@ -67,12 +67,13 @@ class CategoryController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'                  =>  'required|unique:categories,name',
+            'name'                  =>  'required|regex:/^[\pL\s\-]+$/u|unique:categories,name',
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug',
         ], [
             'name.required'                 =>  'Category Name is required',
+            'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',
@@ -133,12 +134,13 @@ class CategoryController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'                  =>  'required|unique:categories,name,' . $id,
+            'name'                  =>  'required|regex:/^[\pL\s\-]+$/u|unique:categories,name,' . $id,
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug,' . $id,
         ], [
             'name.required'                 =>  'Category Name is required',
+            'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',
@@ -247,7 +249,7 @@ class CategoryController extends Controller
                     $delete_url = url('admin/sub/categories/delete', $row['id']);
                     $edit_url = url('admin/sub/categories/edit', $row['id']);
                     $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                    // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
                 ->rawColumns(['action', 'active'])
@@ -267,12 +269,13 @@ class CategoryController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'                  =>  'required|unique:categories,name',
+            'name'                  =>  'required|regex:/^[\pL\s\-]+$/u|unique:categories,name',
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug',
         ], [
             'name.required'                 =>  'Category Name is required',
+            'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',
@@ -334,12 +337,13 @@ class CategoryController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'                  =>  'required|unique:categories,name,' . $id,
+            'name'                  =>  'required|regex:/^[\pL\s\-]+$/u|unique:categories,name,' . $id,
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug,' . $id,
         ], [
             'name.required'                 =>  'Category Name is required',
+            'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',

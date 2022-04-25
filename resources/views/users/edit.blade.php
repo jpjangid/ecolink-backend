@@ -55,37 +55,28 @@
                     </div>
                     <div class="col-md-4">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
-                        <input readonly type="text" class="form-control" name="country" placeholder="Enter country" value="India" />
+                        <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ $user->country }}" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="state"><span style="color: red;">* </span>State:</label>
-                        <select class="form-control select2bs4" name="state" id="state">
-                            <option value="">Select State</option>
-                            @foreach($locations as $location)
-                            <option value="{{ $location->state }}" {{ $user->state == $location->state ? "selected" : "" }}>{{ $location->state }}</option>
-                            @endforeach
-                        </select>
+                        <input type="text" class="form-control" name="state" placeholder="Enter State" value="{{ $user->state }}" />
                         @error('state')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="city"><span style="color: red;">* </span>City:</label>
-                        <select class="form-control select2bs4" name="city" id="city">
-                            <option value="">Select City</option>
-                        </select>
+                        <input type="text" class="form-control" name="city" placeholder="Enter City" value="{{ $user->city }}" />
                         @error('city')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="pincode"><span style="color: red;">* </span>Postal:</label>
-                        <select class="form-control select2bs4" name="pincode" id="pincode">
-                            <option value="">Select Postal</option>
-                        </select>
+                        <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode" value="{{ $user->pincode }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror

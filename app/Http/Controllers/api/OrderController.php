@@ -69,7 +69,7 @@ class OrderController extends Controller
             'shippment_via'         =>  'required'
         ]);
 
-        // $response = $this->shipViaSaia($request->user_id,$request->shipping_zip,$request->shipping_country);
+        // $response = $this->shipViaSaia($request->user_id, $request->shipping_zip, $request->shipping_country);
 
         // dd($response);
 
@@ -237,23 +237,24 @@ class OrderController extends Controller
         $cartItems = Cart::where('user_id', $user_id)->with('product')->get();
 
         $detailItems = '';
-        foreach($cartItems as $item){
+        foreach ($cartItems as $item) {
             $detailItems .= '
             <DetailItem>
-                <DestinationZipcode>'.$zip.'</DestinationZipcode>
-                <DestinationCountry>'.$country.'</DestinationCountry>
-                <Pieces>'.$item->quantity.'</Pieces>
+                <DestinationZipcode>' . $zip . '</DestinationZipcode>
+                <DestinationCountry>' . $country . '</DestinationCountry>
+                <Pieces>' . $item->quantity . '</Pieces>
                 <Package>BG</Package>
-                <Weight>'.$item->product->weight.'</Weight>
-                <Freezable>N</Freezable>
-                <SaiaGuaranteed>12</SaiaGuaranteed>
+                <Weight>' . $item->product->weight . '</Weight>
+                <FoodItem>N</FoodItem>
+                <Hazardous>' . $item->product->hazardous == 1 ? 'Y' : 'N' . '</Hazardous>
+                <Description>' . $item->product->description . '</Description>
             </DetailItem>';
         }
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'www.saiasecure.com/webservice/pickup/soap.asmx',
+            CURLOPT_URL => 'www.saiasecure.com/webservice/BOL/soap.asmx',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -263,40 +264,47 @@ class OrderController extends Controller
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => '<?xml version="1.0" encoding="utf-8"?>
             <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-            <soap:Body>
-                <Create xmlns="http://www.SaiaSecure.com/WebService/Pickup">
-                <request>
-                    <Details>'.$detailItems.'</Details>
-                    <UserID>ecolink</UserID>
-                    <Password>ecolink4</Password>
-                    <TestMode>Y</TestMode>
-                    <AccountNumber>0747932</AccountNumber>
-                    <CompanyName></CompanyName>
-                    <Street></Street>
-                    <Box></Box>
-                    <City></City>
-                    <State></State>
-                    <Zipcode></Zipcode>
-                    <ContactName>Rishabh Jain</ContactName>
-                    <ContactPhone>1234567890</ContactPhone>
-                    <PickupDate>2022-04-13</PickupDate>
-                    <ReadyTime>12:00:00</ReadyTime>
-                    <CloseTime>16:00:00</CloseTime>
-                    <SpecialInstructions>Test</SpecialInstructions>
-                </request>
-                </Create>
-            </soap:Body>
+                <soap:Body>
+                    <Create xmlns="http://www.SaiaSecure.com/WebService/BOL">
+                        <request>
+                            <UserID>ecolink</UserID>
+                            <Password>ecolink4</Password>
+                            <TestMode>Y</TestMode>
+                            <ShipmentDate>2022-04-26</ShipmentDate>
+                            <BillingTerms>Prepaid</BillingTerms>
+                            <BLNumber></BLNumber>
+                            <ShipperNumber></ShipperNumber>
+                            <PONumber></PONumber>
+                            <PrintRates>Y</PrintRates>
+                            <Customs>N</Customs>
+                            <VICS>N</VICS>
+                            <WeightUnits></WeightUnits>
+                            <Shipper>
+                                <AccountNumber>0747932</AccountNumber>
+                            </Shipper>
+                            <Consignee>
+                                <ContactName>Lakhan Sharma</ContactName>
+                                <Address1>1511 Cantebury Drive</Address1>
+                                <City>Westbury</City>
+                                <State>NY</State>
+                                <Zipcode>11590</Zipcode>
+                            </Consignee>
+                            <Details>'.$detailItems.'</Details>
+                        </request>
+                    </Create>
+                </soap:Body>
             </soap:Envelope>',
             CURLOPT_HTTPHEADER => array(
-                'SOAPAction: http://www.SaiaSecure.com/WebService/Pickup/Create',
+                'SOAPAction: http://www.SaiaSecure.com/WebService/BOL/Create',
                 'Content-Type: text/xml',
-                'Cookie: TS01cfb1b0=01dd6f358acb92572fa7f2a04989d7024383ad64fc5097445587857c2bc5ccd72cbf3131f66cb60ebd5310b3952f1d4080dcb7b944'
+                'Cookie: TS01cfb1b0=01dd6f358a6e978dc2013abf80935685742949fca51a0ee8b22d3f7e34dfe604d71de42a57432d0fe5203ab25bc1b4ff280cf2e57c'
             ),
         ));
 
         $response = curl_exec($curl);
 
         curl_close($curl);
+
         return $response;
     }
 }

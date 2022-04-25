@@ -27,21 +27,21 @@ class ProductController extends Controller
         if (!empty($product)) {
             $product->image = asset('storage/products/' . $product->image);
 
-            $related = Product::select('id','name','slug','image','alt','sale_price','regular_price')->where(['status' => 1, 'parent_id' => $product->parent_id])->where('id', '!=', $product->id)->with('ratings:id,rating,product_id')->get();
+            $related = Product::select('id', 'name', 'slug', 'image', 'alt', 'sale_price', 'regular_price')->where(['status' => 1, 'parent_id' => $product->parent_id])->where('id', '!=', $product->id)->with('ratings:id,rating,product_id')->get();
 
             $related_products = $related_products->concat($related);
-    
+
             $categories = collect();
             if ($related_products->isEmpty()) {
                 $parent = Category::find($product->parent_id);
                 if (!empty($parent->parent_id)) {
-                    $related = Product::select('id','name','slug','image','alt','sale_price','regular_price')->where(['status' => 1, 'parent_id' => $parent->parent_id])->where('id', '!=', $product->id)->with('ratings:id,rating,product_id')->get();
+                    $related = Product::select('id', 'name', 'slug', 'image', 'alt', 'sale_price', 'regular_price')->where(['status' => 1, 'parent_id' => $parent->parent_id])->where('id', '!=', $product->id)->with('ratings:id,rating,product_id')->get();
 
                     $related_products = $related_products->concat($related);
 
                     $categories = DB::table('categories')->select('id')->where('id', '!=', $parent->id)->where('parent_id', $parent->parent_id)->get();
 
-                    if($categories->isEmpty()){
+                    if ($categories->isEmpty()) {
                         $maincats = DB::table('categories')->select('id')->where('id', '!=', $parent->id)->where('parent_id', NULL)->get();
                         $maincat_ids = array();
                         foreach ($maincats as $maincat) {
@@ -52,32 +52,32 @@ class ProductController extends Controller
                 }
             }
 
-            if($related_products->isEmpty()){
+            if ($related_products->isEmpty()) {
                 $maincats = DB::table('categories')->select('id')->where('id', '!=', $parent->id)->where('parent_id', NULL)->get();
                 $maincat_ids = array();
                 foreach ($maincats as $maincat) {
                     array_push($maincat_ids, $maincat->id);
                 }
 
-                $related = Product::select('id','name','slug','image','alt','sale_price','regular_price')->where(['status' => 1])->where('id', '!=', $product->id)->whereIn('parent_id', $maincat_ids)->with('ratings:id,rating,product_id')->get();
+                $related = Product::select('id', 'name', 'slug', 'image', 'alt', 'sale_price', 'regular_price')->where(['status' => 1])->where('id', '!=', $product->id)->whereIn('parent_id', $maincat_ids)->with('ratings:id,rating,product_id')->get();
 
                 $related_products = $related_products->concat($related);
 
                 $categories = DB::table('categories')->select('id')->whereIn('parent_id', $maincat_ids)->get();
             }
-    
+
             if ($categories->isNotEmpty()) {
                 $cat_ids = array();
                 foreach ($categories as $cat) {
                     array_push($cat_ids, $cat->id);
                 }
-    
-                $related = Product::select('id','name','slug','image','alt','sale_price','regular_price')->where(['status' => 1])->where('id', '!=', $product->id)->whereIn('parent_id', $cat_ids)->with('ratings:id,rating,product_id')->get();
+
+                $related = Product::select('id', 'name', 'slug', 'image', 'alt', 'sale_price', 'regular_price')->where(['status' => 1])->where('id', '!=', $product->id)->whereIn('parent_id', $cat_ids)->with('ratings:id,rating,product_id')->get();
 
                 $related_products = $related_products->concat($related);
             }
-            
-            foreach($related_products as $related_product){
+
+            foreach ($related_products as $related_product) {
                 $related_product->image = asset('storage/products/' . $related_product->image);
                 $rate = $related_product->ratings->avg('rating');
                 $related_product->rating = number_format((float)$rate, 2, '.', '');
@@ -86,7 +86,7 @@ class ProductController extends Controller
                 unset($related_product->ratings);
             }
 
-            $data = collect(['product' => $product,'related_products' => $related_products]);
+            $data = collect(['product' => $product, 'related_products' => $related_products]);
 
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
         } else {

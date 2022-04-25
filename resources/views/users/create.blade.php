@@ -54,28 +54,28 @@
                     </div>
                     <div class="col-md-4">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
-                        <input type="text" class="form-control" name="country" placeholder="Enter Country" />
+                        <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ old('country') }}" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="state"><span style="color: red;">* </span>State:</label>
-                        <input type="text" class="form-control" name="state" placeholder="Enter State" />
+                        <input type="text" class="form-control" name="state" placeholder="Enter State" value="{{ old('state') }}" />
                         @error('state')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="city"><span style="color: red;">* </span>City:</label>
-                        <input type="text" class="form-control" name="city" placeholder="Enter City" />
+                        <input type="text" class="form-control" name="city" placeholder="Enter City" value="{{ old('city') }}" />
                         @error('city')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="pincode"><span style="color: red;">* </span>Postal:</label>
-                        <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode" />
+                        <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode" value="{{ old('pincode') }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror

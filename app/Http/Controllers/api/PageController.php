@@ -21,11 +21,11 @@ class PageController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $page = Page::where(['status' => 1, 'slug' => $request->slug])->with('links:page_id,link_id','links.relatedPage:id,title,slug')->first();
+        $page = Page::where(['status' => 1, 'slug' => $request->slug])->with('links:page_id,link_id', 'links.relatedPage:id,title,slug')->where('status', 1)->first();
 
         if (!empty($page)) {
-            $page->image = asset('storage/pages/'.$page->image);
-            
+            $page->image = asset('storage/pages/' . $page->image);
+
             return response()->json(['message' => 'Data fetched Successfully', 'data' => $page], 200);
         } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);

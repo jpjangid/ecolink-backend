@@ -21,11 +21,10 @@ class Page extends Model
     public function links()
     {
         return $this->hasMany('App\Models\LinksOnPage', 'page_id', 'id');
-    
     }
 
     public function subpage()
     {
-        return $this->hasMany('App\Models\Page', 'parent_id', 'id');
+        return $this->hasMany('App\Models\Page', 'parent_id', 'id')->where('status', 1);
     }
 }
