@@ -13,7 +13,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        $carts = Cart::select('id','user_id','product_id','quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
+        $carts = Cart::select('id','user_id','product_id','quantity')->where('user_id', $request->user_id)->with('product')->get();
         
         $user = DB::table('users')->select('id','name','email','address','city','state','country','pincode','mobile')->find($request->user_id);
 
