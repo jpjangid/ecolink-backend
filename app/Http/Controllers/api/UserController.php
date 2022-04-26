@@ -12,6 +12,9 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 use App\Models\UserAddress;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgotPassword;
+use Illuminate\Support\Str;
 class UserController extends Controller
 {
     public function register(Request $request)
@@ -146,11 +149,10 @@ class UserController extends Controller
         }
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPasswordEmail(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email'         => 'required|email',
-            'password'      => 'required|confirmed|min:8'
+            'email'         => 'required|email'
         ]);
 
         if ($validator->fails()) {
@@ -160,10 +162,44 @@ class UserController extends Controller
         $user = User::where('email',$request->email)->first();
 
         if(!empty($user)){
-            $user->password = Hash::make($request->password);
+            $randomString = Str::random(30);
+            $user->remember_token = $randomString;
             $user->update();
 
-            // Auth::user()->AauthAcessToken()->delete();
+            $user->url = 'https://brandtalks.in/ecolinkfrontend/profile/reset-password/'.$user->remember_token;
+
+            Mail::to($request->email)->send(new ForgotPassword($user));
+            return response()->json(['message' => 'Forgot password email sent successfully', 'code' => 200], 200);
+        }else{
+            return response()->json(['message' => 'No User Found associated with this email', 'code' => 400], 400);
+        }
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'         =>  'required|email',
+            'token'         =>  'required',
+            'password'      =>  'required|confirmed|min:8'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $user = User::where(['email' => $request->email, 'remember_token' => $request->token])->first();
+
+        $updated_at = date('Y-m-d H:i:s', strtotime($user->updated_at.'+2 hours'));
+        
+        $datetime = date('Y-m-d H:i:s');
+            
+        if($updated_at < $datetime){
+            return response()->json(['message' => 'Token expired', 'code' => 400], 400);
+        }
+
+        if(!empty($user)){
+            $user->password = Hash::make($request->password);
+            $user->update();
 
             return response()->json(['message' => 'User password changed successfully', 'code' => 200, 'data' => $user], 200);
         }else{
@@ -174,22 +210,25 @@ class UserController extends Controller
     public function editUserInfo(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'name'          =>  'required|string|max:255',
+            'name'          =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
             'email'         =>  'required|email|unique:users,email,' . $request->user_id,
-            'password'      =>  'string|min:8',
+            'password'      =>  'min:8',
             'mobile'        =>  'required|digits:10|unique:users,mobile,' . $request->user_id,
             'address'       =>  'required',
-            'state'         =>  'required',
-            'city'          =>  'required',
+            'state'         =>  'required|regex:/^[\pL\s\-]+$/u',
+            'city'          =>  'required|regex:/^[\pL\s\-]+$/u',
             'pincode'       =>  'required',
             'user_id'       =>  'required',
         ], [
             'name.required'         =>  'Please Enter Name',
+            'name.regex'            =>  'Please Enter Name in alphabets',
             'email.required'        =>  'Please Enter Email',
             'mobile.required'       =>  'Please Enter Mobile No.',
             'address.required'      =>  'Please Enter Address',
             'state.required'        =>  'Please Select State',
+            'state.regex'           =>  'Please Enter State in alphabets',
             'city.required'         =>  'Please Select City',
+            'city.regex'            =>  'Please Enter City in alphabets',
             'pincode.required'      =>  'Please Select Pincode',
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
         ]);
@@ -215,7 +254,7 @@ class UserController extends Controller
             }
     
             $pass = $user->password;
-            if (!empty($request['password'])) {
+            if (isset($request['password']) && !empty($request['password'])) {
                 $pass = Hash::make($request['password']);
             }
     
@@ -229,7 +268,6 @@ class UserController extends Controller
             $user->city             =   $request['city'];
             $user->pincode          =   $request['pincode'];
             $user->password         =   $pass;
-            $user->role             =   $request['role'];
             $user->profile_image    =   $image_name;
             $user->save();
 
@@ -237,6 +275,5 @@ class UserController extends Controller
         }else{
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
-
     }
 }

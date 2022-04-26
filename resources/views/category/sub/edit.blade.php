@@ -67,7 +67,7 @@
                     <!-- Category image -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="image"><span style="color: red;">* </span>Featured Image:</label>
+                            <label for="image">Featured Image:</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
@@ -81,9 +81,9 @@
                     <!-- alt title-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="alt_title"><span style="color: red;">* </span>Alt Title</label>
-                            <input type="text" class="form-control form-control-solid @error('alt_title') is-invalid @enderror" name="alt" id="alt_title" placeholder="Please Enter Alt Title" value="{{ $category->alt }}">
-                            @error('meta_description')
+                            <label class="required form-label" for="alt"><span style="color: red;">* </span>Alt Title</label>
+                            <input type="text" class="form-control form-control-solid @error('alt') is-invalid @enderror" name="alt" id="alt" placeholder="Please Enter Alt Title" value="{{ $category->alt }}">
+                            @error('alt')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>

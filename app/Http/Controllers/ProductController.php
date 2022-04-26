@@ -16,7 +16,7 @@ class ProductController extends Controller
     {
         if (request()->ajax()) {
             /* Getting all records */
-            $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status')->where(['status' => 1, 'flag' => 0])->get();
+            $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status')->where(['flag' => 0])->get();
 
             /* Converting Selected Data into desired format */
             $products = new Collection;
@@ -76,6 +76,12 @@ class ProductController extends Controller
             'sale_price'            =>  'required',
             'category_id'           =>  'required',
             'alt'                   =>  'required',
+            'image'                 =>  'required',
+            'status'                =>  'required',
+            'weight'                =>  'required',
+            'height'                =>  'required',
+            'width'                 =>  'required',
+            'lenght'                =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'slug.required'                 =>  'Please Enter Slug',
@@ -85,6 +91,12 @@ class ProductController extends Controller
             'sale_price.required'           =>  'Please Enter Sale Price',
             'category_id.required'          =>  'Please Select Category',
             'alt.required'                  =>  'Please Enter Alt',
+            'image.required'                =>  'Please Select Image',
+            'status.required'               =>  'Please Select Status',
+            'weight.required'               =>  'Please Enter Weight',
+            'height.required'               =>  'Please Enter Height',
+            'width.required'                =>  'Please Enter Width',
+            'lenght.required'               =>  'Please Enter Lenght',
         ]);
 
         /* Storing OG Image on local disk */
@@ -184,6 +196,11 @@ class ProductController extends Controller
             'sale_price'            =>  'required',
             'category_id'           =>  'required',
             'alt'                   =>  'required',
+            'status'                =>  'required',
+            'weight'                =>  'required',
+            'height'                =>  'required',
+            'width'                 =>  'required',
+            'lenght'                =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'slug.required'                 =>  'Please Enter Slug',
@@ -193,6 +210,11 @@ class ProductController extends Controller
             'sale_price.required'           =>  'Please Enter Sale Price',
             'category_id.required'          =>  'Please Select Category',
             'alt.required'                  =>  'Please Enter Alt',
+            'status.required'               =>  'Please Select Status',
+            'weight.required'               =>  'Please Enter Weight',
+            'height.required'               =>  'Please Enter Height',
+            'width.required'                =>  'Please Enter Width',
+            'lenght.required'               =>  'Please Enter Lenght',
         ]);
 
         /* Fetching Blog Data using Id */

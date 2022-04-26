@@ -74,6 +74,8 @@ Route::middleware('auth:api')->group(function () {
 
 //Route for Forgot password
 Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
+//Route for Forgot password email
+Route::post('forgotPasswordEmail', [UserController::class, 'forgotPasswordEmail']);
 
 //Route for Get All Blogs
 Route::get('getallblogs', [BlogController::class, 'blogs']);

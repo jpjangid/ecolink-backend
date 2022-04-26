@@ -51,7 +51,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label" for="category_id"><span style="color: red;">* </span>Category</label>
-                            <select name="category_id" class="form-control select2bs4">
+                            <select name="category_id" class="form-control select2bs4 @error('category_id') is-invalid @enderror">
                                 <option value="">Select Category</option>
                                 @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -77,7 +77,7 @@
                     <!-- Product SKU -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="sku">SKU</label>
+                            <label class="required form-label" for="sku"><span style="color: red;">* </span>SKU</label>
                             <input type="text" class="form-control @error('sku') is-invalid @enderror" name="sku" id="sku" placeholder="Please Enter Product SKU" value="{{ old('sku') }}">
                             @error('sku')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -89,14 +89,17 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label" for="regular_price"><span style="color: red;">* </span>Product Regular Price</label>
-                            <input type="number" step=".01" class="form-control" name="regular_price" id="regular_price" placeholder="Please Enter Product Regular Price" value="{{ old('regular_price') }}">
+                            <input type="number" step=".01" class="form-control @error('regular_price') is-invalid @enderror" name="regular_price" id="regular_price" placeholder="Please Enter Product Regular Price" value="{{ old('regular_price') }}">
+                            @error('regular_price')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <!-- Product Discount Type -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="form-label" for="discount_type"><span style="color: red;">* </span>Product Discount Type</label>
+                            <label class="form-label" for="discount_type">Product Discount Type</label>
                             <select name="discount_type" class="form-control" id="dis_type">
                                 <option value="">Select Type</option>
                                 <option value="percentage" {{ old('discount_type') == 'percentage' ? 'selected' : '' }}>Percentage</option>
@@ -108,7 +111,7 @@
                     <!-- Product Discount -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="form-label" for="discount"><span style="color: red;">* </span>Product Discount</label>
+                            <label class="form-label" for="discount">Product Discount</label>
                             <input type="number" step=".01" class="form-control" name="discount" id="discount" placeholder="Please Enter Product Discount" value="{{ old('discount') }}">
                         </div>
                     </div>
@@ -117,7 +120,10 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label" for="sale_price"><span style="color: red;">* </span>Product Sale Price</label>
-                            <input type="number" step=".01" class="form-control" name="sale_price" id="sale_price" placeholder="Please Enter Product Sale Price" value="{{ old('sale_price') }}" readonly>
+                            <input type="number" step=".01" class="form-control @error('sale_price') is-invalid @enderror" name="sale_price" id="sale_price" placeholder="Please Enter Product Sale Price" value="{{ old('sale_price') }}" readonly>
+                            @error('sale_price')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
@@ -126,11 +132,11 @@
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
+                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('image')
-                            <span class="error invalid-feedback">{{ $message }}</span>
+                            <span class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -183,7 +189,7 @@
                     <!-- Product Stock-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="stock"><span style="color: red;">* </span>Product Stock</label>
+                            <label class="required form-label" for="stock">Product Stock</label>
                             <input type="number" step=".01" class="form-control @error('stock') is-invalid @enderror" name="stock" id="stock" placeholder="Please Enter Product Stock" value="{{ old('stock') }}">
                             @error('stock')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -194,7 +200,7 @@
                     <!-- Product Low Stock Amount-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="low_stock"><span style="color: red;">* </span>Product Low Stock Amount</label>
+                            <label class="required form-label" for="low_stock">Product Low Stock Amount</label>
                             <input type="number" step=".01" class="form-control @error('low_stock') is-invalid @enderror" name="low_stock" id="low_stock" placeholder="Please Enter Product Low Stock Amount" value="{{ old('low_stock') }}">
                             @error('low_stock')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -229,32 +235,44 @@
                     <!-- Weight-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="weight">Weight</label>
+                            <label class="required form-label" for="weight"><span style="color: red;">* </span>Weight</label>
                             <input type="number" step=".01" step=".01" class="form-control @error('weight') is-invalid @enderror" name="weight" id="weight" placeholder="Please Enter Weight" value="{{ old('weight') }}">
+                            @error('weight')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <!-- Lenght-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="lenght">Lenght</label>
+                            <label class="required form-label" for="lenght"><span style="color: red;">* </span>Lenght</label>
                             <input type="number" step=".01" step=".01" class="form-control @error('lenght') is-invalid @enderror" name="lenght" id="lenght" placeholder="Please Enter Lenght" value="{{ old('lenght') }}">
+                            @error('lenght')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <!-- Width-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="width">Width</label>
+                            <label class="required form-label" for="width"><span style="color: red;">* </span>Width</label>
                             <input type="number" step=".01" step=".01" class="form-control @error('width') is-invalid @enderror" name="width" id="width" placeholder="Please Enter Width" value="{{ old('width') }}">
+                            @error('width')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <!-- Height-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="height">Height</label>
+                            <label class="required form-label" for="height"><span style="color: red;">* </span>Height</label>
                             <input type="number" step=".01" step=".01" class="form-control @error('height') is-invalid @enderror" name="height" id="height" placeholder="Please Enter Height" value="{{ old('height') }}">
+                            @error('height')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
@@ -388,10 +406,10 @@
                         </div>
                     </div>
 
-                    <!-- Product image -->
+                    <!-- Product og image -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="og_image"><span style="color: red;">* </span>OG Image:</label>
+                            <label for="og_image">OG Image:</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="og_image">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>

@@ -71,12 +71,16 @@ class CategoryController extends Controller
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug',
+            'status'                =>  'required',
+            'image'                 =>  'required',
         ], [
             'name.required'                 =>  'Category Name is required',
             'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',
+            'status.required'               =>  'Category Status is required',
+            'image.required'                =>  'Category Image is required',
         ]);
 
         /* Storing Featured Image on local disk */
@@ -138,12 +142,14 @@ class CategoryController extends Controller
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug,' . $id,
+            'status'                =>  'required',
         ], [
             'name.required'                 =>  'Category Name is required',
             'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',
+            'status.required'               =>  'Category Status is required',
         ]);
 
         /* Storing Featured Image on local disk */
@@ -273,12 +279,18 @@ class CategoryController extends Controller
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug',
+            'status'                =>  'required',
+            'image'                 =>  'required',
+            'parent_id'             =>  'required',
         ], [
             'name.required'                 =>  'Category Name is required',
             'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',
+            'status.required'               =>  'Category Status is required',
+            'image.required'                =>  'Category Image is required',
+            'parent_id.required'            =>  'Parent Category is required',
         ]);
 
         /* Storing Featured Image on local disk */
@@ -341,12 +353,16 @@ class CategoryController extends Controller
             'description'           =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required|unique:categories,slug,' . $id,
+            'status'                =>  'required',
+            'parent_id'             =>  'required',
         ], [
             'name.required'                 =>  'Category Name is required',
             'name.regex'                    =>  'Please Enter Category Name in alphabets',
             'description.required'          =>  'Category Description is required',
             'alt.required'                  =>  'Category Image Alt text is required',
             'slug.required'                 =>  'Category Slug is required',
+            'status.required'               =>  'Category Status is required',
+            'parent_id.required'            =>  'Parent Category is required',
         ]);
 
         /* Storing Featured Image on local disk */

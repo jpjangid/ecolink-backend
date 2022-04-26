@@ -73,12 +73,18 @@ class BlogController extends Controller
             'publish_date'          =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required',
+            'status'                =>  'required',
+            'image'                 =>  'required',
+            'category'              =>  'required'
         ], [
             'title.required'                =>  'Blog Title is required',
             'description.required'          =>  'Blog Description is required',
             'publish_date.required'         =>  'Blog Publish Date is required',
             'alt.required'                  =>  'Featured Image Alt text is required',
             'slug.required'                 =>  'Blog Slug is required',
+            'status.required'               =>  'Blog Status is required',
+            'image.required'                =>  'Blog Image is required',
+            'category.required'             =>  'Blog Category is required',
         ]);
 
         /* Storing Featured Image on local disk */
@@ -154,12 +160,16 @@ class BlogController extends Controller
             'publish_date'          =>  'required',
             'alt'                   =>  'required',
             'slug'                  =>  'required',
+            'status'                =>  'required',
+            'category'              =>  'required'
         ], [
             'title.required'                =>  'Blog Title is required',
             'description.required'          =>  'Blog Description is required',
             'publish_date.required'         =>  'Blog Publish Date is required',
             'alt.required'                  =>  'Featured Image Alt text is required',
-            'slug'                          =>  'Blog Slug is required',
+            'slug.required'                 =>  'Blog Slug is required',
+            'status.required'               =>  'Blog Status is required',
+            'category.required'             =>  'Blog Category is required',
         ]);
 
         /* Fetching Blog Data using Id */
