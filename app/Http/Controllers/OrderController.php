@@ -14,45 +14,53 @@ class OrderController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $allorders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with('user:id,name')->orderby('created_at', 'desc')->get();
+        if (checkpermission('OrderController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $allorders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with('user:id,name')->orderby('created_at', 'desc')->get();
 
-            $orders = new Collection;
-            foreach ($allorders as $order) {
-                $orders->push([
-                    'id'                => $order->id,
-                    'order_no'          => $order->order_no,
-                    'client'            => $order->user->name,
-                    'order_status'      => $order->order_status,
-                    'payment_status'    => $order->payment_status,
-                    'total'             => number_format((float)$order->total_amount, 2, '.', ''),
-                    'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
-                    'order_comments'    => $order->order_comments
-                ]);
+                $orders = new Collection;
+                foreach ($allorders as $order) {
+                    $orders->push([
+                        'id'                => $order->id,
+                        'order_no'          => $order->order_no,
+                        'client'            => $order->user->name,
+                        'order_status'      => $order->order_status,
+                        'payment_status'    => $order->payment_status,
+                        'total'             => number_format((float)$order->total_amount, 2, '.', ''),
+                        'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
+                        'order_comments'    => $order->order_comments
+                    ]);
+                }
+
+                return Datatables::of($orders)
+                    ->addIndexColumn()
+                    /* Link to redirect on Order Detail Page */
+                    ->addColumn('orderno', function ($row) {
+                        $edit_url = url('admin/orders/order_detail', $row['id']);
+                        $btn = '<a href="' . $edit_url . '">#' . $row['order_no'] . '</i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['orderno'])
+                    ->make(true);
             }
-
-            return Datatables::of($orders)
-                ->addIndexColumn()
-                /* Link to redirect on Order Detail Page */
-                ->addColumn('orderno', function ($row) {
-                    $edit_url = url('admin/orders/order_detail', $row['id']);
-                    $btn = '<a href="' . $edit_url . '">#' . $row['order_no'] . '</i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['orderno'])
-                ->make(true);
+            return view('orders.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-        return view('orders.index');
     }
 
     public function order_detail($id)
     {
-        /* Order Detail Page with user and order data */
-        $order = Order::where('id', $id)->with('items.product', 'items.return', 'user')->first();
-        $user = DB::table('users')->find($order->user_id);
+        if (checkpermission('OrderController@edit')) {
+            /* Order Detail Page with user and order data */
+            $order = Order::where('id', $id)->with('items.product', 'items.return', 'user')->first();
+            $user = DB::table('users')->find($order->user_id);
 
-        return view('orders.detail', compact('order'));
+            return view('orders.detail', compact('order'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request)

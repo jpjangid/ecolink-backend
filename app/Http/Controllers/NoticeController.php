@@ -14,8 +14,12 @@ class NoticeController extends Controller
 {
     public function index()
     {
-        $notices = Notice::all();
-        return view('notices.index', compact('notices'));
+        if (checkpermission('NoticeController@index')) {
+            $notices = Notice::all();
+            return view('notices.index', compact('notices'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update_status(Request $request)
@@ -30,8 +34,12 @@ class NoticeController extends Controller
 
     public function edit($id)
     {
-        $notice = Notice::find($id);
-        return view('notices.edit', compact('notice'));
+        if (checkpermission('NoticeController@edit')) {
+            $notice = Notice::find($id);
+            return view('notices.edit', compact('notice'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -62,7 +70,7 @@ class NoticeController extends Controller
             'status'    =>  $request->status,
         ]);
 
-         /* After successfull update of data redirecting to index page with message */
-         return redirect('admin/notices')->with('success', 'Notice Updated Successfully');
+        /* After successfull update of data redirecting to index page with message */
+        return redirect('admin/notices')->with('success', 'Notice Updated Successfully');
     }
 }

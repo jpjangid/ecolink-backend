@@ -21,6 +21,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\UserPermissionController;
+use App\Http\Controllers\TaxRateController;
 
 
 /*
@@ -178,6 +180,15 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/delete/{id}', [RequestProductController::class, 'destroy']);
     });
 
+    Route::prefix('taxrates')->group(function () {
+        Route::get('/', [TaxRateController::class, 'index']);
+        Route::get('/create', [TaxRateController::class, 'create']);
+        Route::post('/store', [TaxRateController::class, 'store']);
+        Route::get('/edit/{id}', [TaxRateController::class, 'edit']);
+        Route::put('/update/{id}', [TaxRateController::class, 'update']);
+        Route::get('/delete/{id}', [TaxRateController::class, 'destroy']);
+    });
+
     Route::prefix('carts')->group(function () {
         Route::get('/', [CartController::class, 'index']);
         Route::get('/delete/{id}', [CartController::class, 'destroy']);
@@ -198,6 +209,14 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/edit/{id}', [NoticeController::class, 'edit']);
         Route::put('/update/{id}', [NoticeController::class, 'update']);
         Route::post('/update_status', [NoticeController::class, 'update_status']);
+    });
+
+    
+    /**Route for userpermissions */
+    Route::prefix('userpermissions')->group(function () {
+        Route::get('/', [UserPermissionController::class, 'index']);
+        Route::post('store', [UserPermissionController::class, 'store']);
+        Route::get('edit/{id}', [UserPermissionController::class, 'edit']);
     });
 });
 

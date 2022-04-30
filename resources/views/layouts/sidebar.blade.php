@@ -40,18 +40,22 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('UserController@create'))
 						<li class="nav-item">
 							<a href="{{ url('admin/users/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add User</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('UserController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/users') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>User List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
@@ -63,18 +67,22 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('BlogController@create'))
 						<li class="nav-item">
 							<a href="{{ url('admin/blogs/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add Blog</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('BlogController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/blogs') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Blog List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
@@ -86,18 +94,22 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('CategoryController@create'))
 						<li class="nav-item">
 							<a href="{{ url('admin/categories/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add Category</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('CategoryController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/categories') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Category List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
@@ -109,18 +121,22 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('SubCategoryController@create'))
 						<li class="nav-item">
 							<a href="{{ url('admin/sub/categories/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add Sub Category</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('SubCategoryController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/sub/categories') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Sub Category List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
@@ -132,18 +148,22 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('ProductController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/products/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add Product</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('ProductController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/products') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Product List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
@@ -155,18 +175,22 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('NewsLetterController@create'))
 						<li class="nav-item">
 							<a href="{{ url('admin/newsletters/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add News Letter</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('NewsLetterController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/newsletters') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>News Letter List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
@@ -178,18 +202,22 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('PageController@create'))
 						<li class="nav-item">
 							<a href="{{ url('admin/pages/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add Page</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('PageController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/pages') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Page List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
@@ -201,21 +229,53 @@
 						</p>
 					</a>
 					<ul class="nav nav-treeview">
+						@if(checkpermission('CouponController@create'))
 						<li class="nav-item">
 							<a href="{{ url('admin/coupons/create') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Add Coupon</p>
 							</a>
 						</li>
+						@endif
+						@if(checkpermission('CouponController@index'))
 						<li class="nav-item">
 							<a href="{{ url('admin/coupons') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Coupon List</p>
 							</a>
 						</li>
+						@endif
 					</ul>
 				</li>
 
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<p>
+							Tax Rate
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						@if(checkpermission('TaxRateController@create'))
+						<li class="nav-item">
+							<a href="{{ url('admin/taxrates/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Tax Rate</p>
+							</a>
+						</li>
+						@endif
+						@if(checkpermission('TaxRateController@index'))
+						<li class="nav-item">
+							<a href="{{ url('admin/taxrates') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Tax Rate List</p>
+							</a>
+						</li>
+						@endif
+					</ul>
+				</li>
+
+				@if(checkpermission('CartController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/carts') }}" class="nav-link">
 						<p>
@@ -223,7 +283,9 @@
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('WishlistController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/wishlists') }}" class="nav-link">
 						<p>
@@ -231,7 +293,9 @@
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('UserAddressController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/addresses') }}" class="nav-link">
 						<p>
@@ -239,7 +303,9 @@
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('OrderController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/orders') }}" class="nav-link">
 						<p>
@@ -247,7 +313,9 @@
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('ReturnController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/returns') }}" class="nav-link">
 						<p>
@@ -255,7 +323,9 @@
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('AskChemistController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/askchemist') }}" class="nav-link">
 						<p>
@@ -263,7 +333,9 @@
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('RequestProductController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/requestproduct') }}" class="nav-link">
 						<p>
@@ -271,15 +343,19 @@
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('ContactUsController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/contact') }}" class="nav-link">
 						<p>
-							Contact
+							Contact Us
 						</p>
 					</a>
 				</li>
+				@endif
 
+				@if(checkpermission('NoticeController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/notices') }}" class="nav-link">
 						<p>
@@ -287,6 +363,17 @@
 						</p>
 					</a>
 				</li>
+				@endif
+
+				@if(checkpermission('UserPermissionController@index'))
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/userpermissions') }}" class="nav-link">
+						<p>
+							User Permissions
+						</p>
+					</a>
+				</li>
+				@endif
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

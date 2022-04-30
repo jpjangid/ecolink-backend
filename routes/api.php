@@ -17,6 +17,7 @@ use App\Http\Controllers\api\WishlistController;
 use App\Http\Controllers\api\UserAddressController;
 use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\ReturnController;
+use App\Http\Controllers\api\TaxRateController;
 
 //Route for register new user
 Route::post('register', [UserController::class, 'register']);
@@ -70,6 +71,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('getReturnOrder', [ReturnController::class, 'index']);
     //Route For Storing for Return Order Data
     Route::post('storeReturnOrder', [ReturnController::class, 'store']);
+    
+    //Route For User Exempt
+    Route::post('taxExempt', [TaxRateController::class, 'taxExempt']);
 });
 
 //Route for Forgot password
@@ -109,3 +113,6 @@ Route::post('getCategory', [CategoryController::class, 'category']);
 Route::post('globalSearch', [HomeController::class, 'globalSearch']);
 //Route for Filter Product
 Route::post('filterProduct', [HomeController::class, 'filterProduct']);
+
+//Route For Getting Tax Using zip
+Route::post('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);

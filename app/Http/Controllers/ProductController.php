@@ -14,54 +14,61 @@ class ProductController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status')->where(['flag' => 0])->get();
+        if (checkpermission('ProductController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status')->where(['flag' => 0])->get();
 
-            /* Converting Selected Data into desired format */
-            $products = new Collection;
-            foreach ($allproducts as $product) {
-                $products->push([
-                    'id'        => $product->id,
-                    'name'      => $product->name,
-                    'slug'      => $product->slug,
-                    'status'    => $product->status,
-                ]);
-            }
+                /* Converting Selected Data into desired format */
+                $products = new Collection;
+                foreach ($allproducts as $product) {
+                    $products->push([
+                        'id'        => $product->id,
+                        'name'      => $product->name,
+                        'slug'      => $product->slug,
+                        'status'    => $product->status,
+                    ]);
+                }
 
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($products)
-                ->addIndexColumn()
-                /* Status Active and Deactive Checkbox */
-                ->addColumn('active', function ($row) {
-                    $checked = $row['status'] == '1' ? 'checked' : '';
-                    $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($products)
+                    ->addIndexColumn()
+                    /* Status Active and Deactive Checkbox */
+                    ->addColumn('active', function ($row) {
+                        $checked = $row['status'] == '1' ? 'checked' : '';
+                        $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
                                         <input type="hidden" value="' . $row['id'] . '" class="product_id">
                                         <input type="checkbox" class="form-check-input js-switch  h-20px w-30px" id="customSwitch1" name="status" value="' . $row['status'] . '" ' . $checked . '>
                                     </div>';
 
-                    return $active;
-                })
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/products/delete', $row['id']);
-                    $edit_url = url('admin/products/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'active'])
-                ->make(true);
+                        return $active;
+                    })
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/products/delete', $row['id']);
+                        $edit_url = url('admin/products/edit', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action', 'active'])
+                    ->make(true);
+            }
+            return view('products.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-
-        return view('products.index');
     }
 
     public function create()
     {
-        /* Loading Create Page with categories data */
-        $categories  = DB::table('categories')->where(['flag' => '0'])->get();
+        if (checkpermission('ProductController@create')) {
+            /* Loading Create Page with categories data */
+            $categories  = DB::table('categories')->where(['flag' => '0'])->get();
 
-        return view('products.create', compact('categories'));
+            return view('products.create', compact('categories'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function store(Request $request)
@@ -141,18 +148,18 @@ class ProductController extends Controller
             'alt'                   =>  $request->alt,
             'hsn'                   =>  $request->hsn,
             'tag'                   =>  $request->tag,
-            'short_desc'            =>  $request->short_desc, 
-            'tax_status'            =>  $request->tax_status, 
-            'tax_class'             =>  $request->tax_class, 
-            'in_stock'              =>  $request->in_stock, 
-            'stock'                 =>  $request->stock, 
-            'low_stock'             =>  $request->low_stock, 
-            'sold_individually'     =>  $request->sold_individually, 
+            'short_desc'            =>  $request->short_desc,
+            'tax_status'            =>  $request->tax_status,
+            'tax_class'             =>  $request->tax_class,
+            'in_stock'              =>  $request->in_stock,
+            'stock'                 =>  $request->stock,
+            'low_stock'             =>  $request->low_stock,
+            'sold_individually'     =>  $request->sold_individually,
             'minimum_qty'           =>  $request->minimum_qty,
-            'weight'                =>  $request->weight, 
-            'lenght'                =>  $request->lenght, 
-            'width'                 =>  $request->width, 
-            'height'                =>  $request->height, 
+            'weight'                =>  $request->weight,
+            'lenght'                =>  $request->lenght,
+            'width'                 =>  $request->width,
+            'height'                =>  $request->height,
             'shipping_class'        =>  $request->shipping_class,
             'insurance'             =>  $request->insurance,
             'hazardous'             =>  $request->hazardous,
@@ -176,12 +183,16 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        /* Getting Product data with categories for edit using Id */
-        $categories = DB::table('categories')->where(['flag' => '0'])->get();
+        if (checkpermission('ProductController@edit')) {
+            /* Getting Product data with categories for edit using Id */
+            $categories = DB::table('categories')->where(['flag' => '0'])->get();
 
-        $product = DB::table('products')->find($id);
+            $product = DB::table('products')->find($id);
 
-        return view('products.edit', compact('categories', 'product', 'id'));
+            return view('products.edit', compact('categories', 'product', 'id'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -261,18 +272,18 @@ class ProductController extends Controller
         $product->sale_price            =  number_format((float)$request->sale_price, 2, '.', '');
         $product->image                 =  $image;
         $product->tag                   =  $request->tag;
-        $product->short_desc            =  $request->short_desc; 
-        $product->tax_status            =  $request->tax_status; 
-        $product->tax_class             =  $request->tax_class; 
-        $product->in_stock              =  $request->in_stock; 
-        $product->stock                 =  $request->stock; 
-        $product->low_stock             =  $request->low_stock; 
-        $product->sold_individually     =  $request->sold_individually; 
-        $product->minimum_qty           =  $request->minimum_qty; 
-        $product->weight                =  $request->weight; 
-        $product->lenght                =  $request->lenght; 
-        $product->width                 =  $request->width; 
-        $product->height                =  $request->height; 
+        $product->short_desc            =  $request->short_desc;
+        $product->tax_status            =  $request->tax_status;
+        $product->tax_class             =  $request->tax_class;
+        $product->in_stock              =  $request->in_stock;
+        $product->stock                 =  $request->stock;
+        $product->low_stock             =  $request->low_stock;
+        $product->sold_individually     =  $request->sold_individually;
+        $product->minimum_qty           =  $request->minimum_qty;
+        $product->weight                =  $request->weight;
+        $product->lenght                =  $request->lenght;
+        $product->width                 =  $request->width;
+        $product->height                =  $request->height;
         $product->shipping_class        =  $request->shipping_class;
         $product->insurance             =  $request->insurance;
         $product->hazardous             =  $request->hazardous;

@@ -21,62 +21,70 @@ class ReturnController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $all_return_orders = ReturnItems::with('item.order', 'user', 'product')->orderby('created_at', 'desc')->get();
+        if (checkpermission('ReturnController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $all_return_orders = ReturnItems::with('item.order', 'user', 'product')->orderby('created_at', 'desc')->get();
 
-            /* Converting Selected Data into desired format */
-            $return_orders = new Collection;
-            foreach ($all_return_orders as $return_order) {
-                $return_orders->push([
-                    'id'                => $return_order->id,
-                    'order_no'          => '#' . $return_order->item->order->order_no,
-                    'sku'               => $return_order->product->sku,
-                    'return_no'         => $return_order->return_no,
-                    'client'            => $return_order->user->name,
-                    'reason'            => $return_order->reason,
-                    'return_status'     => $return_order->status,
-                    'date'              => date('d-m-Y h:i A', strtotime($return_order->created_at)),
-                ]);
+                /* Converting Selected Data into desired format */
+                $return_orders = new Collection;
+                foreach ($all_return_orders as $return_order) {
+                    $return_orders->push([
+                        'id'                => $return_order->id,
+                        'order_no'          => '#' . $return_order->item->order->order_no,
+                        'sku'               => $return_order->product->sku,
+                        'return_no'         => $return_order->return_no,
+                        'client'            => $return_order->user->name,
+                        'reason'            => $return_order->reason,
+                        'return_status'     => $return_order->status,
+                        'date'              => date('d-m-Y h:i A', strtotime($return_order->created_at)),
+                    ]);
+                }
+
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($return_orders)
+                    ->addIndexColumn()
+                    /* Link to redirect on Return Order Detail Page */
+                    ->addColumn('returnno', function ($row) {
+                        $edit_url = url('admin/returns/return_detail', $row['id']);
+                        $btn = '<a href="' . $edit_url . '">#' . $row['return_no'] . '</i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['returnno'])
+                    ->make(true);
             }
-
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($return_orders)
-                ->addIndexColumn()
-                /* Link to redirect on Return Order Detail Page */
-                ->addColumn('returnno', function ($row) {
-                    $edit_url = url('admin/returns/return_detail', $row['id']);
-                    $btn = '<a href="' . $edit_url . '">#' . $row['return_no'] . '</i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['returnno'])
-                ->make(true);
+            return view('returns.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-        return view('returns.index');
     }
 
     public function return_detail($id)
     {
-        /* Return Order Detail Page with user and order data */
-        $return_order = ReturnItems::where('id', $id)->with('item', 'order', 'user', 'product')->first();
-        $order_id = $return_order->order_id;
-        $order = Order::where('id', $order_id)->with('items.product')->first();
-        $total = 0.00;
-        $itemtotal = 0.00;
-        foreach ($order->items as $order_item) {
-            if ($order_item->id == $return_order->order_item_id) {
-                $itemtotal = $order_item->product->sale_price * $order_item->quantity;
+        if (checkpermission('ReturnController@edit')) {
+            /* Return Order Detail Page with user and order data */
+            $return_order = ReturnItems::where('id', $id)->with('item', 'order', 'user', 'product')->first();
+            $order_id = $return_order->order_id;
+            $order = Order::where('id', $order_id)->with('items.product')->first();
+            $total = 0.00;
+            $itemtotal = 0.00;
+            foreach ($order->items as $order_item) {
+                if ($order_item->id == $return_order->order_item_id) {
+                    $itemtotal = $order_item->product->sale_price * $order_item->quantity;
+                }
             }
-        }
 
-        if (!empty($order->coupon_id)) {
-            $coupon = Coupon::find($order->coupon_id);
-            $total = $this->coupon($coupon, $return_order);
+            if (!empty($order->coupon_id)) {
+                $coupon = Coupon::find($order->coupon_id);
+                $total = $this->coupon($coupon, $return_order);
+            } else {
+                $total = $itemtotal;
+            }
+
+            return view('returns.detail', compact('return_order', 'total', 'order'));
         } else {
-            $total = $itemtotal;
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-
-        return view('returns.detail', compact('return_order', 'total', 'order'));
     }
 
     public function update(Request $request)

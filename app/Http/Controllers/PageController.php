@@ -16,88 +16,99 @@ class PageController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0', 'status' => 1])->get();
+        if (checkpermission('PageController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0', 'status' => 1])->get();
 
-            /* Converting Selected Data into desired format */
-            $pages = new Collection;
-            foreach ($allpages as $page) {
-                $pages->push([
-                    'id'        => $page->id,
-                    'title'     => $page->title,
-                    'slug'      => $page->slug,
-                    'status'    => $page->status
-                ]);
-            }
+                /* Converting Selected Data into desired format */
+                $pages = new Collection;
+                foreach ($allpages as $page) {
+                    $pages->push([
+                        'id'        => $page->id,
+                        'title'     => $page->title,
+                        'slug'      => $page->slug,
+                        'status'    => $page->status
+                    ]);
+                }
 
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($pages)
-                ->addIndexColumn()
-                /* Status Active and Deactive Checkbox */
-                ->addColumn('active', function ($row) {
-                    $checked = $row['status'] == '1' ? 'checked' : '';
-                    $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($pages)
+                    ->addIndexColumn()
+                    /* Status Active and Deactive Checkbox */
+                    ->addColumn('active', function ($row) {
+                        $checked = $row['status'] == '1' ? 'checked' : '';
+                        $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
                                         <input type="hidden" value="' . $row['id'] . '" class="page_id">
                                         <input type="checkbox" class="form-check-input js-switch  h-20px w-30px" id="customSwitch1" name="status" value="' . $row['status'] . '" ' . $checked . '>
                                     </div>';
 
-                    return $active;
-                })
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/pages/delete', $row['id']);
-                    $edit_url = url('admin/pages/edit', $row['id']);
-                    $copy_url = url('admin/pages/copy', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-info btn-xs ml-1" href="' . $copy_url . '"><i class="fa fa-clone"></i></a>';
-                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'active'])
-                ->make(true);
-        }
+                        return $active;
+                    })
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/pages/delete', $row['id']);
+                        $edit_url = url('admin/pages/edit', $row['id']);
+                        $copy_url = url('admin/pages/copy', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        $btn .= '<a class="btn btn-info btn-xs ml-1" href="' . $copy_url . '"><i class="fa fa-clone"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action', 'active'])
+                    ->make(true);
+            }
 
-        return view('pages.index');
+            return view('pages.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function create()
     {
-        /* Getting All Link Categories */
-        $categories = LinkCategory::all();
-        /* Getting Parent Pages Data */
-        $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
-        /* Getting All Pages */
-        $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
+        if (checkpermission('PageController@create')) {
+            /* Getting All Link Categories */
+            $categories = LinkCategory::all();
+            /* Getting Parent Pages Data */
+            $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
+            /* Getting All Pages */
+            $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
 
-        /* Loading Create Page */
-        return view('pages.create', compact('categories', 'links', 'parentpages'));
+            /* Loading Create Page */
+            return view('pages.create', compact('categories', 'links', 'parentpages'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function copy($id)
     {
-        /* Getting All Link Categories */
-        $categories = LinkCategory::all();
-        /* Getting Page data for edit using Id */
-        $page = DB::table('pages')->find($id);
-        /* Getting Parent Pages Data */
-        $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
-        /* Getting All Pages */
-        $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
-        /* Getting All Saved Page Links */
-        $pagelinksobject = DB::table('links_on_pages')->select('id', 'link_id')->where('page_id', $id)->get();
+        if (checkpermission('PageController@create')) {
+            /* Getting All Link Categories */
+            $categories = LinkCategory::all();
+            /* Getting Page data for edit using Id */
+            $page = DB::table('pages')->find($id);
+            /* Getting Parent Pages Data */
+            $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
+            /* Getting All Pages */
+            $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->get();
+            /* Getting All Saved Page Links */
+            $pagelinksobject = DB::table('links_on_pages')->select('id', 'link_id')->where('page_id', $id)->get();
 
-        $pagelinks = array();
-        foreach ($pagelinksobject as $value) {
-            array_push($pagelinks, $value->link_id);
+            $pagelinks = array();
+            foreach ($pagelinksobject as $value) {
+                array_push($pagelinks, $value->link_id);
+            }
+
+            return view('pages.copy', compact('page', 'id', 'categories', 'links', 'parentpages', 'pagelinks'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-
-        return view('pages.copy', compact('page', 'id', 'categories', 'links', 'parentpages', 'pagelinks'));
     }
 
     public function store(Request $request)
     {
-        dd($request->all());
         /* Validating Input fields */
         $request->validate([
             'title'                 =>  'required',
@@ -178,22 +189,26 @@ class PageController extends Controller
 
     public function edit($id)
     {
-        /* Getting All Link Categories */
-        $categories = LinkCategory::all();
-        /* Getting Page data for edit using Id */
-        $page = DB::table('pages')->find($id);
-        /* Getting Parent Pages Data */
-        $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
-        /* Getting All Pages */
-        $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
-        /* Getting All Saved Page Links */
-        $pagelinksobject = DB::table('links_on_pages')->select('id', 'link_id')->where('page_id', $id)->get();
-        $pagelinks = array();
-        foreach ($pagelinksobject as $value) {
-            array_push($pagelinks, $value->link_id);
-        }
+        if (checkpermission('PageController@edit')) {
+            /* Getting All Link Categories */
+            $categories = LinkCategory::all();
+            /* Getting Page data for edit using Id */
+            $page = DB::table('pages')->find($id);
+            /* Getting Parent Pages Data */
+            $parentpages = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
+            /* Getting All Pages */
+            $links = DB::table('pages')->select('id', 'title')->where(['flag' => '0', 'status' => 1])->where('id', '!=', $id)->get();
+            /* Getting All Saved Page Links */
+            $pagelinksobject = DB::table('links_on_pages')->select('id', 'link_id')->where('page_id', $id)->get();
+            $pagelinks = array();
+            foreach ($pagelinksobject as $value) {
+                array_push($pagelinks, $value->link_id);
+            }
 
-        return view('pages.edit', compact('page', 'id', 'categories', 'links', 'parentpages', 'pagelinks'));
+            return view('pages.edit', compact('page', 'id', 'categories', 'links', 'parentpages', 'pagelinks'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -277,9 +292,13 @@ class PageController extends Controller
 
     public function destroy($id)
     {
-        /* Updating selected entry Flag to 1 for soft delete */
-        Page::where('id', $id)->update(['flag' => 1]);
+        if (checkpermission('PageController@destroy')) {
+            /* Updating selected entry Flag to 1 for soft delete */
+            Page::where('id', $id)->update(['flag' => 1]);
 
-        return redirect('admin/pages')->with('danger', 'Page Deleted');
+            return redirect('admin/pages')->with('danger', 'Page Deleted');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 }

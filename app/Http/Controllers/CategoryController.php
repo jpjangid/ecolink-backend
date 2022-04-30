@@ -15,52 +15,60 @@ class CategoryController extends Controller
     //Code for Main Category
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $maincategories = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->get();
+        if (checkpermission('CategoryController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $maincategories = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->get();
 
-            /* Converting Selected Data into desired format */
-            $categories = new Collection;
-            foreach ($maincategories as $category1) {
-                $categories->push([
-                    'id'        => $category1->id,
-                    'name'      => $category1->name,
-                    'slug'      => $category1->slug,
-                    'status'    => $category1->status
-                ]);
-            }
+                /* Converting Selected Data into desired format */
+                $categories = new Collection;
+                foreach ($maincategories as $category1) {
+                    $categories->push([
+                        'id'        => $category1->id,
+                        'name'      => $category1->name,
+                        'slug'      => $category1->slug,
+                        'status'    => $category1->status
+                    ]);
+                }
 
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($categories)
-                ->addIndexColumn()
-                /* Status Active and Deactive Checkbox */
-                ->addColumn('active', function ($row) {
-                    $checked = $row['status'] == '1' ? 'checked' : '';
-                    $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($categories)
+                    ->addIndexColumn()
+                    /* Status Active and Deactive Checkbox */
+                    ->addColumn('active', function ($row) {
+                        $checked = $row['status'] == '1' ? 'checked' : '';
+                        $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
                                         <input type="hidden" value="' . $row['id'] . '" class="category_id">
                                         <input type="checkbox" class="form-check-input js-switch  h-20px w-30px" id="customSwitch1" name="status" value="' . $row['status'] . '" ' . $checked . '>
                                     </div>';
 
-                    return $active;
-                })
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/categories/delete', $row['id']);
-                    $edit_url = url('admin/categories/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'active'])
-                ->make(true);
+                        return $active;
+                    })
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/categories/delete', $row['id']);
+                        $edit_url = url('admin/categories/edit', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action', 'active'])
+                    ->make(true);
+            }
+            return view('category.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-        return view('category.index');
     }
 
     public function create()
     {
-        /* Loading Create Page */
-        return view('category.create');
+        if (checkpermission('CategoryController@create')) {
+            /* Loading Create Page */
+            return view('category.create');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function store(Request $request)
@@ -129,9 +137,13 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        /* Getting Category data for edit using Id */
-        $category = DB::table('categories')->where('id', $id)->first();
-        return view('category.edit', compact('category', 'id'));
+        if (checkpermission('CategoryController@edit')) {
+            /* Getting Category data for edit using Id */
+            $category = DB::table('categories')->where('id', $id)->first();
+            return view('category.edit', compact('category', 'id'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -207,68 +219,80 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        /* Updating selected entry Flag to 1 for soft delete */
-        DB::table('categories')->where('id', $id)->update(['flag' => 1]);
-        return redirect('admin/categories')->with('danger', 'Category deleted successfully');
+        if (checkpermission('CategoryController@destroy')) {
+            /* Updating selected entry Flag to 1 for soft delete */
+            DB::table('categories')->where('id', $id)->update(['flag' => 1]);
+            return redirect('admin/categories')->with('danger', 'Category deleted successfully');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     //Code for Sub Category
     public function index_sub()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $maincategories = Category::where('flag', 0)->where('parent_id', null)->with('subcategory')->distinct('parent_id')->get();
+        if (checkpermission('SubCategoryController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $maincategories = Category::where('flag', 0)->where('parent_id', null)->with('subcategory')->distinct('parent_id')->get();
 
-            /* Converting Selected Data into desired format */
-            $categories = new Collection;
-            foreach ($maincategories as $category) {
-                if (!empty($category->subcategory)) {
-                    foreach ($category->subcategory as $sub) {
-                        if ($sub->flag == 0) {
-                            $categories->push([
-                                'id'        => $sub->id,
-                                'main'      => $category->name,
-                                'name'      => $sub->name,
-                                'slug'      => $sub->slug,
-                                'status'    => $sub->status
-                            ]);
+                /* Converting Selected Data into desired format */
+                $categories = new Collection;
+                foreach ($maincategories as $category) {
+                    if (!empty($category->subcategory)) {
+                        foreach ($category->subcategory as $sub) {
+                            if ($sub->flag == 0) {
+                                $categories->push([
+                                    'id'        => $sub->id,
+                                    'main'      => $category->name,
+                                    'name'      => $sub->name,
+                                    'slug'      => $sub->slug,
+                                    'status'    => $sub->status
+                                ]);
+                            }
                         }
                     }
                 }
-            }
 
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($categories)
-                ->addIndexColumn()
-                /* Status Active and Deactive Checkbox */
-                ->addColumn('active', function ($row) {
-                    $checked = $row['status'] == '1' ? 'checked' : '';
-                    $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($categories)
+                    ->addIndexColumn()
+                    /* Status Active and Deactive Checkbox */
+                    ->addColumn('active', function ($row) {
+                        $checked = $row['status'] == '1' ? 'checked' : '';
+                        $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
                                         <input type="hidden" value="' . $row['id'] . '" class="category_id">
                                         <input type="checkbox" class="form-check-input js-switch  h-20px w-30px" id="customSwitch1" name="status" value="' . $row['status'] . '" ' . $checked . '>
                                     </div>';
 
-                    return $active;
-                })
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/sub/categories/delete', $row['id']);
-                    $edit_url = url('admin/sub/categories/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'active'])
-                ->make(true);
+                        return $active;
+                    })
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/sub/categories/delete', $row['id']);
+                        $edit_url = url('admin/sub/categories/edit', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action', 'active'])
+                    ->make(true);
+            }
+            return view('category.sub.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-        return view('category.sub.index');
     }
 
     public function create_sub()
     {
-        /* Loading Create Page with Categories */
-        $categories = DB::table('categories')->where('parent_id', null)->where(['flag' => 0, 'status' => 1])->get();
-        return view('category.sub.create', compact('categories'));
+        if (checkpermission('SubCategoryController@create')) {
+            /* Loading Create Page with Categories */
+            $categories = DB::table('categories')->where('parent_id', null)->where(['flag' => 0, 'status' => 1])->get();
+            return view('category.sub.create', compact('categories'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function store_sub(Request $request)
@@ -339,10 +363,14 @@ class CategoryController extends Controller
 
     public function edit_sub($id)
     {
-        /* Getting Sub Category data with category for edit using Id */
-        $categories = DB::table('categories')->where('parent_id', null)->where(['flag' => 0, 'status' => 1])->get();
-        $category = DB::table('categories')->where('id', $id)->first();
-        return view('category.sub.edit', compact('category', 'categories', 'id'));
+        if (checkpermission('SubCategoryController@edit')) {
+            /* Getting Sub Category data with category for edit using Id */
+            $categories = DB::table('categories')->where('parent_id', null)->where(['flag' => 0, 'status' => 1])->get();
+            $category = DB::table('categories')->where('id', $id)->first();
+            return view('category.sub.edit', compact('category', 'categories', 'id'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update_sub(Request $request, $id)
@@ -421,9 +449,13 @@ class CategoryController extends Controller
 
     public function destroy_sub($id)
     {
-        /* Updating selected entry Flag to 1 for soft delete */
-        DB::table('categories')->where('id', $id)->update(['flag' => 1]);
+        if (checkpermission('SubCategoryController@destroy')) {
+            /* Updating selected entry Flag to 1 for soft delete */
+            DB::table('categories')->where('id', $id)->update(['flag' => 1]);
 
-        return redirect('admin/sub/categories')->with('danger', 'Sub Category deleted successfully');
+            return redirect('admin/sub/categories')->with('danger', 'Sub Category deleted successfully');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 }

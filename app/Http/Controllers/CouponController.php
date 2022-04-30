@@ -12,67 +12,75 @@ class CouponController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->get();
+        if (checkpermission('CouponController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->get();
 
-            /* Converting Selected Data into desired format */
-            $coupons = new Collection;
-            foreach ($allcoupons as $coupon) {
-                $coupons->push([
-                    'id'            =>  $coupon->id,
-                    'name'          =>  $coupon->name,
-                    'code'          =>  $coupon->code,
-                    'type'          =>  $coupon->type,
-                    'offer_start'   =>  date('d-m-Y H:i', strtotime($coupon->offer_start)),
-                    'offer_end'     =>  date('d-m-Y H:i', strtotime($coupon->offer_end)),
-                    'days'          =>  $coupon->days,
-                    'created_at'    =>  date('d-m-Y H:i', strtotime($coupon->created_at)),
-                    'show_in_front' =>  $coupon->show_in_front
-                ]);
-            }
+                /* Converting Selected Data into desired format */
+                $coupons = new Collection;
+                foreach ($allcoupons as $coupon) {
+                    $coupons->push([
+                        'id'            =>  $coupon->id,
+                        'name'          =>  $coupon->name,
+                        'code'          =>  $coupon->code,
+                        'type'          =>  $coupon->type,
+                        'offer_start'   =>  date('d-m-Y H:i', strtotime($coupon->offer_start)),
+                        'offer_end'     =>  date('d-m-Y H:i', strtotime($coupon->offer_end)),
+                        'days'          =>  $coupon->days,
+                        'created_at'    =>  date('d-m-Y H:i', strtotime($coupon->created_at)),
+                        'show_in_front' =>  $coupon->show_in_front
+                    ]);
+                }
 
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($coupons)
-                ->addIndexColumn()
-                /* Status Active and Deactive Checkbox */
-                ->addColumn('active', function ($row) {
-                    $checked = $row['show_in_front'] == '1' ? 'checked' : '';
-                    $active  = '<div class="form-check form-switch form-check-custom form-check-solid" style="padding-left: 3.75rem !important">
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($coupons)
+                    ->addIndexColumn()
+                    /* Status Active and Deactive Checkbox */
+                    ->addColumn('active', function ($row) {
+                        $checked = $row['show_in_front'] == '1' ? 'checked' : '';
+                        $active  = '<div class="form-check form-switch form-check-custom form-check-solid" style="padding-left: 3.75rem !important">
                                         <input type="hidden" value="' . $row['id'] . '" class="coupon_id">
                                         <input type="checkbox" class="form-check-input show_in_front  h-25px w-40px" value="' . $row['show_in_front'] . '" ' . $checked . '>
                                     </div>';
 
-                    return $active;
-                })
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/coupons/delete', $row['id']);
-                    $edit_url = url('admin/coupons/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'active'])
-                ->make(true);
-        }
+                        return $active;
+                    })
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/coupons/delete', $row['id']);
+                        $edit_url = url('admin/coupons/edit', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action', 'active'])
+                    ->make(true);
+            }
 
-        return view('coupons.index');
+            return view('coupons.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function create()
     {
-        /* Loading Create Page with users, products and categories data */
-        $role = DB::table('roles')->where('name','client')->first();
-        $users = DB::table('users')->where('role_id', $role->id)->get();
-        $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
-        $categories = DB::table('categories')->where(['flag' => '0'])->get();
+        if (checkpermission('CouponController@create')) {
+            /* Loading Create Page with users, products and categories data */
+            $role = DB::table('roles')->where('name', 'client')->first();
+            $users = DB::table('users')->where('role_id', $role->id)->get();
+            $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
+            $categories = DB::table('categories')->where(['flag' => '0'])->get();
 
-        return view('coupons.create', compact(
-            'categories',
-            'users',
-            'products'
-        ));
+            return view('coupons.create', compact(
+                'categories',
+                'users',
+                'products'
+            ));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function store(Request $request)
@@ -116,20 +124,24 @@ class CouponController extends Controller
 
     public function edit($id)
     {
-        /* Getting Coupon data for edit using Id */
-        $coupon = DB::table('coupons')->find($id);
-        $role = DB::table('roles')->where('name','client')->first();
-        $users = DB::table('users')->where('role_id', $role->id)->get();
-        $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
-        $categories = DB::table('categories')->where(['flag' => '0'])->get();
+        if (checkpermission('CouponController@edit')) {
+            /* Getting Coupon data for edit using Id */
+            $coupon = DB::table('coupons')->find($id);
+            $role = DB::table('roles')->where('name', 'client')->first();
+            $users = DB::table('users')->where('role_id', $role->id)->get();
+            $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
+            $categories = DB::table('categories')->where(['flag' => '0'])->get();
 
-        return view('coupons.edit', compact(
-            'categories',
-            'users',
-            'products',
-            'coupon',
-            'id'
-        ));
+            return view('coupons.edit', compact(
+                'categories',
+                'users',
+                'products',
+                'coupon',
+                'id'
+            ));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -178,10 +190,14 @@ class CouponController extends Controller
 
     public function destroy($id)
     {
-        /* Updating selected entry Flag to 1 for soft delete */
-        Coupon::where('id', $id)->update(['flag' => 1]);
+        if (checkpermission('CouponController@destroy')) {
+            /* Updating selected entry Flag to 1 for soft delete */
+            Coupon::where('id', $id)->update(['flag' => 1]);
 
-        return redirect('admin/coupons')->with('success', 'Coupon Deleted Successfully');
+            return redirect('admin/coupons')->with('success', 'Coupon Deleted Successfully');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update_status(Request $request)

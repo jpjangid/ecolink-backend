@@ -12,41 +12,49 @@ class NewsLetterController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $allnewsletters = DB::table('news_letters')->select('id', 'email', 'created_at')->where('flag', '0')->get();
+        if (checkpermission('NewsLetterController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $allnewsletters = DB::table('news_letters')->select('id', 'email', 'created_at')->where('flag', '0')->get();
 
-            /* Converting Selected Data into desired format */
-            $newsletters = new Collection;
-            foreach ($allnewsletters as $newsletter) {
-                $newsletters->push([
-                    'id'        => $newsletter->id,
-                    'email'     => $newsletter->email,
-                    'date'      => date('d-m-Y', strtotime($newsletter->created_at)),
-                ]);
+                /* Converting Selected Data into desired format */
+                $newsletters = new Collection;
+                foreach ($allnewsletters as $newsletter) {
+                    $newsletters->push([
+                        'id'        => $newsletter->id,
+                        'email'     => $newsletter->email,
+                        'date'      => date('d-m-Y', strtotime($newsletter->created_at)),
+                    ]);
+                }
+
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($newsletters)
+                    ->addIndexColumn()
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/newsletters/delete', $row['id']);
+                        $edit_url = url('admin/newsletters/edit', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
             }
-
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($newsletters)
-                ->addIndexColumn()
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/newsletters/delete', $row['id']);
-                    $edit_url = url('admin/newsletters/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            return view('newsletters.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-        return view('newsletters.index');
     }
 
     public function create()
     {
-        /* Loading Create Page */
-        return view('newsletters.create');
+        if (checkpermission('NewsLetterController@create')) {
+            /* Loading Create Page */
+            return view('newsletters.create');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function store(Request $request)
@@ -67,9 +75,13 @@ class NewsLetterController extends Controller
 
     public function edit($id)
     {
-        /* Getting News Letter data for edit using Id */
-        $letter = DB::table('news_letters')->find($id);
-        return view('newsletters.edit', compact('id', 'letter'));
+        if (checkpermission('NewsLetterController@edit')) {
+            /* Getting News Letter data for edit using Id */
+            $letter = DB::table('news_letters')->find($id);
+            return view('newsletters.edit', compact('id', 'letter'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -90,9 +102,13 @@ class NewsLetterController extends Controller
 
     public function destroy($id)
     {
-        /* Updating selected entry Flag to 1 for soft delete */
-        NewsLetter::where('id', $id)->update(['flag' => 1]);
+        if (checkpermission('NewsLetterController@destroy')) {
+            /* Updating selected entry Flag to 1 for soft delete */
+            NewsLetter::where('id', $id)->update(['flag' => 1]);
 
-        return redirect('admin/newsletters')->with('danger', 'News Letter Deleted successfully');
+            return redirect('admin/newsletters')->with('danger', 'News Letter Deleted successfully');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 }

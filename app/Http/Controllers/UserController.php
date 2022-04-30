@@ -17,48 +17,56 @@ class UserController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode')->where('flag', '0')->get();
+        if (checkpermission('UserController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode')->where('flag', '0')->get();
 
-            /* Converting Selected Data into desired format */
-            $users = new Collection;
-            foreach ($allusers as $user) {
-                $users->push([
-                    'id'            =>  $user->id,
-                    'name'          =>  $user->name,
-                    'email'         =>  $user->email,
-                    'address'       =>  $user->address,
-                    'mobile'        =>  $user->mobile,
-                    'city'          =>  $user->city,
-                    'state'         =>  $user->state,
-                    'pincode'       =>  $user->pincode,
-                ]);
+                /* Converting Selected Data into desired format */
+                $users = new Collection;
+                foreach ($allusers as $user) {
+                    $users->push([
+                        'id'            =>  $user->id,
+                        'name'          =>  $user->name,
+                        'email'         =>  $user->email,
+                        'address'       =>  $user->address,
+                        'mobile'        =>  $user->mobile,
+                        'city'          =>  $user->city,
+                        'state'         =>  $user->state,
+                        'pincode'       =>  $user->pincode,
+                    ]);
+                }
+
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($users)
+                    ->addIndexColumn()
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/users/delete', $row['id']);
+                        $edit_url = url('admin/users/edit', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
             }
-
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($users)
-                ->addIndexColumn()
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/users/delete', $row['id']);
-                    $edit_url = url('admin/users/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            return view('users.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-        return view('users.index');
     }
 
     public function create()
     {
-        /* Loading Create Page with location data */
-        $locations = Location::select('state')->distinct()->orderby('state')->get();
-        $roles = Role::all();
-        return view('users.create', compact('locations','roles'));
+        if (checkpermission('UserController@create')) {
+            /* Loading Create Page with location data */
+            $locations = Location::select('state')->distinct()->orderby('state')->get();
+            $roles = Role::all();
+            return view('users.create', compact('locations', 'roles'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function store(Request $request)
@@ -144,11 +152,15 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        /* Getting User data with location for edit using Id */
-        $user = User::find($id);
-        $roles = Role::all();
-        $locations = Location::select('state')->distinct()->orderby('state')->get();
-        return view('users.edit', compact('user', 'locations', 'id','roles'));
+        if (checkpermission('UserController@edit')) {
+            /* Getting User data with location for edit using Id */
+            $user = User::find($id);
+            $roles = Role::all();
+            $locations = Location::select('state')->distinct()->orderby('state')->get();
+            return view('users.edit', compact('user', 'locations', 'id', 'roles'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -226,9 +238,13 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        /* Updating selected entry Flag to 1 for soft delete */
-        User::where('id', $id)->update(['flag' => 1]);
+        if (checkpermission('UserController@destroy')) {
+            /* Updating selected entry Flag to 1 for soft delete */
+            User::where('id', $id)->update(['flag' => 1]);
 
-        return redirect('admin/users')->with('danger', 'User deleted successfully');
+            return redirect('admin/users')->with('danger', 'User deleted successfully');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 }

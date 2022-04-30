@@ -14,54 +14,62 @@ class BlogController extends Controller
 {
     public function index()
     {
-        if (request()->ajax()) {
-            /* Getting all records */
-            $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->get();
+        if (checkpermission('BlogController@index')) {
+            if (request()->ajax()) {
+                /* Getting all records */
+                $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->get();
 
-            /* Converting Selected Data into desired format */
-            $blogs = new Collection;
-            foreach ($allblogs as $blog) {
-                $blogs->push([
-                    'id'            => $blog->id,
-                    'title'         => $blog->title,
-                    'slug'          => $blog->slug,
-                    'category'      => $blog->category,
-                    'publish_date'  => date('d-m-Y', strtotime($blog->publish_date)),
-                    'status' => $blog->status
-                ]);
-            }
+                /* Converting Selected Data into desired format */
+                $blogs = new Collection;
+                foreach ($allblogs as $blog) {
+                    $blogs->push([
+                        'id'            => $blog->id,
+                        'title'         => $blog->title,
+                        'slug'          => $blog->slug,
+                        'category'      => $blog->category,
+                        'publish_date'  => date('d-m-Y', strtotime($blog->publish_date)),
+                        'status' => $blog->status
+                    ]);
+                }
 
-            /* Sending data through yajra datatable for server side rendering */
-            return Datatables::of($blogs)
-                ->addIndexColumn()
-                /* Status Active and Deactive Checkbox */
-                ->addColumn('active', function ($row) {
-                    $checked = $row['status'] == '1' ? 'checked' : '';
-                    $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
+                /* Sending data through yajra datatable for server side rendering */
+                return Datatables::of($blogs)
+                    ->addIndexColumn()
+                    /* Status Active and Deactive Checkbox */
+                    ->addColumn('active', function ($row) {
+                        $checked = $row['status'] == '1' ? 'checked' : '';
+                        $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
                                         <input type="hidden" value="' . $row['id'] . '" class="blog_id">
                                         <input type="checkbox" class="form-check-input js-switch  h-20px w-30px" id="customSwitch1" name="status" value="' . $row['status'] . '" ' . $checked . '>
                                     </div>';
 
-                    return $active;
-                })
-                /* Adding Actions like edit, delete and show */
-                ->addColumn('action', function ($row) {
-                    $delete_url = url('admin/blogs/delete', $row['id']);
-                    $edit_url = url('admin/blogs/edit', $row['id']);
-                    $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                    $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'active'])
-                ->make(true);
+                        return $active;
+                    })
+                    /* Adding Actions like edit, delete and show */
+                    ->addColumn('action', function ($row) {
+                        $delete_url = url('admin/blogs/delete', $row['id']);
+                        $edit_url = url('admin/blogs/edit', $row['id']);
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action', 'active'])
+                    ->make(true);
+            }
+            return view('blogs.index');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
         }
-        return view('blogs.index');
     }
 
     public function create()
     {
-        /* Loading Create Page */
-        return view('blogs.create');
+        if (checkpermission('BlogController@create')) {
+            /* Loading Create Page */
+            return view('blogs.create');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function store(Request $request)
@@ -145,10 +153,14 @@ class BlogController extends Controller
 
     public function edit($id)
     {
-        /* Getting Blog data for edit using Id */
-        $blog = DB::table('blogs')->find($id);
+        if (checkpermission('BlogController@edit')) {
+            /* Getting Blog data for edit using Id */
+            $blog = DB::table('blogs')->find($id);
 
-        return view('blogs.edit', compact('blog', 'id'));
+            return view('blogs.edit', compact('blog', 'id'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 
     public function update(Request $request, $id)
@@ -222,9 +234,13 @@ class BlogController extends Controller
 
     public function destroy($id)
     {
-        /* Updating selected entry Flag to 1 for soft delete */
-        Blog::where('id', $id)->update(['flag' => 1]);
+        if (checkpermission('BlogController@destroy')) {
+            /* Updating selected entry Flag to 1 for soft delete */
+            Blog::where('id', $id)->update(['flag' => 1]);
 
-        return redirect('admin/blogs')->with('danger', 'Blog Deleted');
+            return redirect('admin/blogs')->with('danger', 'Blog Deleted');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 }
