@@ -102,14 +102,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="min_order_amount">Min Order Amount</label>
-                            <input type="text" class="form-control form-control-solid" name="min_order_amount" id="min_order_amount" placeholder="Please Enter Min Order Amount" value="{{ old('min_order_amount') }}">
+                            <input type="number" step=".01" class="form-control form-control-solid" name="min_order_amount" id="min_order_amount" placeholder="Please Enter Min Order Amount" value="{{ old('min_order_amount') }}">
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="max_order_amount">Max Order Amount</label>
-                            <input type="text" class="form-control form-control-solid" name="max_order_amount" id="max_order_amount" placeholder="Please Enter Max Order Amount" value="{{ old('max_order_amount') }}">
+                            <input type="number" step=".01" class="form-control form-control-solid" name="max_order_amount" id="max_order_amount" placeholder="Please Enter Max Order Amount" value="{{ old('max_order_amount') }}">
                         </div>
                     </div>
 
@@ -163,7 +163,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="discount">Discount</label>
-                            <input type="number" class="form-control form-control-solid" name="discount" id="discount" placeholder="Please Enter Discount" value="{{ old('discount') }}">
+                            <input type="number" step=".01" class="form-control form-control-solid" name="discount" id="discount" placeholder="Please Enter Discount" value="{{ old('discount') }}">
                         </div>
                     </div>
 

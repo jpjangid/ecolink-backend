@@ -237,7 +237,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="weight">Weight</label>
-                            <input type="number" step=".01" step=".01" class="form-control @error('weight') is-invalid @enderror" name="weight" id="weight" placeholder="Please Enter Weight" value="{{ $product->weight }}">
+                            <input type="number" step=".01" class="form-control @error('weight') is-invalid @enderror" name="weight" id="weight" placeholder="Please Enter Weight" value="{{ $product->weight }}">
                             @error('weight')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -248,7 +248,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="lenght">Lenght</label>
-                            <input type="number" step=".01" step=".01" class="form-control @error('lenght') is-invalid @enderror" name="lenght" id="lenght" placeholder="Please Enter Lenght" value="{{ $product->lenght }}">
+                            <input type="number" step=".01" class="form-control @error('lenght') is-invalid @enderror" name="lenght" id="lenght" placeholder="Please Enter Lenght" value="{{ $product->lenght }}">
                             @error('lenght')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -259,7 +259,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="width">Width</label>
-                            <input type="number" step=".01" step=".01" class="form-control @error('width') is-invalid @enderror" name="width" id="width" placeholder="Please Enter Width" value="{{ $product->width }}">
+                            <input type="number" step=".01" class="form-control @error('width') is-invalid @enderror" name="width" id="width" placeholder="Please Enter Width" value="{{ $product->width }}">
                             @error('width')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -270,7 +270,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="height">Height</label>
-                            <input type="number" step=".01" step=".01" class="form-control @error('height') is-invalid @enderror" name="height" id="height" placeholder="Please Enter Height" value="{{ $product->height }}">
+                            <input type="number" step=".01" class="form-control @error('height') is-invalid @enderror" name="height" id="height" placeholder="Please Enter Height" value="{{ $product->height }}">
                             @error('height')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror

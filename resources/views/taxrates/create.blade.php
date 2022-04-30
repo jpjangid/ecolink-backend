@@ -73,7 +73,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="rate">Rate</label>
-                            <input type="number" class="form-control form-control-solid @error('rate') is-invalid @enderror" name="rate" id="rate" placeholder="Please Enter Rate" value="{{ old('rate') }}">
+                            <input type="number" step=".01" class="form-control form-control-solid @error('rate') is-invalid @enderror" name="rate" id="rate" placeholder="Please Enter Rate" value="{{ old('rate') }}">
                             @error('rate')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
