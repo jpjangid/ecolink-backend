@@ -275,15 +275,32 @@
 					</ul>
 				</li>
 
-				@if(checkpermission('CartController@index'))
 				<li class="nav-item has-treeview">
-					<a href="{{ url('admin/carts') }}" class="nav-link">
+					<a href="#" class="nav-link">
 						<p>
 							Carts
+							<i class="fas fa-angle-left right"></i>
 						</p>
 					</a>
+					<ul class="nav nav-treeview">
+						@if(checkpermission('CartController@create'))
+						<li class="nav-item">
+							<a href="{{ url('admin/carts/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Cart</p>
+							</a>
+						</li>
+						@endif
+						@if(checkpermission('CartController@index'))
+						<li class="nav-item">
+							<a href="{{ url('admin/carts') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Cart List</p>
+							</a>
+						</li>
+						@endif
+					</ul>
 				</li>
-				@endif
 
 				@if(checkpermission('WishlistController@index'))
 				<li class="nav-item has-treeview">

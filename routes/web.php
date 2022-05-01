@@ -191,6 +191,10 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('carts')->group(function () {
         Route::get('/', [CartController::class, 'index']);
+        Route::get('/create', [CartController::class, 'create']);
+        Route::post('/store', [CartController::class, 'store']);
+        Route::get('/edit/{id}', [CartController::class, 'edit']);
+        Route::put('/update/{id}', [CartController::class, 'update']);
         Route::get('/delete/{id}', [CartController::class, 'destroy']);
     });
 

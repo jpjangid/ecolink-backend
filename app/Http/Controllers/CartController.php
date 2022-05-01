@@ -15,7 +15,7 @@ class CartController extends Controller
         if (checkpermission('CartController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allcarts = Cart::select('id', 'user_id', 'product_id', 'quantity')->with('user:id,name', 'product:id,name')->get();
+                $allcarts = Cart::select('id', 'user_id', 'product_id', 'quantity', 'created_at')->with('user:id,name', 'product:id,name')->get();
 
                 /* Converting Selected Data into desired format */
                 $carts = new Collection;
@@ -37,7 +37,7 @@ class CartController extends Controller
                         $delete_url = url('admin/carts/delete', $row['id']);
                         $edit_url = url('admin/carts/edit', $row['id']);
                         $btn = '';
-                        // $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
                         $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
@@ -48,6 +48,69 @@ class CartController extends Controller
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }
+    }
+
+    public function create()
+    {
+        if (checkpermission('CartController@create')) {
+            $users = DB::table('users')->select('id', 'name')->where('role_id', '!=', 1)->get();
+            $products = DB::table('products')->where('status', 1)->get();
+            return view('carts.create', compact('users', 'products'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id'       =>  'required',
+            'product_id'    =>  'required',
+            'quantity'      =>  'required'
+        ]);
+
+        $cart = Cart::where(['user_id' => $request->user_id,'product_id' =>  $request->product_id])->first();
+
+        if(!empty($cart)){
+            return redirect('admin/carts')->with('danger','Duplicate entry');
+        }else{
+            Cart::create([
+                'user_id'       =>  $request->user_id,
+                'product_id'    =>  $request->product_id,
+                'quantity'      =>  $request->quantity,
+            ]);
+        }
+
+        return redirect('admin/carts')->with('success','Entry added successfully');
+    }
+
+    public function edit($id)
+    {
+        if (checkpermission('CartController@edit')) {
+            $cart = DB::table('carts')->find($id);
+            $users = DB::table('users')->select('id', 'name')->where('role_id', '!=', 1)->get();
+            $products = DB::table('products')->where('status', 1)->get();
+            return view('carts.edit', compact('users', 'products', 'cart'));
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'user_id'       =>  'required',
+            'product_id'    =>  'required',
+            'quantity'      =>  'required'
+        ]);
+
+        Cart::find($id)->update([
+            'user_id'       =>  $request->user_id,
+            'product_id'    =>  $request->product_id,
+            'quantity'      =>  $request->quantity,
+        ]);
+
+        return redirect('admin/carts')->with('success','Entry updated successfully');
     }
 
     public function destroy($id)

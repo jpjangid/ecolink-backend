@@ -30,7 +30,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
-                        <!-- <li class="breadcrumb-item"><a href="{{ url('admin/carts/create') }}" class="btn btn-info mt-o" style="float: right;">New cart</a></li> -->
+                        <li class="breadcrumb-item"><a href="{{ url('admin/carts/create') }}" class="btn btn-info mt-o" style="float: right;">New Cart Entry</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -41,10 +41,10 @@
         <table id="cartTable" class="table table-striped table-bordered" style="width:100%">
             <thead>
                 <tr class="text-center">
+                    <th>Created Date</th>
                     <th>User</th>
                     <th>Product</th>
                     <th>Quantity</th>
-                    <th>Created Date</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
@@ -60,8 +60,12 @@
         var cartTable = $('#cartTable').DataTable({
             processing: true,
             serverSide: true,
+            order: [[ 0, "desc" ]],
             ajax: "{{ url('admin/carts') }}",
             columns: [{
+                    data: 'created_at',
+                    name: 'created_at'
+                }, {
                     data: 'user',
                     name: 'user'
                 },
@@ -72,10 +76,6 @@
                 {
                     data: 'quantity',
                     name: 'quantity'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at'
                 },
                 {
                     data: 'action',
