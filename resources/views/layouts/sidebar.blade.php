@@ -372,6 +372,16 @@
 				</li>
 				@endif
 
+				@if(checkpermission('TechnicalSupportController@index'))
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/technicalsupport') }}" class="nav-link">
+						<p>
+							Technical Support
+						</p>
+					</a>
+				</li>
+				@endif
+
 				@if(checkpermission('ContactUsController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/contact') }}" class="nav-link">

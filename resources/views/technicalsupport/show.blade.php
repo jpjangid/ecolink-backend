@@ -12,7 +12,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('admin/bulkpricing') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('admin/technicalsupport') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->

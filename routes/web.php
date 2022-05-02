@@ -24,6 +24,7 @@ use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\TaxRateController;
 use App\Http\Controllers\BulkPricingController;
+use App\Http\Controllers\TechnicalSupportController;
 
 
 /*
@@ -187,6 +188,14 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/edit/{id}', [BulkPricingController::class, 'edit']);
         Route::put('/update/{id}', [BulkPricingController::class, 'update']);
         Route::get('/delete/{id}', [BulkPricingController::class, 'destroy']);
+    });
+
+    Route::prefix('technicalsupport')->group(function () {
+        Route::get('/', [TechnicalSupportController::class, 'index']);
+        Route::get('/show/{id}', [TechnicalSupportController::class, 'show']);
+        Route::get('/edit/{id}', [TechnicalSupportController::class, 'edit']);
+        Route::put('/update/{id}', [TechnicalSupportController::class, 'update']);
+        Route::get('/delete/{id}', [TechnicalSupportController::class, 'destroy']);
     });
 
     Route::prefix('taxrates')->group(function () {
