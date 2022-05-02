@@ -41,9 +41,9 @@
         <table id="wishlistTable" class="table table-striped table-bordered" style="width:100%">
             <thead>
                 <tr class="text-center">
+                    <th>Created Date</th>
                     <th>User</th>
                     <th>Product</th>
-                    <th>Created Date</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
@@ -59,18 +59,18 @@
         var wishlistTable = $('#wishlistTable').DataTable({
             processing: true,
             serverSide: true,
+            order: [[ 0, "desc" ]],
             ajax: "{{ url('admin/wishlists') }}",
             columns: [{
+                    data: 'created_at',
+                    name: 'created_at'
+                }, {
                     data: 'user',
                     name: 'user'
                 },
                 {
                     data: 'product',
                     name: 'product'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at'
                 },
                 {
                     data: 'action',
