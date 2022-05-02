@@ -74,6 +74,7 @@ class UserController extends Controller
             'password'              =>  $pass,
             'role_id'               =>  $role->id,
             'profile_image'         =>  $image_name,
+            'tax_exempt'            =>  $request->tax_exempt,
          ]);
 
          UserAddress::create([
@@ -85,6 +86,7 @@ class UserController extends Controller
              'state'         =>  $request['state'],
              'city'          =>  $request['city'],
              'zip'           =>  $request['pincode'],
+             'landmark'      =>  $request['landmark'],
          ]);
 
         $token = $user->createToken('MyApp')->accessToken;
