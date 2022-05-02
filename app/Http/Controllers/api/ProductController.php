@@ -28,7 +28,9 @@ class ProductController extends Controller
 
             $related_products = $this->relatedProducts($product);
 
-            $data = collect(['product' => $product, 'related_products' => $related_products]);
+            $variants = $this->variants($product);
+
+            $data = collect(['product' => $product, 'related_products' => $related_products, 'variants' => $variants]);
 
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
         } else {
@@ -53,19 +55,24 @@ class ProductController extends Controller
 
             $related_products = $this->relatedProducts($product);
 
+            $variants = $this->variants($product);
+
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $product], 200);
         } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
 
+    public function variants($product)
+    {
+        $variants = Product::select('id', 'name', 'slug', 'variant')->where(['status' => 1, 'name' => $product->name])->where('id', '!=', $product->id)->get();
+
+        return $variants;
+    }
+
     public function relatedProducts($product)
     {
         $related_products = collect();
-
-        $related = Product::select('id', 'name', 'slug', 'image', 'alt', 'sale_price', 'regular_price', 'variant')->where(['status' => 1, 'name' => $product->name])->where('id', '!=', $product->id)->with('ratings:id,rating,product_id')->get();
-
-        $related_products = $related_products->concat($related);
 
         $related = Product::select('id', 'name', 'slug', 'image', 'alt', 'sale_price', 'regular_price', 'variant')->where(['status' => 1, 'parent_id' => $product->parent_id])->where('id', '!=', $product->id)->with('ratings:id,rating,product_id')->get();
 
