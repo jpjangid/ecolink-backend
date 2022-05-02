@@ -1,5 +1,5 @@
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#e66465, #9198e5);">
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#37793a, #2774ba);">
 	<!-- Brand Logo -->
 	<div class="brand-link">
 		<img src="{{ asset('New_Ecolink_Logo-33.png') }}" alt="Ecolink logo" class="brand-image  elevation-3" style="opacity: .8">
@@ -26,6 +26,7 @@
 
 				<li class="nav-item">
 					<a href="{{ url('admin/home') }}" class="nav-link">
+						<i class="nav-icon fas fa-tachometer-alt"></i>
 						<p>
 							Dashboard
 						</p>
@@ -34,6 +35,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-user"></i>
 						<p>
 							Users
 							<i class="fas fa-angle-left right"></i>
@@ -61,6 +63,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-cubes"></i>
 						<p>
 							Blogs
 							<i class="fas fa-angle-left right"></i>
@@ -88,6 +91,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-square"></i>
 						<p>
 							Category
 							<i class="fas fa-angle-left right"></i>
@@ -115,6 +119,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-clone"></i>
 						<p>
 							Sub Category
 							<i class="fas fa-angle-left right"></i>
@@ -142,6 +147,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-shopping-basket"></i>
 						<p>
 							Product
 							<i class="fas fa-angle-left right"></i>
@@ -169,6 +175,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="fas fa-solid fa-envelope-open-text nav-icon"></i>
 						<p>
 							News Letter
 							<i class="fas fa-angle-left right"></i>
@@ -196,6 +203,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-file"></i>
 						<p>
 							Page
 							<i class="fas fa-angle-left right"></i>
@@ -223,6 +231,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="fas fa-tags nav-icon"></i>
 						<p>
 							Coupon
 							<i class="fas fa-angle-left right"></i>
@@ -250,6 +259,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="fas fa-solid fa-percent nav-icon"></i>
 						<p>
 							Tax Rate
 							<i class="fas fa-angle-left right"></i>
@@ -277,6 +287,7 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="fas fa-shopping-cart nav-icon"></i>
 						<p>
 							Carts
 							<i class="fas fa-angle-left right"></i>
@@ -305,6 +316,7 @@
 				@if(checkpermission('WishlistController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/wishlists') }}" class="nav-link">
+						<i class="fas fa-solid fa-heart nav-icon"></i>
 						<p>
 							Wish List
 						</p>
@@ -315,6 +327,7 @@
 				@if(checkpermission('UserAddressController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/addresses') }}" class="nav-link">
+						<i class="fas fa-solid fa-address-book nav-icon"></i>
 						<p>
 							User Addresses
 						</p>
@@ -325,6 +338,7 @@
 				@if(checkpermission('OrderController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/orders') }}" class="nav-link">
+						<i class="nav-icon fab fa-opencart"></i>
 						<p>
 							Orders
 						</p>
@@ -335,6 +349,7 @@
 				@if(checkpermission('ReturnController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/returns') }}" class="nav-link">
+						<i class="fa fa-undo nav-icon"></i>
 						<p>
 							Order Returns
 						</p>
@@ -345,6 +360,7 @@
 				@if(checkpermission('AskChemistController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/askchemist') }}" class="nav-link">
+						<i class="fas fa-solid fa-comment nav-icon"></i>
 						<p>
 							Ask Chemist
 						</p>
@@ -355,6 +371,7 @@
 				@if(checkpermission('RequestProductController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/requestproduct') }}" class="nav-link">
+						<i class="fas fa-th-list nav-icon"></i>
 						<p>
 							Request Product
 						</p>
@@ -365,6 +382,7 @@
 				@if(checkpermission('BulkPricingController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/bulkpricing') }}" class="nav-link">
+						<i class="fas fa-money-bill nav-icon"></i>
 						<p>
 							Bulk Pricing
 						</p>
@@ -375,6 +393,7 @@
 				@if(checkpermission('TechnicalSupportController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/technicalsupport') }}" class="nav-link">
+						<i class="fas fa-tools nav-icon"></i>
 						<p>
 							Technical Support
 						</p>
@@ -385,6 +404,7 @@
 				@if(checkpermission('ContactUsController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/contact') }}" class="nav-link">
+						<i class="fas fa-solid fa-address-book nav-icon"></i>
 						<p>
 							Contact Us
 						</p>
@@ -395,6 +415,7 @@
 				@if(checkpermission('NoticeController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/notices') }}" class="nav-link">
+						<i class="fas fa-solid fa-pen nav-icon"></i>
 						<p>
 							Notice
 						</p>
@@ -405,6 +426,7 @@
 				@if(checkpermission('UserPermissionController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/userpermissions') }}" class="nav-link">
+						<i class="fas fa-user-lock nav-icon"></i>
 						<p>
 							User Permissions
 						</p>
