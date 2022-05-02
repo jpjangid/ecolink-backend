@@ -17,7 +17,7 @@ class ProductController extends Controller
         if (checkpermission('ProductController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status')->where(['flag' => 0])->get();
+                $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status', 'variant')->where(['flag' => 0])->get();
 
                 /* Converting Selected Data into desired format */
                 $products = new Collection;
@@ -25,6 +25,7 @@ class ProductController extends Controller
                     $products->push([
                         'id'        => $product->id,
                         'name'      => $product->name,
+                        'variant'   => $product->variant,
                         'slug'      => $product->slug,
                         'status'    => $product->status,
                     ]);
@@ -76,6 +77,7 @@ class ProductController extends Controller
         /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required',
+            'variant'               =>  'required',
             'slug'                  =>  'required',
             'description'           =>  'required',
             'sku'                   =>  'required',
@@ -91,6 +93,7 @@ class ProductController extends Controller
             'lenght'                =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
+            'variant.required'              =>  'Please Enter Product Variant Name',
             'slug.required'                 =>  'Please Enter Slug',
             'description.required'          =>  'Please Enter Description',
             'sku.required'                  =>  'Please Enter SKU',
@@ -129,6 +132,7 @@ class ProductController extends Controller
         /* Storing Data in Table */
         Product::create([
             'name'                  =>  $request->name,
+            'variant'               =>  $request->variant,
             'slug'                  =>  $request->slug,
             'parent_id'             =>  $request->category_id,
             'description'           =>  $request->description,
@@ -200,6 +204,7 @@ class ProductController extends Controller
         /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required',
+            'variant'               =>  'required',
             'slug'                  =>  'required',
             'description'           =>  'required',
             'sku'                   =>  'required',
@@ -214,6 +219,7 @@ class ProductController extends Controller
             'lenght'                =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
+            'variant.required'              =>  'Please Enter Product Variant Name',
             'slug.required'                 =>  'Please Enter Slug',
             'description.required'          =>  'Please Enter Description',
             'sku.required'                  =>  'Please Enter SKU',
@@ -253,6 +259,7 @@ class ProductController extends Controller
 
         /* Updating Data fetched by Id */
         $product->name                  =  $request->name;
+        $product->variant               =  $request->variant;
         $product->slug                  =  $request->slug;
         $product->description           =  $request->description;
         $product->alt                   =  $request->alt;

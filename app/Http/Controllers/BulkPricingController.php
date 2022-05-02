@@ -8,14 +8,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
-class RequestProductController extends Controller
+class BulkPricingController extends Controller
 {
     public function index()
     {
-        if (checkpermission('RequestProductController@index')) {
+        if (checkpermission('BulkPricingController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allcontact = DB::table('contact_us')->select('id', 'first_name', 'last_name', 'phone', 'email', 'created_at')->where(['flag' => '0', 'type' => 'productrequest'])->get();
+                $allcontact = DB::table('contact_us')->select('id', 'first_name', 'last_name', 'phone', 'email', 'created_at')->where(['flag' => '0', 'type' => 'bulkpricing'])->get();
 
                 /* Converting Selected Data into desired format */
                 $contacts = new Collection;
@@ -35,9 +35,9 @@ class RequestProductController extends Controller
                     ->addIndexColumn()
                     /* Adding Actions like edit, delete and show */
                     ->addColumn('action', function ($row) {
-                        $delete_url = url('admin/requestproduct/delete', $row['id']);
-                        $edit_url = url('admin/requestproduct/edit', $row['id']);
-                        $show_url = url('admin/requestproduct/show', $row['id']);
+                        $delete_url = url('admin/bulkpricing/delete', $row['id']);
+                        $edit_url = url('admin/bulkpricing/edit', $row['id']);
+                        $show_url = url('admin/bulkpricing/show', $row['id']);
                         $btn = '';
                         // $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
                         $btn .= '<a class="btn btn-info btn-xs ml-1" href="' . $show_url . '"><i class="fa fa-eye"></i></a>';
@@ -47,7 +47,7 @@ class RequestProductController extends Controller
                     ->rawColumns(['action'])
                     ->make(true);
             }
-            return view('requestproduct.index');
+            return view('bulkpricing.index');
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }
@@ -65,11 +65,11 @@ class RequestProductController extends Controller
 
     public function show($id)
     {
-        if (checkpermission('RequestProductController@edit')) {
+        if (checkpermission('BulkPricingController@edit')) {
             /* Getting Contact with Question to show using Id */
             $contact = ContactUs::where('id', $id)->with('question')->first();
 
-            return view('requestproduct.show', compact('contact'));
+            return view('bulkpricing.show', compact('contact'));
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }
@@ -79,7 +79,7 @@ class RequestProductController extends Controller
     // {
     //     $contact = ContactUs::where('id', $id)->with('question')->first();
 
-    //     return view('requestproduct.edit', compact('contact'));
+    //     return view('bulkpricing.edit', compact('contact'));
     // }
 
     // public function update(Request $request, $id)
@@ -89,7 +89,7 @@ class RequestProductController extends Controller
 
     public function destroy($id)
     {
-        if (checkpermission('RequestProductController@destroy')) {
+        if (checkpermission('BulkPricingController@destroy')) {
             /* Updating selected entry Flag to 1 for soft delete */
             ContactUs::where('id', $id)->update(['flag' => 1]);
 

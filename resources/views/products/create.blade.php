@@ -35,6 +35,17 @@
                             @enderror
                         </div>
                     </div>
+                    
+                    <!-- Product Variant -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="variant"><span style="color: red;">* </span>Product Variant</label>
+                            <input type="text" class="form-control @error('variant') is-invalid @enderror" name="variant" id="variant" placeholder="Please Enter Product Variant" value="{{ old('variant') }}">
+                            @error('variant')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
 
                     <!-- slug -->
                     <div class="col-md-4">

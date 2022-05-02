@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
             $table->string('name')->nullable();
+            $table->string('variant')->nullable();
             $table->string('slug')->nullable();
             $table->string('sku')->nullable();
             $table->string('hsn')->nullable();

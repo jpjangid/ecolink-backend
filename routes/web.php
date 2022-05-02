@@ -23,6 +23,7 @@ use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\TaxRateController;
+use App\Http\Controllers\BulkPricingController;
 
 
 /*
@@ -178,6 +179,14 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/edit/{id}', [RequestProductController::class, 'edit']);
         Route::put('/update/{id}', [RequestProductController::class, 'update']);
         Route::get('/delete/{id}', [RequestProductController::class, 'destroy']);
+    });
+
+    Route::prefix('bulkpricing')->group(function () {
+        Route::get('/', [BulkPricingController::class, 'index']);
+        Route::get('/show/{id}', [BulkPricingController::class, 'show']);
+        Route::get('/edit/{id}', [BulkPricingController::class, 'edit']);
+        Route::put('/update/{id}', [BulkPricingController::class, 'update']);
+        Route::get('/delete/{id}', [BulkPricingController::class, 'destroy']);
     });
 
     Route::prefix('taxrates')->group(function () {

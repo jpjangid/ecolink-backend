@@ -42,6 +42,7 @@
             <thead>
                 <tr class="text-center">
                     <th>Product</th>
+                    <th>Variant</th>
                     <th>Slug</th>
                     <th>Status</th>
                     <th class="no-sort">Action</th>
@@ -64,6 +65,10 @@
                 columns: [{
                         data: 'name',
                         name: 'name'
+                    },
+                    {
+                        data: 'variant',
+                        name: 'variant'
                     },
                     {
                         data: 'slug',

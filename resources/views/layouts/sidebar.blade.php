@@ -362,6 +362,16 @@
 				</li>
 				@endif
 
+				@if(checkpermission('BulkPricingController@index'))
+				<li class="nav-item has-treeview">
+					<a href="{{ url('admin/bulkpricing') }}" class="nav-link">
+						<p>
+							Bulk Pricing
+						</p>
+					</a>
+				</li>
+				@endif
+
 				@if(checkpermission('ContactUsController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/contact') }}" class="nav-link">
