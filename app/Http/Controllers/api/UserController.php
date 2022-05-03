@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPassword;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 class UserController extends Controller
 {
@@ -90,8 +91,9 @@ class UserController extends Controller
          ]);
 
         $token = $user->createToken('MyApp')->accessToken;
+        $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
-        $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id]);
+        $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
 
         if(!empty($user)){
             return response()->json(['message' => 'Hi '.$user->name.', welcome to home','code' => 200, 'data' => $data], 200);
@@ -111,7 +113,10 @@ class UserController extends Controller
             //generate the token for the user
             $token = auth()->user()->createToken('MyApp')->accessToken;
 
-            $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => auth()->user()->id]);
+            $user = User::find(auth()->user()->id);
+            $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
+
+            $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => auth()->user()->id, 'user' => $user]);
             //now return this token on success login attempt
             return response()->json(['message' => 'Hi '.auth()->user()->name.', welcome to home','code' => 200, 'data' => $data], 200);
         }
