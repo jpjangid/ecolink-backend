@@ -148,6 +148,7 @@ class UserController extends Controller
         }
 
         $user = User::find($request->user_id);
+        $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
         if(!empty($user)){
             return response()->json(['message' => 'User Info fetched successfully', 'code' => 200, 'data' => $user], 200);
@@ -277,6 +278,8 @@ class UserController extends Controller
             $user->password         =   $pass;
             $user->profile_image    =   $image_name;
             $user->save();
+            
+            $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
             return response()->json(['message' => 'User info update successfully', 'code' => 200, 'data' => $user], 200);
         }else{
