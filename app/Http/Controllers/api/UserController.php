@@ -88,6 +88,7 @@ class UserController extends Controller
              'city'          =>  $request['city'],
              'zip'           =>  $request['pincode'],
              'landmark'      =>  $request['landmark'],
+             'name'          =>  $request['name'],
          ]);
 
         $token = $user->createToken('MyApp')->accessToken;
