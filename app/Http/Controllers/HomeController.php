@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ContactUs;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Blog;
+use App\Models\Cart;
 
 class HomeController extends Controller
 {
@@ -23,7 +28,18 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        if (auth()->user()->role_id == 1) {
+            $contacts = ContactUs::where('flag', '0')->latest()->take(10)->get();
+            $orders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with('user:id,name,mobile', 'items:id,order_id,product_id', 'items.product')->orderby('created_at', 'desc')->latest()->take(10)->get();
+            $orderCount = Order::where('flag', '0')->get()->flatten();
+            $enquireCount = ContactUs::where('flag', '0')->get()->flatten();
+            $productCount = Product::where('flag', '0')->get()->flatten();
+            $blogCount = Blog::where('flag', '0')->get()->flatten();
+            $CartCount = Cart::get()->flatten();
+            return view('home', compact('contacts', 'orders', 'orderCount', 'enquireCount', 'productCount', 'blogCount', 'CartCount'));
+        }
+
+
         // if (Auth::user()->role == "admin") {
         //     $days = array();
         //     $todate = date('Y-m-d', strtotime('- 30 day'));
