@@ -313,6 +313,34 @@
 					</ul>
 				</li>
 
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<i class="fab fa-opencart nav-icon"></i>
+						<p>
+							Orders
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						@if(checkpermission('OrderController@create'))
+						<li class="nav-item">
+							<a href="{{ url('admin/orders/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Order</p>
+							</a>
+						</li>
+						@endif
+						@if(checkpermission('OrderController@index'))
+						<li class="nav-item">
+							<a href="{{ url('admin/orders') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Order List</p>
+							</a>
+						</li>
+						@endif
+					</ul>
+				</li>
+
 				@if(checkpermission('WishlistController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/wishlists') }}" class="nav-link">
@@ -330,17 +358,6 @@
 						<i class="fas fa-solid fa-address-book nav-icon"></i>
 						<p>
 							User Addresses
-						</p>
-					</a>
-				</li>
-				@endif
-
-				@if(checkpermission('OrderController@index'))
-				<li class="nav-item has-treeview">
-					<a href="{{ url('admin/orders') }}" class="nav-link">
-						<i class="nav-icon fab fa-opencart"></i>
-						<p>
-							Orders
 						</p>
 					</a>
 				</li>

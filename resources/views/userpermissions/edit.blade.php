@@ -36,6 +36,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>Select All Permissions</td>
+                                <input type="hidden" id="user_id" value="{{$id}}">
+                                <input type="hidden" id="role_id" value="{{$role_id}}">
+                                <td><input type="checkbox" class="permission_id form-control-input" value="all"></label></td>
+                                <td>Delete All Permissions</td>
+                                <td colspan="2"><input type="checkbox" class="permission_id form-control-input" value="unselectall"></label></td>
+                            </tr>
                             @foreach($names as $name)
                             <tr>
                                 @if($name->title != 'Role' && $name->title != 'Permission')
@@ -84,14 +92,6 @@
                                 @endforeach
                             </tr>
                             @endforeach
-                            <tr>
-                                <td>Select All Permissions</td>
-                                <input type="hidden" id="user_id" value="{{$id}}">
-                                <input type="hidden" id="role_id" value="{{$role_id}}">
-                                <td><input type="checkbox" class="permission_id form-control-input" value="all"></label></td>
-                                <td>Delete All Permissions</td>
-                                <td colspan="2"><input type="checkbox" class="permission_id form-control-input" value="unselectall"></label></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
