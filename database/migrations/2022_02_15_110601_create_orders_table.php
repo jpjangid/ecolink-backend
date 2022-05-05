@@ -17,7 +17,6 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->string('order_no')->unique();
             $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
             $table->float('order_amount');
             $table->float('discount_applied')->nullable();
             $table->float('service_charge_applied')->nullable();

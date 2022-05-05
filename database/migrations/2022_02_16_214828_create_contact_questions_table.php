@@ -16,7 +16,6 @@ class CreateContactQuestionsTable extends Migration
         Schema::create('contact_questions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('contact_id');
-            $table->foreign('contact_id')->references('id')->on('contact_us');
             $table->text('input_1')->nullable();
             $table->text('input_2')->nullable();
             $table->text('input_3')->nullable();

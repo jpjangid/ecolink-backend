@@ -74,8 +74,8 @@ class OrderController extends Controller
     {
         $request->validate([
             'billing_name'          =>  'required',
-            'billing_mobile'        =>  'required|digits:10',
-            'billing_email'         =>  'required|email',
+            'billing_mobile'        =>  'required|digits:10|unique:users,mobile',
+            'billing_email'         =>  'required|email|unique:users,email',
             'billing_address'       =>  'required',
             'billing_city'          =>  'required',
             'billing_state'         =>  'required',
@@ -95,8 +95,6 @@ class OrderController extends Controller
             'quantity.*'            =>  'required',
             'product_total'         =>  'required',
         ]);
-
-        dd($request->all());
 
         if (!empty($request->customer)) {
             $user_id = $request->customer;
@@ -128,6 +126,7 @@ class OrderController extends Controller
                 'state'         =>  $request['billing_state'],
                 'city'          =>  $request['billing_city'],
                 'zip'           =>  $request['billing_zip'],
+                'landmark'      =>  $request['billing_landmark'],
             ]);
 
             $user_id = $user->id;
@@ -174,6 +173,129 @@ class OrderController extends Controller
                 ]);
             }
         }
+
+        return redirect('admin/orders')->with('success','Order Added Successfully');
+    }
+
+    public function edit($id)
+    {
+        $products = DB::table('products')->where('status', 1)->orderBy('name', 'asc')->get();
+        $users = DB::table('users')->where('role_id', '!=', 1)->where('flag', 0)->orderBy('name', 'asc')->get();
+        $order = Order::where('id', $id)->with('items')->first();
+
+        return view('orders.edit', compact('products', 'users', 'order'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'billing_name'          =>  'required',
+            'billing_address'       =>  'required',
+            'billing_city'          =>  'required',
+            'billing_state'         =>  'required',
+            'billing_country'       =>  'required',
+            'billing_zip'           =>  'required',
+            'shipping_name'         =>  'required',
+            'shipping_mobile'       =>  'required|digits:10',
+            'shipping_email'        =>  'required|email',
+            'shipping_address'      =>  'required',
+            'shipping_city'         =>  'required',
+            'shipping_state'        =>  'required',
+            'shipping_country'      =>  'required',
+            'shipping_zip'          =>  'required',
+            'total_amt'             =>  'required',
+            'total_qty'             =>  'required',
+            'product_id.*'          =>  'required',
+            'quantity.*'            =>  'required',
+            'product_total'         =>  'required',
+        ]);
+
+        if (!empty($request->customer)) {
+            $user_id = $request->customer;
+        } else {
+            $request->validate([
+                'billing_mobile'        =>  'required|digits:10|unique:users,mobile',
+                'billing_email'         =>  'required|email|unique:users,email',
+            ]);
+            /* Hashing password */
+            $pass = Hash::make($request['billing_mobile']);
+
+            /* Storing Data in Table */
+            $user = User::create([
+                'name'                  =>  $request['billing_name'],
+                'email'                 =>  $request['billing_email'],
+                'mobile'                =>  $request['billing_mobile'],
+                'address'               =>  $request['billing_address'],
+                'country'               =>  $request['billing_country'],
+                'state'                 =>  $request['billing_state'],
+                'city'                  =>  $request['billing_city'],
+                'pincode'               =>  $request['billing_zip'],
+                'password'              =>  $pass,
+                'role_id'               =>  2,
+            ]);
+
+            UserAddress::create([
+                'user_id'       =>  $user->id,
+                'name'          =>  $request['billing_name'],
+                'email'         =>  $request['billing_email'],
+                'mobile'        =>  $request['billing_mobile'],
+                'address'       =>  $request['billing_address'],
+                'country'       =>  $request['billing_country'],
+                'state'         =>  $request['billing_state'],
+                'city'          =>  $request['billing_city'],
+                'zip'           =>  $request['billing_zip'],
+                'landmark'      =>  $request['billing_landmark'],
+            ]);
+
+            $user_id = $user->id;
+        }
+
+        $order = Order::where('id', $id)->update([
+            'user_id'                   =>  $user_id,
+            'order_amount'              =>  $request->total_amt,
+            'discount_applied'          =>  $request->discount,
+            'total_amount'              =>  $request->total_amt,
+            'no_items'                  =>  $request->total_qty,
+            'billing_name'              =>  $request->billing_name,
+            'billing_mobile'            =>  $request->billing_mobile,
+            'billing_email'             =>  $request->billing_email,
+            'billing_address'           =>  $request->billing_address,
+            'billing_country'           =>  $request->billing_country,
+            'billing_state'             =>  $request->billing_state,
+            'billing_city'              =>  $request->billing_city,
+            'billing_zip'               =>  $request->billing_zip,
+            'billing_landmark'          =>  $request->billing_landmark,
+            'shipping_name'             =>  $request->shipping_name,
+            'shipping_mobile'           =>  $request->shipping_mobile,
+            'shipping_email'            =>  $request->shipping_email,
+            'shipping_address'          =>  $request->shipping_address,
+            'shipping_country'          =>  $request->shipping_country,
+            'shipping_state'            =>  $request->shipping_state,
+            'shipping_city'             =>  $request->shipping_city,
+            'shipping_zip'              =>  $request->shipping_zip,
+            'shipping_landmark'         =>  $request->shipping_landmark,
+            'order_status'              =>  $request->order_status,
+            'payment_status'            =>  $request->payment_status,
+            'shippment_via'             =>  $request->shippment_via,
+            'payment_amount'            =>  $request->total_amt,
+        ]);
+
+        $items = OrderItems::where('order_id', $id)->get();
+        foreach($items as $item){
+            $item->delete();
+        }
+
+        foreach ($request->product_id as $key => $item) {
+            if(!empty($item) && !empty($request->quantity[$key])){
+                OrderItems::create([
+                    'order_id'              =>  $id,
+                    'product_id'            =>  $item,
+                    'quantity'              =>  $request->quantity[$key],
+                ]);
+            }
+        }
+
+        return redirect('admin/orders')->with('success','Order Updated Successfully');
     }
 
     public function order_no()

@@ -16,9 +16,7 @@ class CreateLinksOnPagesTable extends Migration
         Schema::create('links_on_pages', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('page_id')->nullable();
-            $table->foreign('page_id')->references('id')->on('pages');
             $table->unsignedBigInteger('link_id')->nullable();
-            $table->foreign('link_id')->references('id')->on('pages');
             $table->timestamps();
         });
     }

@@ -20,7 +20,6 @@ class CreateProductReviewsTable extends Migration
             $table->string('name');
             $table->string('email');
             $table->unsignedBigInteger('product_id');
-            $table->foreign('product_id')->references('id')->on('products');
             $table->timestamps();
         });
     }

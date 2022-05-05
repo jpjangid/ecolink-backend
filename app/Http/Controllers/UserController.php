@@ -74,7 +74,7 @@ class UserController extends Controller
         /* Validating Input fields */
         $request->validate([
             'name'              =>  'required|regex:/^[\pL\s\-]+$/u',
-            'email'             =>  'required|email|max:255|unique:users',
+            'email'             =>  'required|email|max:255|unique:users,email',
             'mobile'            =>  'required|digits:10|unique:users,mobile',
             'address'           =>  'required',
             'state'             =>  'required|regex:/^[\pL\s\-]+$/u',

@@ -152,8 +152,8 @@
                         <div class="form-group">
                             <label class="required form-label" for="same">Shipping same as Billing </label>
                             <select class="form-control" name="same" id="same">
-                                <option value="no">No</option>
-                                <option value="yes">Yes</option>
+                                <option value="no" {{ old('same') == 'no' ? 'selected' : '' }} >No</option>
+                                <option value="yes" {{ old('same') == 'yes' ? 'selected' : '' }} >Yes</option>
                             </select>
                         </div>
                     </div>
@@ -273,7 +273,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select name="product_id[]" class="form-control select2 product_id">
+                                    <select name="product_id[]" class="form-control select2 product_id" required>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
                                         <option value="{{ $product->id }}">{{ $product->name }} - {{$product->variant}}</option>
@@ -281,7 +281,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="quantity[]" class="form-control quantity" placeholder="Enter Quantity">
+                                    <input type="number" name="quantity[]" class="form-control quantity" placeholder="Enter Quantity" required>
                                 </td>
                                 <td><input type="text" name="sale_price[]" class="form-control sale_price" placeholder="Enter Sale Price" readonly></td>
                                 <td><input type="text" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly></td>
@@ -367,6 +367,11 @@
 @endsection
 @section('js')
 <script>
+    $(document).ready(function(){
+        calculateTotal();
+        $('#discount').val("");
+    });
+
     $(document).on('change', '#same', function() {
         var same = $('#same').val();
         if (same === 'yes') {
@@ -456,6 +461,7 @@
             lastRow = table.find('tbody tr:last'),
             rowClone = lastRow.clone();
         rowClone.find("input").val("").end();
+        rowClone.find("select").val("").end();
         var newrow = table.find('tbody').append(rowClone);
     });
 
@@ -497,6 +503,7 @@
         var total = price * qty;
         row.find(".product_total").val(total);
         calculateTotal();
+        discount();
     }
 
     function calculateTotal() {
@@ -518,6 +525,10 @@
     }
 
     $(document).on('keyup', '#discount', function() {
+        discount();
+    });
+
+    function discount(){
         var discount = $('#discount').val();
         var total_amt = 0;
         $('.main_table tr').each(function() {
@@ -529,9 +540,9 @@
         if (!isNaN(discount) && discount != '') {
             total = parseFloat(total_amt) - parseFloat(discount);
             $(".total_amt").val(total);
-        }else{
+        } else {
             calculateTotal();
         }
-    });
+    }
 </script>
 @endsection

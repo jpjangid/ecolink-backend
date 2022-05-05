@@ -48,6 +48,7 @@
                     <th>Total Amount</th>
                     <th>Order Date</th>
                     <th>Special Requirement</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,6 +90,10 @@
             {
                 data: 'order_comments',
                 name: 'order_comments'
+            },
+            {
+                data: 'action',
+                name: 'action'
             },
         ]
     });
