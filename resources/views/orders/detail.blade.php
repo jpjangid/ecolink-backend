@@ -147,7 +147,7 @@
         var status = $('#order_status').val();
         var id = $('#order_id').val();
         $.ajax({
-            url: "{{ url('admin/orders/update') }}",
+            url: "{{ url('admin/orders/update_detail') }}",
             type: "POST",
             dataType: "json",
             data: {
@@ -156,9 +156,9 @@
                 _token: '{{csrf_token()}}'
             },
             success: function(data) {
-                location.reload();
-                swal("Good job!", data.message, "success");
-
+                swal("Good job!", data.message, "success").then((value) => {
+                    location.reload();
+                });
             }
         });
     });

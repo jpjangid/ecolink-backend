@@ -148,8 +148,16 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index']);
+        Route::get('/create', [OrderController::class, 'create']);
+        Route::post('/store', [OrderController::class, 'store']);
+        Route::get('/edit/{id}', [OrderController::class, 'edit']);
+        Route::put('/update/{id}', [OrderController::class, 'update']);
+        Route::get('/delete/{id}', [OrderController::class, 'destroy']);
         Route::get('/order_detail/{id}', [OrderController::class, 'order_detail']);
-        Route::post('/update', [OrderController::class, 'update']);
+        Route::post('/update_detail', [OrderController::class, 'update_detail']);
+        Route::post('/getAddresses', [OrderController::class, 'getAddresses']);
+        Route::post('/getAddressDetail', [OrderController::class, 'getAddressDetail']);
+        Route::post('/getProductById', [OrderController::class, 'getProductById']);
     });
 
     Route::prefix('returns')->group(function () {
