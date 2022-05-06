@@ -28,6 +28,7 @@ class CreateUsersTable extends Migration
             $table->integer('pincode')->nullable();
             $table->string('profile_image')->nullable();
             $table->tinyInteger('flag')->default(0);
+            $table->tinyInteger('email_verified')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -18,26 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'address', 'country', 'state', 'city', 'pincode', 'mobile', 'profile_image', 'role_id', 'flag', 'tax_exempt'
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
+        'name', 'email', 'password', 'address', 'country', 'state', 'city', 'pincode', 'mobile', 'profile_image', 'role_id', 'flag', 'tax_exempt', 'email_verified', 'remember_token'
     ];
 
     public function location()
@@ -52,6 +33,6 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo('App\Models\Role','role_id');
+        return $this->belongsTo('App\Models\Role', 'role_id');
     }
 }
