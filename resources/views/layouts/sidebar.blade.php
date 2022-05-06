@@ -11,7 +11,7 @@
 		<!-- Sidebar user panel (optional) -->
 		<div class="user-panel mt-3 pb-3 mb-3 d-flex">
 			<div class="image">
-				<img src="{{ auth()->user()->profile_image != null ? asset('public/storage/profile/'.auth()->user()->id.'/'.auth()->user()->profile_image) : asset('default.jpg') }}" class="img-rounded elevation-2" alt="{{ auth()->user()->name }}">
+				<img src="{{ auth()->user()->profile_image != null ? asset('storage/profile_image/'.auth()->user()->profile_image) : asset('default.jpg') }}" class="img-rounded elevation-2" alt="{{ auth()->user()->name }}">
 			</div>
 			<div class="info">
 				<a href="{{ url('admin/profile',auth()->user()->id) }}" class="d-block">{{ auth()->user()->name }}</a>
