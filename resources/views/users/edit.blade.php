@@ -27,28 +27,28 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="name"><span style="color: red;">* </span> Full Name:</label>
-                        <input type="text" class="form-control" name="name" placeholder="Enter full name" value="{{ $user->name }}" />
+                        <input type="text" class="form-control" name="name" placeholder="Enter Full Name" value="{{ $user->name }}" />
                         @error('name')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="email"><span style="color: red;">* </span>Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter email" value="{{ $user->email }}" />
+                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ $user->email }}" />
                         @error('email')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
-                        <input type="number" class="form-control" name="mobile" placeholder="Enter mobile number" value="{{ $user->mobile }}" />
+                        <input type="number" class="form-control" name="mobile" placeholder="Enter Mobile No." value="{{ $user->mobile }}" />
                         @error('mobile')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="address"><span style="color: red;">* </span>Address:</label>
-                        <input type="text" class="form-control" name="address" placeholder="Enter address" value="{{ $user->address }}" />
+                        <input type="text" class="form-control" name="address" placeholder="Enter Address" value="{{ $user->address }}" />
                         @error('address')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -97,7 +97,7 @@
                         <label for="profile_image">Profile Image:</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image">
-                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
                         </div>
                     </div>
                     <div class="col-md-4">
