@@ -41,7 +41,7 @@
                                 <th>Qty.</th>
                                 <th>Item Price</th>
                                 <th>Amount</th>
-                                <th>Status</th>
+                                <th>Active/Inactive</th>
                             </tr>
                         </thead>
                         <tbody>

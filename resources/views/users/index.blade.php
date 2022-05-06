@@ -61,6 +61,7 @@
 <script type="text/javascript">
     $(function() {
         var table = $('#userTable').DataTable({
+            scrollY: "55vh",
             processing: true,
             serverSide: true,
             ajax: "{{ url('admin/users') }}",

@@ -176,9 +176,8 @@ class UserController extends Controller
             'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
             'pincode'           =>  'required',
             'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
-            'password'          =>  'min:8',
+            'password'          =>  'nullable|min:8',
             'role_id'           =>  'required',
-            'profile_image'     =>  'required'
         ], [
             'name.required'             =>  'Please Enter Name',
             'name.regex'                =>  'Please Enter Name in alphabets',
@@ -194,8 +193,6 @@ class UserController extends Controller
             'country.regex'             =>  'Please Enter Country in alphabets',
             'role_id.required'          =>  'Please Select Role',
             'mobile.numeric'            =>  'The Mobile No. must be numeric',
-            'password.required'         =>  'Please Enter Password',
-            'profile_image.required'    =>  'Please Select Profile Image',
         ]);
 
         /* Fetching Blog Data using Id */
@@ -229,7 +226,7 @@ class UserController extends Controller
         $user->city             =   $request['city'];
         $user->pincode          =   $request['pincode'];
         $user->password         =   $pass;
-        $user->role             =   $request['role'];
+        $user->role_id          =   $request['role_id'];
         $user->profile_image    =   $image_name;
         $user->save();
 

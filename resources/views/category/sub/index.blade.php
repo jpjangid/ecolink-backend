@@ -44,7 +44,7 @@
                     <th>Category</th>
                     <th>Sub Category</th>
                     <th>Slug</th>
-                    <th>Status</th>
+                    <th>Active/Inactive</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
