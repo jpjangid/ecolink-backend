@@ -56,6 +56,7 @@
 @section('js')
 <script type="text/javascript">
     var pageTable = $('#pageTable').DataTable({
+        scrollY: "55vh",
         processing: true,
         serverSide: true,
         url: "{{ url('admin/pages') }}",

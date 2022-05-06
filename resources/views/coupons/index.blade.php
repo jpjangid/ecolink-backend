@@ -61,6 +61,7 @@
 @section('js')
 <script type="text/javascript">
     var couponTable = $('#couponTable').DataTable({
+        scrollY: "55vh",
         processing: true,
         serverSide: true,
         url: "{{ url('admin/coupons') }}",

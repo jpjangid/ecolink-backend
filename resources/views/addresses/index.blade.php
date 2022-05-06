@@ -61,7 +61,7 @@
 <script type="text/javascript">
     $(function() {
         var table = $('#useraddressTable').DataTable({
-            scrollY: "50vh",
+            scrollY: "55vh",
             processing: true,
             serverSide: true,
             ajax: "{{ url('admin/addresses') }}",

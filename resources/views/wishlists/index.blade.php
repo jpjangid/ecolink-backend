@@ -57,6 +57,7 @@
 <script type="text/javascript">
     $(function() {
         var wishlistTable = $('#wishlistTable').DataTable({
+            scrollY: "55vh",
             processing: true,
             serverSide: true,
             order: [[ 0, "desc" ]],

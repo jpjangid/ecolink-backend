@@ -59,6 +59,7 @@
 <script type="text/javascript">
     $(function() {
         var askchemistTable = $('#askchemistTable').DataTable({
+            scrollY: "55vh",
             processing: true,
             serverSide: true,
             ajax: "{{ url('admin/askchemist') }}",

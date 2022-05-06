@@ -56,6 +56,7 @@
 @section('js')
 <script type="text/javascript">
     var materialTable = $('#categoryTable').DataTable({
+        scrollY: "55vh",
         processing: true,
         serverSide: true,
         url: "{{ url('admin/categories') }}",

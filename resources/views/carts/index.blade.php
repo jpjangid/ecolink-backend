@@ -58,6 +58,7 @@
 <script type="text/javascript">
     $(function() {
         var cartTable = $('#cartTable').DataTable({
+            scrollY: "55vh",
             processing: true,
             serverSide: true,
             order: [[ 0, "desc" ]],

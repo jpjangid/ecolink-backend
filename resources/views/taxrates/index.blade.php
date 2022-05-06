@@ -58,6 +58,7 @@
 @section('js')
 <script type="text/javascript">
     var taxrateTable = $('#taxrateTable').DataTable({
+        scrollY: "55vh",
         processing: true,
         serverSide: true,
         url: "{{ url('admin/taxrates') }}",

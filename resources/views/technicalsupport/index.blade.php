@@ -59,6 +59,7 @@
 <script type="text/javascript">
     $(function() {
         var technicalsupportTable = $('#technicalsupportTable').DataTable({
+            scrollY: "55vh",
             processing: true,
             serverSide: true,
             ajax: "{{ url('admin/technicalsupport') }}",

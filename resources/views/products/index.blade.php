@@ -59,6 +59,7 @@
     $(function() {
         $(document).ready(function() {
             var materialTable = $('#productTable').DataTable({
+                scrollY: "55vh",
                 processing: true,
                 serverSide: true,
                 url: "{{ url('admin/products') }}",
