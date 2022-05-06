@@ -40,7 +40,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
-                        <input type="number" class="form-control" name="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
+                        <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
                         @error('mobile')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
