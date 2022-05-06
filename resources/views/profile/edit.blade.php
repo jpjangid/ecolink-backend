@@ -40,7 +40,7 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <img src="{{ auth()->user()->profile_image != null ? asset('storage/profile/'.auth()->user()->id.'/'.auth()->user()->profile_image) :asset('default.jpg') }}" class="img-rounded" alt="{{ auth()->user()->name }}" width="304" height="236"><br>
+                                <img src="{{ auth()->user()->profile_image != null ? asset('storage/profile_image/'.auth()->user()->profile_image) :asset('default.jpg') }}" class="img-rounded" alt="{{ auth()->user()->name }}" width="304" height="236"><br>
                             </div>
                         </div>
                     </div>
