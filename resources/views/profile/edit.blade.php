@@ -62,14 +62,14 @@
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="name"><span style="color: red;">* </span> Password : </label>
+                        <label for="name">Password : </label>
                         <input type="password" class="form-control" name="password" placeholder="Enter your passowrd" value="" />
                         @error('password')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="name"><span style="color: red;">* </span> Confirm Password : </label>
+                        <label for="name">Confirm Password : </label>
                         <input type="password" class="form-control" name="password_confirmation" placeholder="Enter your confirm password" value="" />
                         @error('password_confirmation')
                         <span class="text-danger">{{ $message }}</span>
