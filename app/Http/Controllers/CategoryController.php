@@ -49,7 +49,7 @@ class CategoryController extends Controller
                         $delete_url = url('admin/categories/delete', $row['id']);
                         $edit_url = url('admin/categories/edit', $row['id']);
                         $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
@@ -221,7 +221,26 @@ class CategoryController extends Controller
     {
         if (checkpermission('CategoryController@destroy')) {
             /* Updating selected entry Flag to 1 for soft delete */
-            DB::table('categories')->where('id', $id)->update(['flag' => 1]);
+            $category = Category::where('id', $id)->with('subcategory.products', 'products')->first();
+
+            $category->update(['flag' => 1]);
+            if($category->subcategory->isNotEmpty()){
+                foreach($category->subcategory as $subcategory){
+                    $subcategory->update(['flag' => 1]);
+                    if($subcategory->products->isNotEmpty()){
+                        foreach($subcategory->products as $product){
+                            $product->update(['flag' => 1]);
+                        }
+                    }
+                }
+            }
+
+            if($category->products->isNotEmpty()){
+                foreach($category->products as $product){
+                    $product->update(['flag' => 1]);
+                }
+            }
+
             return redirect('admin/categories')->with('danger', 'Category deleted successfully');
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
@@ -272,7 +291,7 @@ class CategoryController extends Controller
                         $delete_url = url('admin/sub/categories/delete', $row['id']);
                         $edit_url = url('admin/sub/categories/edit', $row['id']);
                         $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
@@ -451,7 +470,25 @@ class CategoryController extends Controller
     {
         if (checkpermission('SubCategoryController@destroy')) {
             /* Updating selected entry Flag to 1 for soft delete */
-            DB::table('categories')->where('id', $id)->update(['flag' => 1]);
+            $category = Category::where('id', $id)->with('subcategory.products', 'products')->first();
+
+            $category->update(['flag' => 1]);
+            if($category->subcategory->isNotEmpty()){
+                foreach($category->subcategory as $subcategory){
+                    $subcategory->update(['flag' => 1]);
+                    if($subcategory->products->isNotEmpty()){
+                        foreach($subcategory->products as $product){
+                            $product->update(['flag' => 1]);
+                        }
+                    }
+                }
+            }
+
+            if($category->products->isNotEmpty()){
+                foreach($category->products as $product){
+                    $product->update(['flag' => 1]);
+                }
+            }
 
             return redirect('admin/sub/categories')->with('danger', 'Sub Category deleted successfully');
         } else {
