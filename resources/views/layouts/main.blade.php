@@ -155,6 +155,10 @@
       $(this).next('.custom-file-label').html(files.join(', '));
     });
 
+    $(".alert").fadeTo(2000, 500).slideUp(500, function() {
+      $(".alert").slideUp(1000);
+    });
+
     function myFunction() {
       // $.ajax({
       //     url:"{{url('getnotifications')}}",
