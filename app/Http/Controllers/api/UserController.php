@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPassword;
+use App\Mail\VerificationMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 class UserController extends Controller
@@ -62,6 +63,7 @@ class UserController extends Controller
         $pass = Hash::make($request['password']);
 
         $role = Role::where('name','client')->first();
+        $randomString = Str::random(30);
 
         $user = User::create([
             'name'                  =>  $request['name'],
@@ -76,6 +78,7 @@ class UserController extends Controller
             'role_id'               =>  $role->id,
             'profile_image'         =>  $image_name,
             'tax_exempt'            =>  $request->tax_exempt,
+            'remember_token'        =>  $randomString
          ]);
 
          UserAddress::create([
@@ -94,12 +97,35 @@ class UserController extends Controller
         $token = $user->createToken('MyApp')->accessToken;
         $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
+        $user->url = 'https://brandtalks.in/ecolinkfrontend/'.$user->remember_token;
+
+        Mail::to($request->email)->send(new VerificationMail($user));
+
         $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
 
         if(!empty($user)){
             return response()->json(['message' => 'Hi '.$user->name.', welcome to home','code' => 200, 'data' => $data], 200);
         }else{
             return response()->json(['message' => 'Credentials Invalid','code' => 400], 400);
+        }
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'         => 'required|email',
+            'token'         => 'required'
+        ]);
+
+        $user = User::where(['email' => $request->email, 'remember_token' => $request->token])->first();
+
+        if(!empty($user)){
+            $user->email_verified = 1;
+            $user->update();
+
+            return response()->json(['message' => 'User Account verified successfully', 'code' => 200, 'data' => $user], 200);
+        }else{
+            return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }
 

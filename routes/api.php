@@ -80,6 +80,8 @@ Route::middleware('auth:api')->group(function () {
 Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
 //Route for Forgot password email
 Route::post('forgotPasswordEmail', [UserController::class, 'forgotPasswordEmail']);
+//Route for verify email
+Route::post('verifyEmail', [UserController::class, 'verifyEmail']);
 
 //Route for Get All Blogs
 Route::get('getallblogs', [BlogController::class, 'blogs']);
