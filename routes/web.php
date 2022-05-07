@@ -241,7 +241,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/update_status', [NoticeController::class, 'update_status']);
     });
 
-    
+
     /**Route for userpermissions */
     Route::prefix('userpermissions')->group(function () {
         Route::get('/', [UserPermissionController::class, 'index']);

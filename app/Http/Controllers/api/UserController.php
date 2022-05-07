@@ -17,11 +17,12 @@ use App\Mail\ForgotPassword;
 use App\Mail\VerificationMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+
 class UserController extends Controller
 {
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name'          =>  'required|string|max:255',
             'email'         =>  'required|string|email|max:255|unique:users,email',
             'password'      =>  'required|string|min:8',
@@ -42,8 +43,8 @@ class UserController extends Controller
             'password.required'     =>  'Please Enter Password',
         ]);
 
-        if($validator->fails()){
-            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);       
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
         /* Storing Featured Image on local disk */
@@ -62,7 +63,7 @@ class UserController extends Controller
         /* Hashing password */
         $pass = Hash::make($request['password']);
 
-        $role = Role::where('name','client')->first();
+        $role = Role::where('name', 'client')->first();
         $randomString = Str::random(30);
 
         $user = User::create([
@@ -79,34 +80,34 @@ class UserController extends Controller
             'profile_image'         =>  $image_name,
             'tax_exempt'            =>  $request->tax_exempt,
             'remember_token'        =>  $randomString
-         ]);
+        ]);
 
-         UserAddress::create([
-             'user_id'       =>  $user->id,
-             'email'         =>  $request['email'],
-             'mobile'        =>  $request['mobile'],
-             'address'       =>  $request['address'],
-             'country'       =>  $request['country'],
-             'state'         =>  $request['state'],
-             'city'          =>  $request['city'],
-             'zip'           =>  $request['pincode'],
-             'landmark'      =>  $request['landmark'],
-             'name'          =>  $request['name'],
-         ]);
+        UserAddress::create([
+            'user_id'       =>  $user->id,
+            'email'         =>  $request['email'],
+            'mobile'        =>  $request['mobile'],
+            'address'       =>  $request['address'],
+            'country'       =>  $request['country'],
+            'state'         =>  $request['state'],
+            'city'          =>  $request['city'],
+            'zip'           =>  $request['pincode'],
+            'landmark'      =>  $request['landmark'],
+            'name'          =>  $request['name'],
+        ]);
 
         $token = $user->createToken('MyApp')->accessToken;
         $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
-        $user->url = 'https://brandtalks.in/ecolinkfrontend/'.$user->remember_token;
+        $user->url = 'https://brandtalks.in/ecolinkfrontend/' . $user->remember_token;
 
         Mail::to($request->email)->send(new VerificationMail($user));
 
         $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
 
-        if(!empty($user)){
-            return response()->json(['message' => 'Hi '.$user->name.', welcome to home','code' => 200, 'data' => $data], 200);
-        }else{
-            return response()->json(['message' => 'Credentials Invalid','code' => 400], 400);
+        if (!empty($user)) {
+            return response()->json(['message' => 'Hi ' . $user->name . ', welcome to home', 'code' => 200, 'data' => $data], 200);
+        } else {
+            return response()->json(['message' => 'Credentials Invalid', 'code' => 400], 400);
         }
     }
 
@@ -119,24 +120,24 @@ class UserController extends Controller
 
         $user = User::where(['email' => $request->email, 'remember_token' => $request->token])->first();
 
-        if(!empty($user)){
+        if (!empty($user)) {
             $user->email_verified = 1;
             $user->update();
 
             return response()->json(['message' => 'User Account verified successfully', 'code' => 200, 'data' => $user], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }
 
     public function login(Request $request)
     {
-        $login_credentials=[
-            'email'=>$request->email,
-            'password'=>$request->password,
+        $login_credentials = [
+            'email' => $request->email,
+            'password' => $request->password,
         ];
 
-        if(auth()->attempt($login_credentials)){
+        if (auth()->attempt($login_credentials)) {
             //generate the token for the user
             $token = auth()->user()->createToken('MyApp')->accessToken;
 
@@ -145,9 +146,8 @@ class UserController extends Controller
 
             $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => auth()->user()->id, 'user' => $user]);
             //now return this token on success login attempt
-            return response()->json(['message' => 'Hi '.auth()->user()->name.', welcome to home','code' => 200, 'data' => $data], 200);
-        }
-        else{
+            return response()->json(['message' => 'Hi ' . auth()->user()->name . ', welcome to home', 'code' => 200, 'data' => $data], 200);
+        } else {
             //wrong login credentials, return, user not authorised to our system, return error code 401
             return response()->json(['error' => 'UnAuthorised Access'], 401);
         }
@@ -159,8 +159,8 @@ class UserController extends Controller
         if (Auth::check()) {
             Auth::user()->AauthAcessToken()->delete();
 
-            return response()->json(['message' => 'User Logout Successfully','code' => 200], 200);
-         }
+            return response()->json(['message' => 'User Logout Successfully', 'code' => 200], 200);
+        }
     }
 
     //method for user info
@@ -177,9 +177,9 @@ class UserController extends Controller
         $user = User::find($request->user_id);
         $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
-        if(!empty($user)){
+        if (!empty($user)) {
             return response()->json(['message' => 'User Info fetched successfully', 'code' => 200, 'data' => $user], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }
@@ -194,18 +194,18 @@ class UserController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $user = User::where('email',$request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-        if(!empty($user)){
+        if (!empty($user)) {
             $randomString = Str::random(30);
             $user->remember_token = $randomString;
             $user->update();
 
-            $user->url = 'https://brandtalks.in/ecolinkfrontend/profile/reset-password/'.$user->remember_token;
+            $user->url = 'https://brandtalks.in/ecolinkfrontend/profile/reset-password/' . $user->remember_token;
 
             Mail::to($request->email)->send(new ForgotPassword($user));
             return response()->json(['message' => 'Forgot password email sent successfully', 'code' => 200], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No User Found associated with this email', 'code' => 400], 400);
         }
     }
@@ -224,27 +224,27 @@ class UserController extends Controller
 
         $user = User::where(['email' => $request->email, 'remember_token' => $request->token])->first();
 
-        $updated_at = date('Y-m-d H:i:s', strtotime($user->updated_at.'+2 hours'));
-        
+        $updated_at = date('Y-m-d H:i:s', strtotime($user->updated_at . '+2 hours'));
+
         $datetime = date('Y-m-d H:i:s');
-            
-        if($updated_at < $datetime){
+
+        if ($updated_at < $datetime) {
             return response()->json(['message' => 'Token expired', 'code' => 400], 400);
         }
 
-        if(!empty($user)){
+        if (!empty($user)) {
             $user->password = Hash::make($request->password);
             $user->update();
 
             return response()->json(['message' => 'User password changed successfully', 'code' => 200, 'data' => $user], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }
 
     public function editUserInfo(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name'          =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
             'email'         =>  'required|email|unique:users,email,' . $request->user_id,
             'password'      =>  'min:8',
@@ -274,7 +274,7 @@ class UserController extends Controller
 
         $user = User::find($request->user_id);
 
-        if(!empty($user)){
+        if (!empty($user)) {
             /* Storing Featured Image on local disk */
             $image_name = $user->profile_image;
             if ($request->hasFile('profile_image')) {
@@ -287,12 +287,12 @@ class UserController extends Controller
                     $path = Storage::putFileAs('public/profile_image/', $file, $image_name);
                 }
             }
-    
+
             $pass = $user->password;
             if (isset($request['password']) && !empty($request['password'])) {
                 $pass = Hash::make($request['password']);
             }
-    
+
             /* Updating Data fetched by Id */
             $user->name             =   $request['name'];
             $user->email            =   $request['email'];
@@ -305,11 +305,11 @@ class UserController extends Controller
             $user->password         =   $pass;
             $user->profile_image    =   $image_name;
             $user->save();
-            
+
             $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
             return response()->json(['message' => 'User info update successfully', 'code' => 200, 'data' => $user], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }

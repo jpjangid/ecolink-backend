@@ -17,7 +17,7 @@
     <!-- Style -->
     <link rel="stylesheet" href="{{ asset('csslo/css/style.css')}}">
 
-    <title>Login #8</title>
+    <title>Ecolink | Login</title>
 </head>
 
 <body>
@@ -72,7 +72,7 @@
 
                                 <input type="submit" value="Log In" class="btn text-white btn-block btn-primary">
 
-                                <span class="d-block text-left my-4 text-muted"> or sign in with</span>
+                                <!-- <span class="d-block text-left my-4 text-muted"> or sign in with</span> -->
 
                                 <!-- <div class="social-login">
                                     <a href="#" class="facebook">
