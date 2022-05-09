@@ -66,6 +66,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('getOrder', [OrderController::class, 'index']);
     //Route For Storing for Order Data
     Route::post('storeOrder', [OrderController::class, 'store']);
+    //Route For Cancelled for Order
+    Route::post('cancelOrder', [OrderController::class, 'cancelOrder']);
 
     //Route For Get Return Orders
     Route::post('getReturnOrder', [ReturnController::class, 'index']);

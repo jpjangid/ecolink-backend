@@ -29,7 +29,8 @@
                     <input type="hidden" value="{{ $order->id }}" id="order_id">
                     <select class="form-control" id="order_status">
                         <option value="pending" {{ $order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="success" {{ $order->order_status == 'success' ? 'selected' : '' }}>Completed</option>
+                        <option value="completed" {{ $order->order_status == 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="cancelled" {{ $order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>
                 </div>
                 <div class="col-md-12 mb-4">

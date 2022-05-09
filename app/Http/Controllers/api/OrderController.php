@@ -307,4 +307,27 @@ class OrderController extends Controller
 
         return $response;
     }
+
+    public function cancelOrder(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id'        =>  'required',
+            'user_id'   =>  'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $order = Order::where(['id' => $request->id, 'user_id' => $request->user_id])->first();
+
+        if (!empty($order)) {
+            $order->status = 'cancelled';
+            $order->update();
+
+            return response()->json(['message' => 'Data fetched Successfully', 'data' => $order], 200);
+        } else {
+            return response()->json(['message' => 'No Order Found', 'code' => 400], 400);
+        }
+    }
 }
