@@ -36,7 +36,8 @@
                                 <!-- <p class="mb-4">Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur adipisicing.</p> -->
                             </div>
                             @if (session('status'))
-                            <div class="alert alert-success" role="alert">
+                            <div class="alert alert-success alert-dismissible">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 {{ session('status') }}
                             </div>
                             @endif
