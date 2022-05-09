@@ -329,6 +329,7 @@
                             <select class="form-control" name="order_status">
                                 <option value="pending">Pending</option>
                                 <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
                             </select>
                         </div>
                     </div>
