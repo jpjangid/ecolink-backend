@@ -74,6 +74,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         /* Validating Input fields */
         $request->validate([
             'name'                  =>  'required',
@@ -181,8 +182,13 @@ class ProductController extends Controller
         $product = Product::find($request->product_id);
         $product->status   = $request->status == 1 ? 0 : 1;
         $product->update();
-
-        return response()->json(['message' => 'Product status updated successfully.']);
+        if ($product->status == 1) {
+            $data['msg'] = 'success';
+            return response()->json($data);
+        } else {
+            $data['msg'] = 'danger';
+            return response()->json($data);
+        }
     }
 
     public function edit($id)

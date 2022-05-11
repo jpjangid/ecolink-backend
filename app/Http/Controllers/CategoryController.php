@@ -214,7 +214,13 @@ class CategoryController extends Controller
         $category->status   = $request->status == 1 ? 0 : 1;
         $category->update();
 
-        return response()->json(['message' => 'Category status updated successfully.']);
+        if ($category->status == 1) {
+            $data['msg'] = 'success';
+            return response()->json($data);
+        } else {
+            $data['msg'] = 'danger';
+            return response()->json($data);
+        }
     }
 
     public function destroy($id)
@@ -224,20 +230,20 @@ class CategoryController extends Controller
             $category = Category::where('id', $id)->with('subcategory.products', 'products')->first();
 
             $category->update(['flag' => 1]);
-            if($category->subcategory->isNotEmpty()){
-                foreach($category->subcategory as $subcategory){
+            if ($category->subcategory->isNotEmpty()) {
+                foreach ($category->subcategory as $subcategory) {
                     $subcategory->update(['flag' => 1]);
-                    if($subcategory->products->isNotEmpty()){
-                        foreach($subcategory->products as $product){
-                            $product->update(['flag' => 1]);
+                    if ($subcategory->products->isNotEmpty()) {
+                        foreach ($subcategory->products as $product) {
+                            $product->update(['flag' => 1, 'status' => 0]);
                         }
                     }
                 }
             }
 
-            if($category->products->isNotEmpty()){
-                foreach($category->products as $product){
-                    $product->update(['flag' => 1]);
+            if ($category->products->isNotEmpty()) {
+                foreach ($category->products as $product) {
+                    $product->update(['flag' => 1, 'status' => 0]);
                 }
             }
 
@@ -462,8 +468,13 @@ class CategoryController extends Controller
         $category = Category::find($request->category_id);
         $category->status   = $request->status == 1 ? 0 : 1;
         $category->update();
-
-        return response()->json(['message' => 'Sub category status updated successfully.']);
+        if ($category->status == 1) {
+            $data['msg'] = 'success';
+            return response()->json($data);
+        } else {
+            $data['msg'] = 'danger';
+            return response()->json($data);
+        }
     }
 
     public function destroy_sub($id)
@@ -473,20 +484,20 @@ class CategoryController extends Controller
             $category = Category::where('id', $id)->with('subcategory.products', 'products')->first();
 
             $category->update(['flag' => 1]);
-            if($category->subcategory->isNotEmpty()){
-                foreach($category->subcategory as $subcategory){
+            if ($category->subcategory->isNotEmpty()) {
+                foreach ($category->subcategory as $subcategory) {
                     $subcategory->update(['flag' => 1]);
-                    if($subcategory->products->isNotEmpty()){
-                        foreach($subcategory->products as $product){
-                            $product->update(['flag' => 1]);
+                    if ($subcategory->products->isNotEmpty()) {
+                        foreach ($subcategory->products as $product) {
+                            $product->update(['flag' => 1, 'status' => 0]);
                         }
                     }
                 }
             }
 
-            if($category->products->isNotEmpty()){
-                foreach($category->products as $product){
-                    $product->update(['flag' => 1]);
+            if ($category->products->isNotEmpty()) {
+                foreach ($category->products as $product) {
+                    $product->update(['flag' => 1, 'status' => 0]);
                 }
             }
 

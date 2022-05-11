@@ -78,7 +78,7 @@
   @yield('script')
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed">
   <div class="wrapper">
 
     <!-- this is header bar with location in same folder -->

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Subscribe;
 
 class NewsLetterController extends Controller
 {
@@ -68,7 +70,11 @@ class NewsLetterController extends Controller
         NewsLetter::create([
             'email'     =>  $request->email,
         ]);
-
+        Mail::to($request->email)->cc("mohsinkhan6992@gmail.com")->send(
+            new Subscribe(
+                $request->email,
+            )
+        );
         /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/newsletters')->with('success', 'News Letter Added successfully');
     }

@@ -100,6 +100,35 @@
             },
             success: function(data) {
                 swal("Good job!", data.message, "success");
+                if (data['msg'] == 'success') {
+                    swal({
+                        title: 'Active!',
+                        text: "Sub Category status updated successfully.",
+                        icon: 'success',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                } else {
+                    swal({
+                        title: 'Inactive',
+                        text: "Sub Category status updated successfully.",
+                        icon: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                }
             }
         });
     });

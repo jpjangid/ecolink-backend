@@ -19,7 +19,7 @@ class PageController extends Controller
         if (checkpermission('PageController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0', 'status' => 1])->get();
+                $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0'])->get();
 
                 /* Converting Selected Data into desired format */
                 $pages = new Collection;
@@ -183,8 +183,13 @@ class PageController extends Controller
         $page = Page::find($request->page_id);
         $page->status   = $request->status == 1 ? 0 : 1;
         $page->update();
-
-        return response()->json(['message' => 'Page status updated successfully.']);
+        if ($page->status == 1) {
+            $data['msg'] = 'success';
+            return response()->json($data);
+        } else {
+            $data['msg'] = 'danger';
+            return response()->json($data);
+        }
     }
 
     public function edit($id)
@@ -294,7 +299,7 @@ class PageController extends Controller
     {
         if (checkpermission('PageController@destroy')) {
             /* Updating selected entry Flag to 1 for soft delete */
-            Page::where('id', $id)->update(['flag' => 1]);
+            Page::where('id', $id)->update(['flag' => 1, 'status' => 0]);
 
             return redirect('admin/pages')->with('danger', 'Page Deleted');
         } else {

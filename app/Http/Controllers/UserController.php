@@ -97,7 +97,7 @@ class UserController extends Controller
             'name.regex'                =>  'Please Enter City in alphabets',
             'pincode.required'          =>  'Please Enter Pincode',
             'country.required'          =>  'Please Enter Country',
-            'name.regex'                =>  'Please Enter Country in alphabets',
+            'country.regex'                =>  'Please Enter Country in alphabets',
             'role_id.required'          =>  'Please Select Role',
             'mobile.numeric'            =>  'The Mobile No. must be numeric',
             'password.required'         =>  'Please Enter Password',

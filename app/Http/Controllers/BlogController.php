@@ -147,8 +147,13 @@ class BlogController extends Controller
         $blog = Blog::find($request->blog_id);
         $blog->status   = $request->status == 1 ? 0 : 1;
         $blog->update();
-
-        return response()->json(['message' => 'Blog status updated successfully.']);
+        if ($blog->status == 1) {
+            $data['msg'] = 'success';
+            return response()->json($data);
+        } else {
+            $data['msg'] = 'danger';
+            return response()->json($data);
+        }
     }
 
     public function edit($id)
@@ -236,7 +241,7 @@ class BlogController extends Controller
     {
         if (checkpermission('BlogController@destroy')) {
             /* Updating selected entry Flag to 1 for soft delete */
-            Blog::where('id', $id)->update(['flag' => 1]);
+            Blog::where('id', $id)->update(['flag' => 1, 'status' => 0]);
 
             return redirect('admin/blogs')->with('danger', 'Blog Deleted');
         } else {

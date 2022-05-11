@@ -45,7 +45,7 @@
                     <th>Slug</th>
                     <th>Blog Category</th>
                     <th>Publish Date</th>
-                    <th>Publish</th>
+                    <th>Active/Inactive</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
@@ -108,9 +108,39 @@
                 _token: '{{csrf_token()}}'
             },
             success: function(data) {
-                swal("Good job!", data.message, "success");
+                if (data['msg'] == 'success') {
+                    swal({
+                        title: 'Active!',
+                        text: "Blog status updated successfully.",
+                        icon: 'success',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                } else {
+                    swal({
+                        title: 'Inactive',
+                        text: "Blog status updated successfully.",
+                        icon: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                }
             }
+
         });
     });
 </script>
+
 @endsection
