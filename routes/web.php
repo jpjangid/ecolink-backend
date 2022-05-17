@@ -73,7 +73,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [BlogController::class, 'store']);
         Route::get('/edit/{id}', [BlogController::class, 'edit']);
         Route::put('/update/{id}', [BlogController::class, 'update']);
-        Route::get('/delete/{id}', [BlogController::class, 'destroy']);
+        Route::delete('/delete/{id}', [BlogController::class, 'destroy']);
         Route::post('/update_status', [BlogController::class, 'update_status']);
     });
 
@@ -83,7 +83,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [CategoryController::class, 'store']);
         Route::get('/edit/{id}', [CategoryController::class, 'edit']);
         Route::put('/update/{id}', [CategoryController::class, 'update']);
-        Route::get('/delete/{id}', [CategoryController::class, 'destroy']);
+        Route::delete('/delete/{id}', [CategoryController::class, 'destroy']);
         Route::post('/update_status', [CategoryController::class, 'update_status']);
     });
 
@@ -93,7 +93,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [CategoryController::class, 'store_sub']);
         Route::get('/edit/{id}', [CategoryController::class, 'edit_sub']);
         Route::put('/update/{id}', [CategoryController::class, 'update_sub']);
-        Route::get('/delete/{id}', [CategoryController::class, 'destroy_sub']);
+        Route::delete('/delete/{id}', [CategoryController::class, 'destroy_sub']);
         Route::post('/update_status', [CategoryController::class, 'update_status_sub']);
     });
 

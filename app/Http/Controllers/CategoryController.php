@@ -48,8 +48,15 @@ class CategoryController extends Controller
                     ->addColumn('action', function ($row) {
                         $delete_url = url('admin/categories/delete', $row['id']);
                         $edit_url = url('admin/categories/edit', $row['id']);
-                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn = '
+                        <div style="display:flex;">
+                        <a class="btn btn-primary btn-xs" href="' . $edit_url . '" style="margin-right: 2px;"><i class="fas fa-edit"></i></a>
+                                        <form action="' . $delete_url . '" method="post">
+                                            <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button class="delete btn btn-danger btn-xs category_confirm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
@@ -229,10 +236,10 @@ class CategoryController extends Controller
             /* Updating selected entry Flag to 1 for soft delete */
             $category = Category::where('id', $id)->with('subcategory.products', 'products')->first();
 
-            $category->update(['flag' => 1]);
+            $category->update(['flag' => 1, 'status' => 0]);
             if ($category->subcategory->isNotEmpty()) {
                 foreach ($category->subcategory as $subcategory) {
-                    $subcategory->update(['flag' => 1]);
+                    $subcategory->update(['flag' => 1, 'status' => 0]);
                     if ($subcategory->products->isNotEmpty()) {
                         foreach ($subcategory->products as $product) {
                             $product->update(['flag' => 1, 'status' => 0]);
@@ -296,8 +303,15 @@ class CategoryController extends Controller
                     ->addColumn('action', function ($row) {
                         $delete_url = url('admin/sub/categories/delete', $row['id']);
                         $edit_url = url('admin/sub/categories/edit', $row['id']);
-                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn = '
+                        <div style="display:flex;">
+                        <a class="btn btn-primary btn-xs" href="' . $edit_url . '" style="margin-right: 2px;"><i class="fas fa-edit"></i></a>
+                                        <form action="' . $delete_url . '" method="post">
+                                            <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button class="delete btn btn-danger btn-xs sub_category_confirm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
