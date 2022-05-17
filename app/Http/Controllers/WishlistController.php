@@ -37,7 +37,13 @@ class WishlistController extends Controller
                         $edit_url = url('admin/wishlists/edit', $row['id']);
                         $btn = '';
                         // $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn = '<div style="display:flex;">
+                                        <form action="' . $delete_url . '" method="post">
+                                            <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button class="delete btn btn-danger btn-sm show_confirm"><i class="fa fa-trash"></i></button>
+                                        </form>
+                                    </div>';
                         return $btn;
                     })
                     ->rawColumns(['action'])

@@ -28,7 +28,7 @@
                     <!-- Customer -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="required form-label" for="user_id">Customer</label>
+                            <label class="required form-label" for="user_id"><span style="color: red;">* </span>Customer</label>
                             <select class="form-control form-control-solid @error('user_id') is-invalid @enderror select2bs4" name="user_id">
                                 <option value="">Select Customer</option>
                                 @foreach($users as $user)
@@ -44,7 +44,7 @@
                     <!-- Product -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="required form-label" for="product_id">Product</label>
+                            <label class="required form-label" for="product_id"><span style="color: red;">* </span>Product</label>
                             <select class="form-control form-control-solid @error('product_id') is-invalid @enderror select2bs4" name="product_id">
                                 <option value="">Select Product</option>
                                 @foreach($products as $product)
@@ -60,7 +60,7 @@
                     <!-- Quantity -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="required form-label" for="quantity">Quantity</label>
+                            <label class="required form-label" for="quantity"><span style="color: red;">* </span>Quantity</label>
                             <input type="number" class="form-control form-control-solid @error('quantity') is-invalid @enderror" name="quantity" id="quantity" placeholder="Please Enter quantity" value="{{ old('quantity') }}">
                             @error('quantity')
                             <span class="error invalid-feedback">{{ $message }}</span>

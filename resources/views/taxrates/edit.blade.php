@@ -29,7 +29,7 @@
                     <!-- Country Code -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="country_code">Country Code</label>
+                            <label class="required form-label" for="country_code"><span style="color: red;">* </span>Country Code</label>
                             <input type="text" class="form-control form-control-solid @error('country_code') is-invalid @enderror" name="country_code" id="country_code" placeholder="Please Enter Country Code" value="{{ $taxrate->country_code }}">
                             @error('country_code')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -40,7 +40,7 @@
                     <!-- State Code -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="state_code">State Code</label>
+                            <label class="required form-label" for="state_code"><span style="color: red;">* </span>State Code</label>
                             <input type="text" class="form-control form-control-solid @error('state_code') is-invalid @enderror" name="state_code" id="state_code" placeholder="Please Enter State Code" value="{{ $taxrate->state_code }}">
                             @error('state_code')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -51,7 +51,7 @@
                     <!-- City -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="city">City</label>
+                            <label class="required form-label" for="city"><span style="color: red;">* </span>City</label>
                             <input type="text" class="form-control form-control-solid @error('city') is-invalid @enderror" name="city" id="city" placeholder="Please Enter City" value="{{ $taxrate->city }}">
                             @error('city')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -62,7 +62,7 @@
                     <!-- Zip -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="zip">Zip</label>
+                            <label class="required form-label" for="zip"><span style="color: red;">* </span>Zip</label>
                             <input type="number" class="form-control form-control-solid @error('zip') is-invalid @enderror" name="zip" id="zip" placeholder="Please Enter Zip" value="{{ $taxrate->zip }}">
                             @error('zip')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -73,7 +73,7 @@
                     <!-- Rate -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="rate">Rate</label>
+                            <label class="required form-label" for="rate"><span style="color: red;">* </span>Rate</label>
                             <input type="number" step=".01" class="form-control form-control-solid @error('rate') is-invalid @enderror" name="rate" id="rate" placeholder="Please Enter Rate" value="{{ $taxrate->rate }}">
                             @error('rate')
                             <span class="error invalid-feedback">{{ $message }}</span>

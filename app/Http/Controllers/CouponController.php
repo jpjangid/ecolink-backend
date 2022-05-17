@@ -90,10 +90,12 @@ class CouponController extends Controller
             'name'          =>  'required',
             'code'          =>  'required',
             'type'          =>  'required',
+            'show_in_front' =>   'required',
         ], [
             'name.required'     =>  'Name is required',
             'code.required'     =>  'Coupon Code is required',
             'type.required'     =>  'Coupon Type is required',
+            'show_in_front.required'    => 'This Field is required',
         ]);
 
         $days = implode(",", $request->days);
@@ -151,10 +153,12 @@ class CouponController extends Controller
             'name'          =>  'required',
             'code'          =>  'required',
             'type'          =>  'required',
+            'show_in_front' =>   'required',
         ], [
-            'name.required'     =>  'Name is required',
-            'code.required'     =>  'Coupon Code is required',
-            'type.required'     =>  'Coupon Type is required',
+            'name.required'             =>  'Name is required',
+            'code.required'             =>  'Coupon Code is required',
+            'type.required'             =>  'Coupon Type is required',
+            'show_in_front.required'    => 'This Field is required',
         ]);
 
         /* Fetching Blog Data using Id */

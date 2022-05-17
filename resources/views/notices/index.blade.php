@@ -41,7 +41,7 @@
             <thead>
                 <tr class="text-center">
                     <th>Title</th>
-                    <th>Display Status</th>
+                    <th>Active</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>

@@ -265,10 +265,10 @@
                     <table class="table table-bordered main_table" width="100%">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Sale Price</th>
-                                <th>Product Total</th>
+                                <th><span style="color: red;">* </span>Product</th>
+                                <th><span style="color: red;">* </span>Quantity</th>
+                                <th><span style="color: red;">* </span>Sale Price</th>
+                                <th><span style="color: red;">* </span> Total</th>
                                 <th><button type="button" class="btn btn-primary btn-sm add_row"><i class="fa fa-plus-circle"></i></button></th>
                             </tr>
                         </thead>

@@ -130,14 +130,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="days">Week Days</label>
-                            <select name="days[]" id="days" class="form-control select2bs4" data-placeholder="Select Days" multiple>
-                                <option value="Sunday" {{ old('days') == 'Sunday' ? 'seleted' : '' }}>Sunday</option>
-                                <option value="Monday" {{ old('days') == 'Monday' ? 'seleted' : '' }}>Monday</option>
-                                <option value="Tuesday" {{ old('days') == 'Tuesday' ? 'seleted' : '' }}>Tuesday</option>
-                                <option value="Wednesday" {{ old('days') == 'Wednesday' ? 'seleted' : '' }}>Wednesday</option>
-                                <option value="Thursday" {{ old('days') == 'Thursday' ? 'seleted' : '' }}>Thursday</option>
-                                <option value="Friday" {{ old('days') == 'Friday' ? 'seleted' : '' }}>Friday</option>
-                                <option value="Saturday" {{ old('days') == 'Saturday' ? 'seleted' : '' }}>Saturday</option>
+                            <select name="days[]" id="days" class="form-control select2bs4" data-placeholder="Select Days" required multiple>
+                                <option value="Sunday" {{in_array('Sunday', old("days") ?: []) ? "selected" : ""}}>Sunday</option>
+                                <option value="Monday" {{in_array('Monday', old("days") ?: []) ? "selected" : ""}}>Monday</option>
+                                <option value="Tuesday" {{in_array('Tuesday', old("days") ?: []) ? "selected" : ""}}>Tuesday</option>
+                                <option value="Wednesday" {{in_array('Wednesday', old("days") ?: []) ? "selected" : ""}}>Wednesday</option>
+                                <option value="Thursday" {{in_array('Thursday', old("days") ?: []) ? "selected" : ""}}>Thursday</option>
+                                <option value="Friday" {{in_array('Friday', old("days") ?: []) ? "selected" : ""}}>Friday</option>
+                                <option value="Saturday" {{ in_array('Saturday', old("days") ?: []) ? "selected" : ""}}>Saturday</option>
                             </select>
                         </div>
                     </div>

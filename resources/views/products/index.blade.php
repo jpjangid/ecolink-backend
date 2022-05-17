@@ -44,7 +44,7 @@
                     <th>Product</th>
                     <th>Variant</th>
                     <th>Slug</th>
-                    <th>Active/Inactive</th>
+                    <th>Active</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
@@ -111,7 +111,8 @@
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        timer: 3000
                     }).then((result) => {
                         if (result) {
                             location.reload();
@@ -125,7 +126,8 @@
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        timer: 3000
                     }).then((result) => {
                         if (result) {
                             location.reload();

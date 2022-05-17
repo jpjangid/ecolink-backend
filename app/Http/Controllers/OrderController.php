@@ -74,8 +74,8 @@ class OrderController extends Controller
     {
         $request->validate([
             'billing_name'          =>  'required',
-            'billing_mobile'        =>  'required|digits:10|unique:users,mobile',
-            'billing_email'         =>  'required|email|unique:users,email',
+            'billing_mobile'        =>  'required|digits:10',
+            'billing_email'         =>  'required|email',
             'billing_address'       =>  'required',
             'billing_city'          =>  'required',
             'billing_state'         =>  'required',
@@ -165,7 +165,7 @@ class OrderController extends Controller
         ]);
 
         foreach ($request->product_id as $key => $item) {
-            if(!empty($item) && !empty($request->quantity[$key])){
+            if (!empty($item) && !empty($request->quantity[$key])) {
                 OrderItems::create([
                     'order_id'              =>  $order->id,
                     'product_id'            =>  $item,
@@ -174,7 +174,7 @@ class OrderController extends Controller
             }
         }
 
-        return redirect('admin/orders')->with('success','Order Added Successfully');
+        return redirect('admin/orders')->with('success', 'Order Added Successfully');
     }
 
     public function edit($id)
@@ -281,12 +281,12 @@ class OrderController extends Controller
         ]);
 
         $items = OrderItems::where('order_id', $id)->get();
-        foreach($items as $item){
+        foreach ($items as $item) {
             $item->delete();
         }
 
         foreach ($request->product_id as $key => $item) {
-            if(!empty($item) && !empty($request->quantity[$key])){
+            if (!empty($item) && !empty($request->quantity[$key])) {
                 OrderItems::create([
                     'order_id'              =>  $id,
                     'product_id'            =>  $item,
@@ -295,7 +295,7 @@ class OrderController extends Controller
             }
         }
 
-        return redirect('admin/orders')->with('success','Order Updated Successfully');
+        return redirect('admin/orders')->with('success', 'Order Updated Successfully');
     }
 
     public function order_no()

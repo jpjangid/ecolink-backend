@@ -226,7 +226,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('wishlists')->group(function () {
         Route::get('/', [WishlistController::class, 'index']);
-        Route::get('/delete/{id}', [WishlistController::class, 'destroy']);
+        Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
     });
 
     Route::prefix('addresses')->group(function () {
