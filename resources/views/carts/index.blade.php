@@ -56,12 +56,35 @@
 @endsection
 @section('js')
 <script type="text/javascript">
+    $(document).ready(function() {
+        $(document).on('click', '.cart_confirm', function(event) {
+            var form = $(this).closest("form");
+            var action = $(this).data("action");
+            event.preventDefault();
+            swal({
+                    title: `Are you sure you want to delete this record?`,
+                    text: "If you delete this, it will be gone forever.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        form.submit();
+                    }
+                });
+        });
+    });
+</script>
+<script type="text/javascript">
     $(function() {
         var cartTable = $('#cartTable').DataTable({
             scrollY: "55vh",
             processing: true,
             serverSide: true,
-            order: [[ 0, "desc" ]],
+            order: [
+                [0, "desc"]
+            ],
             ajax: "{{ url('admin/carts') }}",
             columns: [{
                     data: 'created_at',

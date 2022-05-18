@@ -53,10 +53,6 @@ Route::get('/', function () {
 //     \Artisan::call('optimize:clear');
 // });
 
-Route::get('emailtest', function () {
-    return view('emails.emailtest');
-});
-
 Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     //Profile Route
@@ -218,7 +214,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [TaxRateController::class, 'store']);
         Route::get('/edit/{id}', [TaxRateController::class, 'edit']);
         Route::put('/update/{id}', [TaxRateController::class, 'update']);
-        Route::get('/delete/{id}', [TaxRateController::class, 'destroy']);
+        Route::delete('/delete/{id}', [TaxRateController::class, 'destroy']);
     });
 
     Route::prefix('carts')->group(function () {

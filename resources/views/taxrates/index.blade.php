@@ -58,7 +58,7 @@
 @section('js')
 <script type="text/javascript">
     $(document).ready(function() {
-        $(document).on('click', '.coupan_confirm', function(event) {
+        $(document).on('click', '.tax_confirm', function(event) {
             var form = $(this).closest("form");
             var action = $(this).data("action");
             event.preventDefault();

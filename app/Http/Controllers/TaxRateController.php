@@ -43,7 +43,7 @@ class TaxRateController extends Controller
                                             <form action="' . $delete_url . '" method="post">
                                                 <input type="hidden" name="_token" value="' . csrf_token() . '">
                                                 <input type="hidden" name="_method" value="DELETE">
-                                                <button class="delete btn btn-danger btn-xs coupan_confirm"><i class="fas fa-trash"></i></button>
+                                                <button class="delete btn btn-danger btn-xs tax_confirm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>';
                         return $btn;
