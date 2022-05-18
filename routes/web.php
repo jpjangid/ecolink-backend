@@ -171,7 +171,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/show/{id}', [AskChemistController::class, 'show']);
         Route::get('/edit/{id}', [AskChemistController::class, 'edit']);
         Route::put('/update/{id}', [AskChemistController::class, 'update']);
-        Route::get('/delete/{id}', [AskChemistController::class, 'destroy']);
+        Route::delete('/delete/{id}', [AskChemistController::class, 'destroy']);
     });
 
     Route::prefix('contact')->group(function () {
@@ -179,7 +179,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/show/{id}', [ContactUsController::class, 'show']);
         Route::get('/edit/{id}', [ContactUsController::class, 'edit']);
         Route::put('/update/{id}', [ContactUsController::class, 'update']);
-        Route::get('/delete/{id}', [ContactUsController::class, 'destroy']);
+        Route::delete('/delete/{id}', [ContactUsController::class, 'destroy']);
     });
 
     Route::prefix('requestproduct')->group(function () {
@@ -187,7 +187,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/show/{id}', [RequestProductController::class, 'show']);
         Route::get('/edit/{id}', [RequestProductController::class, 'edit']);
         Route::put('/update/{id}', [RequestProductController::class, 'update']);
-        Route::get('/delete/{id}', [RequestProductController::class, 'destroy']);
+        Route::delete('/delete/{id}', [RequestProductController::class, 'destroy']);
     });
 
     Route::prefix('bulkpricing')->group(function () {
@@ -195,7 +195,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/show/{id}', [BulkPricingController::class, 'show']);
         Route::get('/edit/{id}', [BulkPricingController::class, 'edit']);
         Route::put('/update/{id}', [BulkPricingController::class, 'update']);
-        Route::get('/delete/{id}', [BulkPricingController::class, 'destroy']);
+        Route::delete('/delete/{id}', [BulkPricingController::class, 'destroy']);
     });
 
     Route::prefix('technicalsupport')->group(function () {
@@ -203,7 +203,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/show/{id}', [TechnicalSupportController::class, 'show']);
         Route::get('/edit/{id}', [TechnicalSupportController::class, 'edit']);
         Route::put('/update/{id}', [TechnicalSupportController::class, 'update']);
-        Route::get('/delete/{id}', [TechnicalSupportController::class, 'destroy']);
+        Route::delete('/delete/{id}', [TechnicalSupportController::class, 'destroy']);
     });
 
     Route::prefix('taxrates')->group(function () {
@@ -231,7 +231,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('addresses')->group(function () {
         Route::get('/', [UserAddressController::class, 'index']);
-        Route::get('/delete/{id}', [UserAddressController::class, 'destroy']);
+        Route::delete('/delete/{id}', [UserAddressController::class, 'destroy']);
     });
 
     Route::prefix('notices')->group(function () {

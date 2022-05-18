@@ -37,14 +37,17 @@ class UserAddressController extends Controller
                     ->addIndexColumn()
                     /* Adding Actions like edit, delete and show */
                     ->addColumn('action', function ($row) {
-                        $btn = '';
                         $delete_url = url('admin/addresses/delete', $row['id']);
-                        // $edit_url = url('admin/addresses/edit', $row['id']);
-                        // $btn .= '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn = '<div style="display:flex;">
+                        <form action="' . $delete_url . '" method="post">
+                          <input type="hidden" name="_token" value="' . csrf_token() . '">
+                          <input type="hidden" name="_method" value="DELETE">
+                          <button class="delete btn btn-danger btn-xs address_confirm"><i class="fas fa-trash"></i></button>
+                       </form>
+                      </div>';
                         return $btn;
                     })
-                    ->rawColumns(['action'])
+                    ->rawColumns(['action', 'active'])
                     ->make(true);
             }
             return view('addresses.index');
