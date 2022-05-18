@@ -50,8 +50,15 @@ class CouponController extends Controller
                     ->addColumn('action', function ($row) {
                         $delete_url = url('admin/coupons/delete', $row['id']);
                         $edit_url = url('admin/coupons/edit', $row['id']);
-                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn = '
+                        <div style="display:flex;">
+                        <a class="btn btn-primary btn-xs" href="' . $edit_url . '" style="margin-right: 2px;"><i class="fas fa-edit"></i></a>
+                                        <form action="' . $delete_url . '" method="post">
+                                            <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button class="delete btn btn-danger btn-xs coupan_confirm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
@@ -196,7 +203,7 @@ class CouponController extends Controller
     {
         if (checkpermission('CouponController@destroy')) {
             /* Updating selected entry Flag to 1 for soft delete */
-            Coupon::where('id', $id)->update(['flag' => 1]);
+            Coupon::where('id', $id)->update(['flag' => 1, 'show_in_front' => 0]);
 
             return redirect('admin/coupons')->with('success', 'Coupon Deleted Successfully');
         } else {

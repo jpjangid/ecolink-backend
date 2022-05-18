@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -44,12 +45,16 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->middleware('prevent-back-history');
 
-Route::get('/artisan/clear', function () {
-    \Artisan::call('cache:clear');
-    \Artisan::call('route:clear');
-    \Artisan::call('view:clear');
-    \Artisan::call('config:clear');
-    \Artisan::call('optimize:clear');
+// Route::get('/artisan/clear', function () {
+//     \Artisan::call('cache:clear');
+//     \Artisan::call('route:clear');
+//     \Artisan::call('view:clear');
+//     \Artisan::call('config:clear');
+//     \Artisan::call('optimize:clear');
+// });
+
+Route::get('emailtest', function () {
+    return view('emails.emailtest');
 });
 
 Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
@@ -66,6 +71,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::put('update/{id}', [UserController::class, 'update']);
         Route::get('delete/{id}', [UserController::class, 'destroy']);
     });
+
 
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'index']);
@@ -113,7 +119,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [NewsLetterController::class, 'store']);
         Route::get('/edit/{id}', [NewsLetterController::class, 'edit']);
         Route::put('/update/{id}', [NewsLetterController::class, 'update']);
-        Route::get('/delete/{id}', [NewsLetterController::class, 'destroy']);
+        Route::delete('/delete/{id}', [NewsLetterController::class, 'destroy']);
     });
 
     Route::prefix('pages')->group(function () {
@@ -122,7 +128,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [PageController::class, 'store']);
         Route::get('/edit/{id}', [PageController::class, 'edit']);
         Route::put('/update/{id}', [PageController::class, 'update']);
-        Route::get('/delete/{id}', [PageController::class, 'destroy']);
+        Route::delete('/delete/{id}', [PageController::class, 'destroy']);
         Route::get('/copy/{id}', [PageController::class, 'copy']);
         Route::post('/update_status', [PageController::class, 'update_status']);
     });
@@ -133,7 +139,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [CouponController::class, 'store']);
         Route::get('/edit/{id}', [CouponController::class, 'edit']);
         Route::put('/update/{id}', [CouponController::class, 'update']);
-        Route::get('/delete/{id}', [CouponController::class, 'destroy']);
+        Route::delete('/delete/{id}', [CouponController::class, 'destroy']);
         Route::post('/update_status', [CouponController::class, 'update_status']);
     });
 

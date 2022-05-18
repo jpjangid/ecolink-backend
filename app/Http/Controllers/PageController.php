@@ -50,9 +50,15 @@ class PageController extends Controller
                         $delete_url = url('admin/pages/delete', $row['id']);
                         $edit_url = url('admin/pages/edit', $row['id']);
                         $copy_url = url('admin/pages/copy', $row['id']);
-                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-info btn-xs ml-1" href="' . $copy_url . '"><i class="fa fa-clone"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn = '<div style="display:flex;">
+                                    <a class="btn btn-primary btn-xs" href="' . $edit_url . '" style="margin-right: 2px;"><i class="fas fa-edit"></i></a>
+                                    <a class="btn btn-info btn-xs ml-1" href="' . $copy_url . '"  style="margin-right: 2px;"><i class="fa fa-clone"></i></a>
+                                    <form action="' . $delete_url . '" method="post">
+                                        <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button class="delete btn btn-danger btn-xs page_confirm"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </div>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])

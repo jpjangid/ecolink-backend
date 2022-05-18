@@ -196,7 +196,7 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!empty($user)) {
+        if (!empty($user) && $user->flag == 0) {
             $randomString = Str::random(30);
             $user->remember_token = $randomString;
             $user->update();
