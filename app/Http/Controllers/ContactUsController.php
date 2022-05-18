@@ -38,13 +38,17 @@ class ContactUsController extends Controller
                         $delete_url = url('admin/contact/delete', $row['id']);
                         $edit_url = url('admin/contact/edit', $row['id']);
                         $show_url = url('admin/contact/show', $row['id']);
-                        $btn = '';
-                        // $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-info btn-xs ml-1" href="' . $show_url . '"><i class="fa fa-eye"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
-                        return $btn;
+                        $btn = '<div style="display:flex;">
+                        <a class="btn btn-info btn-xs ml-1" href="' . $show_url . '" style="margin-right: 2px;"><i class="fa fa-eye"></i></a>
+                        <form action="' . $delete_url . '" method="post">
+                         <input type="hidden" name="_token" value="' . csrf_token() . '">
+                         <input type="hidden" name="_method" value="DELETE">
+                         <button class="delete btn btn-danger btn-xs contact_confirm"><i class="fas fa-trash"></i></button>
+                      </form>
+                     </div>';
+                       return $btn;
                     })
-                    ->rawColumns(['action'])
+                    ->rawColumns(['action', 'active'])
                     ->make(true);
             }
             return view('contact.index');
