@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (checkpermission('PageController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0'])->get();
+                $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0'])->where('status', $request->active)->get();
 
                 /* Converting Selected Data into desired format */
                 $pages = new Collection;

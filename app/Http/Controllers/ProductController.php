@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (checkpermission('ProductController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status', 'variant')->where(['flag' => 0])->get();
+                $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status', 'variant')->where(['flag' => 0])->where('status', $request->active)->get();
 
                 /* Converting Selected Data into desired format */
                 $products = new Collection;

@@ -10,12 +10,12 @@ use Yajra\DataTables\DataTables;
 
 class CouponController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (checkpermission('CouponController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->get();
+                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->where('show_in_front', $request->active)->get();
 
                 /* Converting Selected Data into desired format */
                 $coupons = new Collection;

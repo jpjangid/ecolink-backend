@@ -32,6 +32,15 @@
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
                         <li class="breadcrumb-item"><a href="{{ url('admin/blogs/create') }}" class="btn btn-info mt-o" style="float: right;">New Blog</a></li>
                     </ol>
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <select id="active" class="form-control">
+                                <option value="1">Active</option>
+                                <option value="0">Deactive</option>
+                            </select>
+                        </div>
+                    </div>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -80,11 +89,26 @@
 
 <script type="text/javascript">
     $(function() {
+        datatable();
+    });
+
+    $(document).on('change', '#active', function(){
+        datatable();
+    });
+    
+    function datatable() {
         var blogTable = $('#blogTable').DataTable({
+            destroy: true,
             scrollY: "55vh",
             processing: true,
             serverSide: true,
-            ajax: "{{ url('admin/blogs') }}",
+            ajax: {
+                url: "{{ url('admin/blogs') }}",
+                type: "get",
+                data: function(d) {
+                    d.active = $('#active').val();
+                },
+            },
             columns: [{
                     data: 'title',
                     name: 'title'
@@ -113,8 +137,7 @@
                 },
             ]
         });
-
-    });
+    }
 
     $(document).on('change', '.js-switch', function() {
         var row = $(this).closest('tr');

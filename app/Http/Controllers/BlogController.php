@@ -12,12 +12,12 @@ use Yajra\DataTables\DataTables;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (checkpermission('BlogController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->get();
+                $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->where('status', $request->active)->get();
 
                 /* Converting Selected Data into desired format */
                 $blogs = new Collection;

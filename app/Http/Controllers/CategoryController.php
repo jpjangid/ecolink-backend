@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\DB;
 class CategoryController extends Controller
 {
     //Code for Main Category
-    public function index()
+    public function index(Request $request)
     {
         if (checkpermission('CategoryController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $maincategories = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->get();
+                $maincategories = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->where('status', $request->active)->get();
 
                 /* Converting Selected Data into desired format */
                 $categories = new Collection;
@@ -261,29 +261,23 @@ class CategoryController extends Controller
     }
 
     //Code for Sub Category
-    public function index_sub()
+    public function index_sub(Request $request)
     {
         if (checkpermission('SubCategoryController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $maincategories = Category::where('flag', 0)->where('parent_id', null)->with('subcategory')->distinct('parent_id')->get();
+                $subcategories = Category::where('parent_id', '!=', null)->where('status', $request->active)->with('parent')->get();
 
                 /* Converting Selected Data into desired format */
                 $categories = new Collection;
-                foreach ($maincategories as $category) {
-                    if (!empty($category->subcategory)) {
-                        foreach ($category->subcategory as $sub) {
-                            if ($sub->flag == 0) {
-                                $categories->push([
-                                    'id'        => $sub->id,
-                                    'main'      => $category->name,
-                                    'name'      => $sub->name,
-                                    'slug'      => $sub->slug,
-                                    'status'    => $sub->status
-                                ]);
-                            }
-                        }
-                    }
+                foreach ($subcategories as $subcategory) {
+                    $categories->push([
+                        'id'        => $subcategory->id,
+                        'main'      => $subcategory->parent->name,
+                        'name'      => $subcategory->name,
+                        'slug'      => $subcategory->slug,
+                        'status'    => $subcategory->status
+                    ]);
                 }
 
                 /* Sending data through yajra datatable for server side rendering */

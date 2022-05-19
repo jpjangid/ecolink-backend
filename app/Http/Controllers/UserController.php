@@ -15,12 +15,12 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (checkpermission('UserController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode')->where('flag', '0')->get();
+                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->where('flag', $request->active)->get();
 
                 /* Converting Selected Data into desired format */
                 $users = new Collection;
@@ -34,12 +34,23 @@ class UserController extends Controller
                         'city'          =>  $user->city,
                         'state'         =>  $user->state,
                         'pincode'       =>  $user->pincode,
+                        'flag'          =>  $user->flag
                     ]);
                 }
 
                 /* Sending data through yajra datatable for server side rendering */
                 return Datatables::of($users)
                     ->addIndexColumn()
+                    /* Status Active and Deactive Checkbox */
+                    ->addColumn('active', function ($row) {
+                        $checked = $row['flag'] == '0' ? 'checked' : '';
+                        $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
+                                        <input type="hidden" value="' . $row['id'] . '" class="user_id">
+                                        <input type="checkbox" class="form-check-input js-switch  h-20px w-30px" id="customSwitch1" name="flag" value="' . $row['flag'] . '" ' . $checked . '>
+                                    </div>';
+
+                        return $active;
+                    })
                     /* Adding Actions like edit, delete and show */
                     ->addColumn('action', function ($row) {
                         $delete_url = url('admin/users/delete', $row['id']);
@@ -49,7 +60,7 @@ class UserController extends Controller
                         // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
-                    ->rawColumns(['action'])
+                    ->rawColumns(['action','active'])
                     ->make(true);
             }
             return view('users.index');
@@ -243,6 +254,22 @@ class UserController extends Controller
             return redirect('admin/users')->with('danger', 'User deleted successfully');
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
+    }
+
+    public function update_status(Request $request)
+    {
+        /* Updating status of selected entry */
+        $user = User::find($request->user_id);
+        $user->flag   = $request->flag == 1 ? 0 : 1;
+        $user->update();
+
+        if ($user->flag == 1) {
+            $data['msg'] = 'danger';
+            return response()->json($data);
+        } else {
+            $data['msg'] = 'success';
+            return response()->json($data);
         }
     }
 }

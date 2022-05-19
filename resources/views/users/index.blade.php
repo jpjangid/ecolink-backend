@@ -32,6 +32,15 @@
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
                         <li class="breadcrumb-item"><a href="{{ url('admin/users/create') }}" class="btn btn-info mt-o" style="float: right;">New User</a></li>
                     </ol>
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <select id="active" class="form-control">
+                                <option value="0">Active</option>
+                                <option value="1">Deactive</option>
+                            </select>
+                        </div>
+                    </div>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -48,6 +57,7 @@
                     <th>City</th>
                     <th>State</th>
                     <th>Pincode</th>
+                    <th>Active</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
@@ -60,11 +70,26 @@
 @section('js')
 <script type="text/javascript">
     $(function() {
+        datatable();
+    });
+
+    $(document).on('change', '#active', function(){
+        datatable();
+    });
+
+    function datatable(){
         var table = $('#userTable').DataTable({
+            destroy: true,
             scrollY: "55vh",
             processing: true,
             serverSide: true,
-            ajax: "{{ url('admin/users') }}",
+            ajax: {
+                url: "{{ url('admin/users') }}",
+                type: "get",
+                data: function(d) {
+                    d.active = $('#active').val();
+                },
+            },
             columns: [{
                     data: 'name',
                     name: 'name'
@@ -94,6 +119,10 @@
                     name: 'pincode'
                 },
                 {
+                    data: 'active',
+                    name: 'active'
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,
@@ -101,7 +130,53 @@
                 },
             ]
         });
+    }
 
+    $(document).on('click', '.js-switch', function() {
+        var row = $(this).closest('tr');
+        let flag = row.find('.js-switch').val();
+        let userId = row.find('.user_id').val();
+        $.ajax({
+            url: "{{ url('admin/users/update_status') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                flag: flag,
+                user_id: userId,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                if (data['msg'] == 'success') {
+                    swal({
+                        title: 'Active',
+                        text: "User activated.",
+                        icon: 'success',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                } else {
+                    swal({
+                        title: 'Inactive',
+                        text: "User deactivated.",
+                        icon: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                }
+            }
+        });
     });
 </script>
 @endsection
