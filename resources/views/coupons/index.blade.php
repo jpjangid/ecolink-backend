@@ -32,6 +32,15 @@
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
                         <li class="breadcrumb-item"><a href="{{ url('admin/coupons/create') }}" class="btn btn-info mt-o" style="float: right;">New Coupon</a></li>
                     </ol>
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <select id="active" class="form-control">
+                                <option value="1">Active</option>
+                                <option value="0">Deactive</option>
+                            </select>
+                        </div>
+                    </div>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -48,7 +57,7 @@
                     <th>Coupon End Time</th>
                     <th>Days</th>
                     <th>Created On</th>
-                    <th>Show In Front</th>
+                    <th>Active</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
@@ -60,6 +69,68 @@
 @endsection
 @section('js')
 <script type="text/javascript">
+    $(function() {
+        datatable();
+    });
+
+    $(document).on('change', '#active', function() {
+        datatable();
+    });
+
+    function datatable() {
+        var couponTable = $('#couponTable').DataTable({
+            destroy: true,
+            scrollY: "55vh",
+            scrollX: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('admin/coupons') }}",
+                type: "get",
+                data: function(d) {
+                    d.active = $('#active').val();
+                },
+            },
+            columns: [{
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'code',
+                    name: 'code'
+                },
+                {
+                    data: 'type',
+                    name: 'type'
+                },
+                {
+                    data: 'offer_start',
+                    name: 'offer_start'
+                },
+                {
+                    data: 'offer_end',
+                    name: 'offer_end'
+                },
+                {
+                    data: 'days',
+                    name: 'days'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'active',
+                    name: 'active'
+                },
+                {
+                    data: 'action',
+                    name: 'action'
+                },
+            ]
+        });
+    }
+
     $(document).ready(function() {
         $(document).on('click', '.coupan_confirm', function(event) {
             var form = $(this).closest("form");
@@ -79,53 +150,8 @@
                 });
         });
     });
-</script>
-<script type="text/javascript">
-    var couponTable = $('#couponTable').DataTable({
-        scrollY: "55vh",
-        processing: true,
-        serverSide: true,
-        url: "{{ url('admin/coupons') }}",
-        columns: [{
-                data: 'name',
-                name: 'name'
-            },
-            {
-                data: 'code',
-                name: 'code'
-            },
-            {
-                data: 'type',
-                name: 'type'
-            },
-            {
-                data: 'offer_start',
-                name: 'offer_start'
-            },
-            {
-                data: 'offer_end',
-                name: 'offer_end'
-            },
-            {
-                data: 'days',
-                name: 'days'
-            },
-            {
-                data: 'created_at',
-                name: 'created_at'
-            },
-            {
-                data: 'active',
-                name: 'active'
-            },
-            {
-                data: 'action',
-                name: 'action'
-            },
-        ]
-    });
-</script>
-<script>
+
+
     $(document).on('change', '.js-switch', function() {
         var row = $(this).closest('tr');
         let show_in_front = row.find('.show_in_front').val();
