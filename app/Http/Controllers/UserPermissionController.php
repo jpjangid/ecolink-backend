@@ -22,11 +22,13 @@ class UserPermissionController extends Controller
                 /* Converting Selected Data into desired format */
                 $users = new Collection;
                 foreach ($allusers as $user) {
-                    $users->push([
-                        'id'            =>  $user->id,
-                        'name'          =>  $user->name,
-                        'role'          =>  $user->role->name,
-                    ]);
+                    if($user->id != 1){
+                        $users->push([
+                            'id'            =>  $user->id,
+                            'name'          =>  $user->name,
+                            'role'          =>  $user->role->name,
+                        ]);
+                    }
                 }
                 return Datatables::of($users)
                     ->addIndexColumn()
