@@ -17,25 +17,32 @@ use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (checkpermission('OrderController@index')) {
             if (request()->ajax()) {
+                $active = $request->active;
                 /* Getting all records */
-                $allorders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with('user:id,name')->orderby('created_at', 'desc')->get();
+                $allorders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with(['user:id,name,flag',
+                'user' => function ($q) use ($active) {
+                    return $q->where('flag', $active);
+                }])->orderby('created_at', 'desc')->get();
 
                 $orders = new Collection;
                 foreach ($allorders as $order) {
-                    $orders->push([
-                        'id'                => $order->id,
-                        'order_no'          => $order->order_no,
-                        'client'            => $order->user->name,
-                        'order_status'      => $order->order_status,
-                        'payment_status'    => $order->payment_status,
-                        'total'             => number_format((float)$order->total_amount, 2, '.', ''),
-                        'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
-                        'order_comments'    => $order->order_comments
-                    ]);
+                    if(!empty($order->user)){
+                        $orders->push([
+                            'id'                => $order->id,
+                            'order_no'          => $order->order_no,
+                            'client'            => $order->user->name,
+                            'order_status'      => $order->order_status,
+                            'payment_status'    => $order->payment_status,
+                            'total'             => number_format((float)$order->total_amount, 2, '.', ''),
+                            'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
+                            'order_comments'    => $order->order_comments,
+                            'active'            => $order->user->flag == 0 ? 'Active' : 'Deactive'
+                        ]);
+                    }
                 }
 
                 return Datatables::of($orders)

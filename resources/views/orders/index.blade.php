@@ -32,6 +32,15 @@
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
                         <li class="breadcrumb-item"><a href="{{ url('admin/orders/create') }}" class="btn btn-info mt-o" style="float: right;">New Order</a></li>
                     </ol>
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <select id="active" class="form-control">
+                                <option value="0">Active</option>
+                                <option value="1">Deactive</option>
+                            </select>
+                        </div>
+                    </div>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -48,6 +57,7 @@
                     <th>Total Amount</th>
                     <th>Order Date</th>
                     <th>Special Requirement</th>
+                    <th>Active</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -59,44 +69,65 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-    var orderTable = $('#orderTable').DataTable({
-        scrollY: "55vh",
-        processing: true,
-        serverSide: true,
-        url: "{{ url('admin/orders') }}",
-        columns: [{
-                data: 'orderno',
-                name: 'orderno'
-            },
-            {
-                data: 'client',
-                name: 'client'
-            },
-            {
-                data: 'order_status',
-                name: 'order_status'
-            },
-            {
-                data: 'payment_status',
-                name: 'payment_status'
-            },
-            {
-                data: 'total',
-                name: 'total'
-            },
-            {
-                data: 'date',
-                name: 'date'
-            },
-            {
-                data: 'order_comments',
-                name: 'order_comments'
-            },
-            {
-                data: 'action',
-                name: 'action'
-            },
-        ]
+    $(function() {
+        datatable();
     });
+
+    $(document).on('change', '#active', function() {
+        datatable();
+    });
+
+    function datatable() {
+        var orderTable = $('#orderTable').DataTable({
+            destroy: true,
+            scrollY: "55vh",
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ url('admin/orders') }}",
+                type: "get",
+                data: function(d) {
+                    d.active = $('#active').val();
+                },
+            },
+            columns: [{
+                    data: 'orderno',
+                    name: 'orderno'
+                },
+                {
+                    data: 'client',
+                    name: 'client'
+                },
+                {
+                    data: 'order_status',
+                    name: 'order_status'
+                },
+                {
+                    data: 'payment_status',
+                    name: 'payment_status'
+                },
+                {
+                    data: 'total',
+                    name: 'total'
+                },
+                {
+                    data: 'date',
+                    name: 'date'
+                },
+                {
+                    data: 'order_comments',
+                    name: 'order_comments'
+                },
+                {
+                    data: 'active',
+                    name: 'active'
+                },
+                {
+                    data: 'action',
+                    name: 'action'
+                },
+            ]
+        });
+    }
 </script>
 @endsection
