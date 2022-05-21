@@ -25,6 +25,16 @@
         <div style="padding:0 15px;">
             <div style="max-width:532px;margin:5px auto 0;text-align:center;background:#fff;padding:0 10px 10px">
                 <p style="background:#f4f4f4;width:150px;height:20px;margin:0 auto"></p>
+                <p style="font-size:16px;margin:-8px 0 14px;text-align:center;"><span style="border-bottom:1px solid #e51a4b">Visit Us</span></p>
+                <div>
+                    <a href="#" target="_blank" style="margin:0 3px"><img src="{{ asset('storage/images/fb.png') }}" alt="Facebook"></a>
+                    <a href="#" target="_blank" style="margin:0 3px"><img src="{{ asset('storage/images/twitter.png') }}" alt="Twitter"></a>
+                    <a href="#" target="_blank" style="margin:0 3px"><img src="{{ asset('storage/images/insta.png') }}" alt="Instagram"></a>
+                    <a href="#" target="_blank" style="margin:0 3px"><img src="{{ asset('storage/images/pinterest.png') }}" alt="Pinterest"></a>
+                </div>
+                <div>
+                    <p style="text-align:center;"> For any Query/suggestion email on <a href="mailto:info@ecolink.com">info@ecolink.com</a></p>
+                </div>
             </div>
         </div>
     </div>

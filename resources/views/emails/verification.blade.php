@@ -14,10 +14,16 @@
         <div style="padding:0 15px;">
             <div style="padding:35px 20px;text-align:center">
                 <p style="font-size:24px;font-weight:normal;margin:0;text-align:left;"><?php echo $user->name; ?></p>
-                <p style="font-size:18px;font-weight:normal;margin:0;text-align:left; padding-left:0px;">Thank you for subscribing us.
-                    We're thrilled to welcome you onboard with the exciting news, trends, stories and much more. </p>
+                <p style="font-size:18px;font-weight:normal;margin:0;text-align:left; padding-left:0px;">Welcome onboard with Ecolink. We look forward to a long association with you.
+                    Please click on the link below to verify your account with us. </p>
             </div>
             <div style="text-align:center;margin-top:10px;">
+                @component('mail::button', ['url' => $user->url])
+                Verify Account
+                @endcomponent
+            </div>
+            <div style="padding:35px 20px;text-align:center">
+                <p style="font-size:24px;font-weight:normal;margin:0;text-align:left;">Thanks <br>Ecolink</p>
             </div>
         </div>
         <div style="padding:0 15px;">
