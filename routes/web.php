@@ -106,7 +106,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [ProductController::class, 'store']);
         Route::get('/edit/{id}', [ProductController::class, 'edit']);
         Route::put('/update/{id}', [ProductController::class, 'update']);
-        Route::get('/delete/{id}', [ProductController::class, 'destroy']);
+        Route::delete('/delete/{id}', [ProductController::class, 'destroy']);
         Route::post('/update_status', [ProductController::class, 'update_status']);
     });
 

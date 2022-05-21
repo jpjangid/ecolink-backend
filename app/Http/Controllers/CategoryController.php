@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -236,6 +237,28 @@ class CategoryController extends Controller
             /* Updating selected entry Flag to 1 for soft delete */
             $category = Category::where('id', $id)->with('subcategory.products', 'products')->first();
 
+            $product_ids = array();
+            if ($category->subcategory->isNotEmpty()) {
+                foreach ($category->subcategory as $subcategory) {
+                    if ($subcategory->products->isNotEmpty()) {
+                        foreach ($subcategory->products as $product) {
+                            array_push($product_ids, $product->id);
+                        }
+                    }
+                }
+            }
+
+            if ($category->products->isNotEmpty()) {
+                foreach ($category->products as $product) {
+                    array_push($product_ids, $product->id);
+                }
+            }
+
+            $carts = Cart::whereIn('product_id', $product_ids)->get();
+            if($carts->isNotEmpty()){
+                return redirect('admin/categories')->with('danger', 'Product is present in cart.');
+            }
+            
             $category->update(['flag' => 1, 'status' => 0]);
             if ($category->subcategory->isNotEmpty()) {
                 foreach ($category->subcategory as $subcategory) {
@@ -490,6 +513,28 @@ class CategoryController extends Controller
         if (checkpermission('SubCategoryController@destroy')) {
             /* Updating selected entry Flag to 1 for soft delete */
             $category = Category::where('id', $id)->with('subcategory.products', 'products')->first();
+
+            $product_ids = array();
+            if ($category->subcategory->isNotEmpty()) {
+                foreach ($category->subcategory as $subcategory) {
+                    if ($subcategory->products->isNotEmpty()) {
+                        foreach ($subcategory->products as $product) {
+                            array_push($product_ids, $product->id);
+                        }
+                    }
+                }
+            }
+
+            if ($category->products->isNotEmpty()) {
+                foreach ($category->products as $product) {
+                    array_push($product_ids, $product->id);
+                }
+            }
+
+            $carts = Cart::whereIn('product_id', $product_ids)->get();
+            if($carts->isNotEmpty()){
+                return redirect('admin/sub/categories')->with('danger', 'Product is present in cart.');
+            }
 
             $category->update(['flag' => 1]);
             if ($category->subcategory->isNotEmpty()) {

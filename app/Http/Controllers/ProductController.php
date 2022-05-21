@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -48,7 +49,14 @@ class ProductController extends Controller
                     ->addColumn('action', function ($row) {
                         $delete_url = url('admin/products/delete', $row['id']);
                         $edit_url = url('admin/products/edit', $row['id']);
-                        $btn = '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
+                        $btn = '<div style="display:flex;">
+                        <a class="btn btn-primary btn-xs" href="' . $edit_url . '" style="margin-right: 2px;"><i class="fas fa-edit"></i></a>
+                                        <form action="' . $delete_url . '" method="post">
+                                            <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button class="delete btn btn-danger btn-xs product_confirm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
@@ -306,5 +314,24 @@ class ProductController extends Controller
 
         /* After successfull update of data redirecting to index page with message */
         return redirect('admin/products')->with('success', 'Product updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        if (checkpermission('ProductController@destroy')) {
+            $carts = Cart::where('product_id', $id)->get();
+
+            if($carts->isNotEmpty()){
+                return redirect('admin/products')->with('danger', 'Product is present in cart.');
+            }
+
+            $product = Product::find($id);
+            $product->status = 0;
+            $product->flag = 1;
+            $product->update();
+            return redirect('admin/products')->with('danger', 'Product deleted successfully');
+        } else {
+            return redirect()->back()->with('danger', 'You dont have required permission!');
+        }
     }
 }
