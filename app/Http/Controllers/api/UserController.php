@@ -137,6 +137,12 @@ class UserController extends Controller
             'password' => $request->password,
         ];
 
+        $user = DB::table('users')->where('email',$request->email)->first();
+
+        if($user->flag == 1){
+            return response()->json(['message' => 'User is deactive', 'code' => 400], 400);
+        }
+
         if (auth()->attempt($login_credentials)) {
             //generate the token for the user
             $token = auth()->user()->createToken('MyApp')->accessToken;
