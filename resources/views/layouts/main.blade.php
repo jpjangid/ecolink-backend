@@ -37,7 +37,8 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
   <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
   <!-- Select 2 Css -->
-  <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+  <!-- <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}"> -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
   <link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
   <style>
@@ -123,7 +124,8 @@
   <!-- Tempusdominus Bootstrap 4 -->
   <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
   <!-- Summernote -->
-  <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
+  <!-- <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.js"></script>
   <!-- overlayScrollbars -->
   <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
   <!-- AdminLTE App -->
