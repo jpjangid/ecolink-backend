@@ -29,18 +29,17 @@
   <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
   <!-- Daterange picker -->
   <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
-  <!-- summernote -->
-  <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.css') }}">
   <!-- Google Font: Source Sans Pro -->
   <link href="{{ asset('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet') }}">
   <!-- DataTable Css -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
   <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
   <!-- Select 2 Css -->
-  <!-- <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}"> -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
   <link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
+  <!-- summernote -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.css">
   <style>
     .container-fluid {
       overflow-x: auto;
@@ -123,9 +122,6 @@
   <script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
   <!-- Tempusdominus Bootstrap 4 -->
   <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-  <!-- Summernote -->
-  <!-- <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.js"></script>
   <!-- overlayScrollbars -->
   <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
   <!-- AdminLTE App -->
@@ -139,6 +135,8 @@
   <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
+  <!-- Summernote -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.js"></script>
 
   <script type="text/javascript">
     // var editor = new FroalaEditor('#wysiwyg');
@@ -160,124 +158,7 @@
     $(".alert").fadeTo(2000, 500).slideUp(500, function() {
       $(".alert").slideUp(1000);
     });
-
-    function myFunction() {
-      // $.ajax({
-      //     url:"{{url('getnotifications')}}",
-      //     type: "GET",
-      //     dataType : 'json',
-      //     success: function(result){
-      //       console.log(result);
-      //         $('.notificationMessages').empty();
-      //         $('#state').html('<option value="">Select State</option>'); 
-      //         $.each(result.notification,function(key,value){
-      //           $('.notificationMessages').append(`<a href="#" class="dropdown-item">
-      //                   <i class="fas fa-envelope mr-2"></i>`+value.notification.title+` 
-      //                   <span class="float-right text-muted text-sm">3 mins</span>
-      //                 </a>
-      //                 <div class="dropdown-divider"></div>
-      //             `);
-      //         });
-      //     }
-      // });
-      $('.notificationMessages').empty();
-      $('.notificationMessages').append(`<a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>`);
-    }
-
-    //notification js
-
-
-    // $(document).ready(function() {
-    //   //getting notifications from backend on click
-    //   $('#getNotification').click(function(e) {
-    //     e.preventDefault();
-    //     $.ajax({
-    //       url: "{{url('getnotifications')}}",
-    //       type: "GET",
-    //       dataType: 'json',
-    //       success: function(result) {
-    //         $('.notificationMessages').empty();
-    //         if (result.notification != "") {
-    //           $.each(result.notification, function(key, value) {
-    //             $('.notificationMessages').append(`<a href="#" class="dropdown-item">
-    //                   <i class="fas fa-envelope mr-2"></i>` + value.notification.title + ` 
-    //                   <span class="float-right text-muted text-sm">` + value.created_at + `</span>
-    //                 </a>
-    //                 <div class="dropdown-divider"></div>
-    //             `);
-    //           });
-    //         } else {
-    //           $('.notificationMessages').append(`<span class="dropdown-item text-center">
-    //                   No Notifications 
-    //                   <span class="float-right text-muted text-sm"></span>
-    //                 </span>
-    //                 <div class="dropdown-divider"></div>
-    //             `);
-    //         }
-
-    //       }
-    //     });
-    //   });
-
-    //   //count of notification
-    //   function countNotification() {
-    //     $.ajax({
-    //       url: "{{url('getnotifications/count')}}",
-    //       type: "GET",
-    //       dataType: 'json',
-    //       success: function(result) {
-    //         console.log(result);
-    //         setTimeout(function() {
-    //           countNotification();
-    //         }, 10000);
-    //         $('.notificationCount').empty();
-    //         if (result.notificationCount != "") {
-    //           $('.notificationCount').text(result.notificationCount);
-    //         } else {
-    //           $('.notificationCount').text('0');
-    //         }
-    //       }
-    //     });
-    //   }
-
-    //   countNotification();
-    // });
   </script>
-  <script>
-    // Get the modal
-    function ShowModal(id, src) {
-      var modal = document.getElementById("myModal" + id);
-
-      // Get the image and insert it inside the modal - use its "alt" text as a caption
-      var modalImg = document.getElementById("img01" + id);
-      // var captionText = document.getElementById("caption"+id);
-      modal.style.display = "block";
-      modalImg.src = src;
-      // captionText.innerHTML = caption;
-
-      // Get the <span> element that closes the modal
-      var span = document.getElementById("close" + id);
-
-      // When the user clicks on <span> (x), close the modal
-      span.onclick = function() {
-        modal.style.display = "none";
-      }
-    }
-  </script>
-
   @yield('js')
 </body>
 
