@@ -75,13 +75,13 @@
                         <div class="container-fluid">
                             <div class="row mb-2">
                                 <div class="col-sm-6">
-                                    <h6 class="m-0 text-dark">Enquire</h6>
+                                    <h6 class="m-0 text-dark">Enquire Contact</h6>
                                 </div><!-- /.col -->
-                                <!-- <div class="col-sm-6">
+                                <div class="col-sm-6">
                                     <ol class="breadcrumb float-sm-right">
-                                        <li class="breadcrumb-item"><a href="{{ url('admin/products') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
+                                        <li class="breadcrumb-item"><a href="{{ url('admin/contact') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
                                     </ol>
-                                </div> -->
+                                </div>
                                 <!-- /.col -->
                             </div><!-- /.row -->
                         </div><!-- /.container-fluid -->
@@ -103,6 +103,174 @@
                                         <small>{{ $contact->first_name }}</small><br />
                                         <span><b>Email: </b></span>
                                         <small>{{ $contact->email }}</small><br />
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="content-header">
+                        <div class="container-fluid">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <h6 class="m-0 text-dark">Enquire Askchemist</h6>
+                                </div><!-- /.col -->
+                                <div class="col-sm-6">
+                                    <ol class="breadcrumb float-sm-right">
+                                        <li class="breadcrumb-item"><a href="{{ url('admin/askchemist') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
+                                    </ol>
+                                </div>
+                                <!-- /.col -->
+                            </div><!-- /.row -->
+                        </div><!-- /.container-fluid -->
+                    </div>
+                    <div class="container-fluid" style="overflow-x:auto;">
+                        <table id="productTable" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Enquire Type</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach( $askchemists as $askchemist)
+                                <tr>
+                                    <td>{{ $askchemist->type}}</td>
+                                    <td>
+                                        <span><b>Name: </b></span>
+                                        <small>{{ $askchemist->first_name }}</small><br />
+                                        <span><b>Email: </b></span>
+                                        <small>{{ $askchemist->email }}</small><br />
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="content-header">
+                        <div class="container-fluid">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <h6 class="m-0 text-dark">Enquire Product Request</h6>
+                                </div><!-- /.col -->
+                                <div class="col-sm-6">
+                                    <ol class="breadcrumb float-sm-right">
+                                        <li class="breadcrumb-item"><a href="{{ url('admin/requestproduct') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
+                                    </ol>
+                                </div>
+                                <!-- /.col -->
+                            </div><!-- /.row -->
+                        </div><!-- /.container-fluid -->
+                    </div>
+                    <div class="container-fluid" style="overflow-x:auto;">
+                        <table id="productTable" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Enquire Type</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach( $productrequests as $productrequest)
+                                <tr>
+                                    <td>{{ $productrequest->type}}</td>
+                                    <td>
+                                        <span><b>Name: </b></span>
+                                        <small>{{ $productrequest->first_name }}</small><br />
+                                        <span><b>Email: </b></span>
+                                        <small>{{ $productrequest->email }}</small><br />
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="content-header">
+                        <div class="container-fluid">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <h6 class="m-0 text-dark">Enquire Technicals Support</h6>
+                                </div><!-- /.col -->
+                                <div class="col-sm-6">
+                                    <ol class="breadcrumb float-sm-right">
+                                        <li class="breadcrumb-item"><a href="{{ url('admin/technicalsupport') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
+                                    </ol>
+                                </div>
+                                <!-- /.col -->
+                            </div><!-- /.row -->
+                        </div><!-- /.container-fluid -->
+                    </div>
+                    <div class="container-fluid" style="overflow-x:auto;">
+                        <table id="productTable" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Enquire Type</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach( $technicals as $technical)
+                                <tr>
+                                    <td>{{ $technical->type}}</td>
+                                    <td>
+                                        <span><b>Name: </b></span>
+                                        <small>{{ $technical->first_name }}</small><br />
+                                        <span><b>Email: </b></span>
+                                        <small>{{ $technical->email }}</small><br />
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="content-header">
+                        <div class="container-fluid">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <h6 class="m-0 text-dark">Enquire Bulkpricings</h6>
+                                </div><!-- /.col -->
+                                <div class="col-sm-6">
+                                    <ol class="breadcrumb float-sm-right">
+                                        <li class="breadcrumb-item"><a href="{{ url('admin/bulkpricing') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
+                                    </ol>
+                                </div>
+                                <!-- /.col -->
+                            </div><!-- /.row -->
+                        </div><!-- /.container-fluid -->
+                    </div>
+                    <div class="container-fluid" style="overflow-x:auto;">
+                        <table id="productTable" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Enquire Type</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach( $bulkpricings as $bulkpricing)
+                                <tr>
+                                    <td>{{ $bulkpricing->type}}</td>
+                                    <td>
+                                        <span><b>Name: </b></span>
+                                        <small>{{ $bulkpricing->first_name }}</small><br />
+                                        <span><b>Email: </b></span>
+                                        <small>{{ $bulkpricing->email }}</small><br />
                                     </td>
                                 </tr>
                                 @endforeach
