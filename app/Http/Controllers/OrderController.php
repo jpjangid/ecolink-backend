@@ -38,7 +38,7 @@ class OrderController extends Controller
                             'order_status'      => $order->order_status,
                             'payment_status'    => $order->payment_status,
                             'total'             => number_format((float)$order->total_amount, 2, '.', ''),
-                            'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
+                            'date'              => date('Y-m-d h:i A', strtotime($order->created_at)),
                             'order_comments'    => $order->order_comments,
                             'active'            => $order->user->flag == 0 ? 'Active' : 'Deactive'
                         ]);

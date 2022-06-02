@@ -120,3 +120,6 @@ Route::post('filterProduct', [HomeController::class, 'filterProduct']);
 
 //Route For Getting Tax Using zip
 Route::post('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);
+Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
+Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
+Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);

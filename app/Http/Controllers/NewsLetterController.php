@@ -25,7 +25,7 @@ class NewsLetterController extends Controller
                     $newsletters->push([
                         'id'        => $newsletter->id,
                         'email'     => $newsletter->email,
-                        'date'      => date('d-m-Y', strtotime($newsletter->created_at)),
+                        'date'      => date('Y-m-d h:i A', strtotime($newsletter->created_at)),
                     ]);
                 }
 

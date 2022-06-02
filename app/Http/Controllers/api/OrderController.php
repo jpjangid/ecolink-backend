@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
+use QuickBooksOnline\API\DataService\DataService;
 
 class OrderController extends Controller
 {
@@ -68,10 +70,6 @@ class OrderController extends Controller
             'payment_via'           =>  'required',
             'shippment_via'         =>  'required'
         ]);
-
-        // $response = $this->shipViaSaia($request->user_id, $request->shipping_zip, $request->shipping_country);
-
-        // dd($response);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
@@ -186,6 +184,16 @@ class OrderController extends Controller
             }
         }
 
+        if($order->shippment_via == 'saia'){
+            $response = $this->shipViaSaia($order->id);
+        }else{
+            $response = $this->shipViaFedex($order->id);
+        }
+
+        $qboresponse = $this->quickBookInvoice($order->user_id);
+
+        $sosresponse = $this->sosItemUpdate();
+
         if (!empty($order)) {
             foreach ($cartItems as $item) {
                 $item->delete();
@@ -231,17 +239,17 @@ class OrderController extends Controller
         }
     }
 
-    public function shipViaSaia($user_id, $zip, $country)
+    public function shipViaSaia($order_id)
     {
-
-        $cartItems = Cart::where('user_id', $user_id)->with('product')->get();
+        $order = Order::find($order_id);
+        $cartItems = Cart::where('user_id', $order->user_id)->with('product')->get();
 
         $detailItems = '';
         foreach ($cartItems as $item) {
             $detailItems .= '
             <DetailItem>
-                <DestinationZipcode>' . $zip . '</DestinationZipcode>
-                <DestinationCountry>' . $country . '</DestinationCountry>
+                <DestinationZipcode>' . $order->shipping_zip . '</DestinationZipcode>
+                <DestinationCountry>' . $order->shipping_country . '</DestinationCountry>
                 <Pieces>' . $item->quantity . '</Pieces>
                 <Package>BG</Package>
                 <Weight>' . $item->product->weight . '</Weight>
@@ -270,7 +278,7 @@ class OrderController extends Controller
                             <UserID>ecolink</UserID>
                             <Password>ecolink4</Password>
                             <TestMode>Y</TestMode>
-                            <ShipmentDate>2022-04-26</ShipmentDate>
+                            <ShipmentDate>'.date('Y-m-d', strtotime($order->created)).'</ShipmentDate>
                             <BillingTerms>Prepaid</BillingTerms>
                             <BLNumber></BLNumber>
                             <ShipperNumber></ShipperNumber>
@@ -283,13 +291,13 @@ class OrderController extends Controller
                                 <AccountNumber>0747932</AccountNumber>
                             </Shipper>
                             <Consignee>
-                                <ContactName>Lakhan Sharma</ContactName>
-                                <Address1>1511 Cantebury Drive</Address1>
-                                <City>Westbury</City>
-                                <State>NY</State>
-                                <Zipcode>11590</Zipcode>
+                                <ContactName>'.$order->shipping_name.'</ContactName>
+                                <Address1>'.$order->shipping_address.'</Address1>
+                                <City>'.$order->shipping_city.'</City>
+                                <State>'.$order->shipping_state.'</State>
+                                <Zipcode>'.$order->shipping_zip.'</Zipcode>
                             </Consignee>
-                            <Details>'.$detailItems.'</Details>
+                            <Details>' . $detailItems . '</Details>
                         </request>
                     </Create>
                 </soap:Body>
@@ -305,6 +313,129 @@ class OrderController extends Controller
 
         curl_close($curl);
 
+        return $response;
+    }
+
+    public function shipViaFedex($order_id)
+    {
+        $order = Order::where('id', $order_id)->with('items.product')->first();
+
+        $paymentType = $order->payment_via == 'COD' ? 'RECIPIENT' : 'SENDER';
+
+        $items = array();
+        foreach ($order->items as $item) {
+            $weight = collect(['value' => $item->product->weight, 'units' => 'LB']);
+            $itemWeight = collect(['weight' => $weight]);
+            array_push($items, $itemWeight);
+        }
+
+        $token = $this->fedexAuth();
+        $token = json_decode($token);
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apis-sandbox.fedex.com/ship/v1/shipments',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                "labelResponseOptions": "URL_ONLY",
+                "requestedShipment": {
+                    "shipper": {
+                    "contact": {
+                        "personName": "SHIPPER NAME",
+                        "phoneNumber": 1234567890,
+                        "companyName": "Shipper Company Name"
+                    },
+                    "address": {
+                        "streetLines": [
+                        "SHIPPER STREET LINE 1"
+                        ],
+                        "city": "HARRISON",
+                        "stateOrProvinceCode": "AR",
+                        "postalCode": 72601,
+                        "countryCode": "US"
+                    }
+                    },
+                    "recipients": [
+                        {
+                            "contact": {
+                                "personName": "' . $order->shipping_name . '",
+                                "phoneNumber": "' . $order->shipping_mobile . '",
+                                "companyName": "' . $order->shipping_name . '"
+                            },
+                            "address": {
+                                "streetLines": [
+                                    "' . $order->shipping_address . '"
+                                ],
+                                "city": "' . $order->shipping_city . '",
+                                "stateOrProvinceCode": "' . $order->shipping_state . '",
+                                "postalCode": "' . $order->shipping_zip . '",
+                                "countryCode": "' . $order->shipping_country . '"
+                            }
+                        }
+                    ],
+                    "shipDatestamp": "' . date('Y-m-d', strtotime($order->created_at)) . '",
+                    "serviceType": "FEDEX_GROUND",
+                    "packagingType": "YOUR_PACKAGING",
+                    "pickupType": "USE_SCHEDULED_PICKUP",
+                    "blockInsightVisibility": false,
+                    "shippingChargesPayment": {
+                        "paymentType": "' . $paymentType . '"
+                    },
+                    "labelSpecification": {
+                    "imageType": "PDF",
+                    "labelStockType": "PAPER_85X11_TOP_HALF_LABEL"
+                    },
+                    "requestedPackageLineItems": ' . json_encode($items) . '
+                },
+                "accountNumber": {
+                    "value": "740561073"
+                }
+            }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'x-customer-transaction-id: 624deea6-b709-470c-8c39-4b5511281492',
+                'x-locale: en_US',
+                'Authorization: Bearer ' . $token->access_token,
+                'Cookie: _abck=E19AF3FAD6527E1E990819F9CC8CB3CD~-1~YAAQHwTXF8FvlweAAQAA869+JgeB03Iuc9wLacxfX0+U9pyRT6L+sDSP9n2KXNSOH4zLSj4qDNYQtQ4Kcsh5VurQ5Z9BpoqT46XOkSb/Q5fnK77y11npqhaWxLaKuEJJftrXE4fFQgVHPDTrJo1XSyUP09SRvWA11j3rqNgQWGetr9x4FCr+FTmPFKI+FkRUd5fWMf612vRz7oQY5B1npIaotKDuarOiQ0iSwZcvydSuvJEj10lPWYpas0i1ZQUXYHpdi+txH75UWuJwIIB3NnZVWqjEZM3G9LPtHHf036eQs5wRwUNUi7Q95J2CfU3q8rqAvPKaJxxAKvvbiKyUPr22ypowQHTbAalqADWEwrV49VKz4ji13g==~-1~-1~-1; ak_bmsc=0404715F46156A2B67FCB4CEF56F5E76~000000000000000000000000000000~YAAQPHUsMcjvP9+AAQAAxiwy7A+ZV0yXbkVpR/p9EH0SQlDRxhH0daxgmHd3d4mk9KzqpvqbZitICssMd4K/HPlymjvITATej2zfPEnq5vWZB3sGCDfDu3L5Hj19JnsVirLkSAyhA8mBvELuK2he3VHbWLWqP/47ifSqa7cN5XFx/zViRt7wQoWCFvLN83HER//I7dj9gTwO9FeEk5r/ymycAdMS/fZ7BVB35jbEe4Gij9qScOYkFuOjv9NasYZ/5kV5l8UlOtrmOMLgM01pOD648faITRASPY9Q9qs/V9E50dBDYFG0sU4KhZyv+iuOFflHVrU5hk7nn7STb7Vw0J75x2Fr5UuK73j4ucQlDNw8jeb/YzB89a/OFg==; bm_sv=3A1F80F7A318B10F73270023D519B191~YAAQtXUsMd5WqueAAQAA9VaP7A9hJ2EZvh9yQGm6F3HAWnigyAflyeQt69/h6N6/nxlB/SdjXAGcxGVOyBJPc5++PVLt1pWtJCsKp4pSlyePIsUBroC5oakzTDXHBEJtS10u30DLIG5Jk9J9pZgZ0Bz3Xb91tGnLkJpMQwWURCVBn1pcFr0Gi01reKJPP21GZi+h3UxbxngaBI9QVH6stsl7rMhMJAQ1rwM1G8pJbr0C/ubD4LukosjIZN7/MEw=~1'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return $response;
+    }
+
+    public function fedexAuth()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apis-sandbox.fedex.com/oauth/token',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'grant_type=client_credentials&client_id=l7df29a700b97d4d079e4b0d3ea2363d32&client_secret=4a80d56001e84d06ac4cdb5efae564d8',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Cookie: _abck=E19AF3FAD6527E1E990819F9CC8CB3CD~-1~YAAQHwTXF8FvlweAAQAA869+JgeB03Iuc9wLacxfX0+U9pyRT6L+sDSP9n2KXNSOH4zLSj4qDNYQtQ4Kcsh5VurQ5Z9BpoqT46XOkSb/Q5fnK77y11npqhaWxLaKuEJJftrXE4fFQgVHPDTrJo1XSyUP09SRvWA11j3rqNgQWGetr9x4FCr+FTmPFKI+FkRUd5fWMf612vRz7oQY5B1npIaotKDuarOiQ0iSwZcvydSuvJEj10lPWYpas0i1ZQUXYHpdi+txH75UWuJwIIB3NnZVWqjEZM3G9LPtHHf036eQs5wRwUNUi7Q95J2CfU3q8rqAvPKaJxxAKvvbiKyUPr22ypowQHTbAalqADWEwrV49VKz4ji13g==~-1~-1~-1'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
         return $response;
     }
 
@@ -329,5 +460,140 @@ class OrderController extends Controller
         } else {
             return response()->json(['message' => 'No Order Found', 'code' => 400], 400);
         }
+    }
+
+    public function quickBookInvoice($user_id)
+    {
+        $cartItems = Cart::where('user_id', $user_id)->with('product')->get();
+        $lineItems = array();
+        foreach ($cartItems as $item) {
+            $name = $item->product->name . ' ' . $item->product->variant;
+            // $name = preg_replace('/[^A-Za-z0-9\-]/', ' ', $name);
+            // $name = str_replace('-','',$name);
+            $itemRef = collect(['name' => $name, 'value' => (string)$item->product->id]);
+            $salelineItem = collect(['Qty' => $item->quantity, 'UnitPrice' => $item->product->sale_price, 'ItemRef' => $itemRef]);
+            $lineItem = collect(['Description' => $name, 'Amount' => $item->product->sale_price * $item->quantity, 'DetailType' => 'SalesItemLineDetail', 'SalesItemLineDetail' => $salelineItem]);
+
+            array_push($lineItems, $lineItem);
+        }
+
+        $custRef = collect(['value' => (string)$user_id]);
+        $requestBody = collect(['Line' => $lineItems, 'CustomerRef' => $custRef]);
+
+        $file = file_get_contents('storage/qbo.json');
+        $content = json_decode($file, true);
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://sandbox-quickbooks.api.intuit.com/v3/company/4620816365226953830/invoice?minorversion=63',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => "'" . $requestBody . "'",
+            CURLOPT_HTTPHEADER => array(
+                'Accept: application/json',
+                'Authorization: Bearer ' . $content['original']['access_token'],
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $data = json_decode($response);
+        if (isset($data->Invoice) && !empty($data->Invoice)) {
+            return response()->json(['message' => 'QBO Invoice created successfully','code' => 200], 200);
+        } else if (isset($data->Fault->Error)) {
+            return response()->json(['message' => 'Error Occured','Error' => $data,'code' => 400], 400);
+        } else {
+            $token = $this->qboRefershToken();
+            $data = json_encode($token);
+            file_put_contents('storage/qbo.json', $data);
+            $this->quickBookInvoice($user_id);
+        }
+    }
+
+    public function qboRefershToken()
+    {
+        $file = file_get_contents('storage/qbo.json');
+        $content = json_decode($file, true);
+
+        $oauth2LoginHelper = new OAuth2LoginHelper(env('QBOClientId'), env('QBOClientSecret'));
+        $accessTokenObj = $oauth2LoginHelper->refreshAccessTokenWithRefreshToken($content['original']['refresh_token']);
+        $accessTokenValue = $accessTokenObj->getAccessToken();
+        $refreshTokenValue = $accessTokenObj->getRefreshToken();
+
+        $data = collect(['access_token' => $accessTokenValue, 'refresh_token' => $refreshTokenValue]);
+
+        return $data;
+    }
+
+    public function sosItemUpdate()
+    {
+        $file = file_get_contents('storage/sos.json');
+        $content = json_decode($file, true);
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sosinventory.com/api/v2/item',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Host: api.sosinventory.com',
+                'Authorization: Bearer ' . $content['access_token']
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return $response;
+
+        $token = $this->sosRefreshToken();
+        file_put_contents('storage/qbo.json', $token);
+        $this->sosItemUpdate();
+    }
+
+    public function sosRefreshToken()
+    {
+        $file = file_get_contents('storage/sos.json');
+        $content = json_decode($file, true);
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sosinventory.com/oauth2/token',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_POSTFIELDS => 'grant_type=refresh_token&refresh_token='. $content['refresh_token'],
+            CURLOPT_HTTPHEADER => array(
+                'Host: api.sosinventory.com',
+                'Content-Type: application/x-www-form-urlencoded',
+                'Cookie: ARRAffinity=732f04f98c62ba546a70c33d76f429eebd1bdad70935530c9ed3ede578156b3b; ARRAffinitySameSite=732f04f98c62ba546a70c33d76f429eebd1bdad70935530c9ed3ede578156b3b'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return $response;
     }
 }

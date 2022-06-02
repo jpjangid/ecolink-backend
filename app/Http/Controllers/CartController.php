@@ -25,7 +25,7 @@ class CartController extends Controller
                         'user'          => $cart->user->name,
                         'product'       => $cart->product->name,
                         'quantity'      => $cart->quantity,
-                        'created_at'    => date('d-m-Y h:i A', strtotime($cart->created_at)),
+                        'created_at'    => date('Y-m-d h:i A', strtotime($cart->created_at)),
                     ]);
                 }
 
