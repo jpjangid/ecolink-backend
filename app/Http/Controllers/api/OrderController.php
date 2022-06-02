@@ -184,9 +184,9 @@ class OrderController extends Controller
             }
         }
 
-        if($order->shippment_via == 'saia'){
+        if ($order->shippment_via == 'saia') {
             $response = $this->shipViaSaia($order->id);
-        }else{
+        } else {
             $response = $this->shipViaFedex($order->id);
         }
 
@@ -209,20 +209,6 @@ class OrderController extends Controller
             //     }
             // }
             // $status = 'ORDER PLACED!!';
-            // Mail::to($recent_order->billing_email)
-            //     ->cc(['lakhansharma.webanix@gmail.com', 'mohsinwebanix@gmail.com'])
-            //     ->send(
-            //         new OrderPlaced(
-            //             $user->name,
-            //             $recent_order->order_no,
-            //             $user->name . ' your order has been placed successfully. Your order no. is #' . $recent_order->order_no . ' and you can find your purchase information below.',
-            //             $recent_order,
-            //             $image,
-            //             $status
-            //         )
-            // );
-
-            // sendSms($recent_order->billing_mobile, "Thank you for placing an order with us. We will be processing it soon. For any assistance plz mail us at enquiry@vaibhavstores.in. Thank you, Vaibhav Stores. PH: +9180 41518183");
         }
         // Notification::create(['title' => "New Order",'message' => 'New Order has beeen placed by '.auth()->user()->email.' with order no: '.$order->order_no]);
         return response()->json(['message' => 'Order Placed Successfully', 'code' => 200, 'data' => $order], 200);
@@ -278,7 +264,7 @@ class OrderController extends Controller
                             <UserID>ecolink</UserID>
                             <Password>ecolink4</Password>
                             <TestMode>Y</TestMode>
-                            <ShipmentDate>'.date('Y-m-d', strtotime($order->created)).'</ShipmentDate>
+                            <ShipmentDate>' . date('Y-m-d', strtotime($order->created)) . '</ShipmentDate>
                             <BillingTerms>Prepaid</BillingTerms>
                             <BLNumber></BLNumber>
                             <ShipperNumber></ShipperNumber>
@@ -291,11 +277,11 @@ class OrderController extends Controller
                                 <AccountNumber>0747932</AccountNumber>
                             </Shipper>
                             <Consignee>
-                                <ContactName>'.$order->shipping_name.'</ContactName>
-                                <Address1>'.$order->shipping_address.'</Address1>
-                                <City>'.$order->shipping_city.'</City>
-                                <State>'.$order->shipping_state.'</State>
-                                <Zipcode>'.$order->shipping_zip.'</Zipcode>
+                                <ContactName>' . $order->shipping_name . '</ContactName>
+                                <Address1>' . $order->shipping_address . '</Address1>
+                                <City>' . $order->shipping_city . '</City>
+                                <State>' . $order->shipping_state . '</State>
+                                <Zipcode>' . $order->shipping_zip . '</Zipcode>
                             </Consignee>
                             <Details>' . $detailItems . '</Details>
                         </request>
@@ -508,9 +494,9 @@ class OrderController extends Controller
 
         $data = json_decode($response);
         if (isset($data->Invoice) && !empty($data->Invoice)) {
-            return response()->json(['message' => 'QBO Invoice created successfully','code' => 200], 200);
+            return response()->json(['message' => 'QBO Invoice created successfully', 'code' => 200], 200);
         } else if (isset($data->Fault->Error)) {
-            return response()->json(['message' => 'Error Occured','Error' => $data,'code' => 400], 400);
+            return response()->json(['message' => 'Error Occured', 'Error' => $data, 'code' => 400], 400);
         } else {
             $token = $this->qboRefershToken();
             $data = json_encode($token);
@@ -583,7 +569,7 @@ class OrderController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_POSTFIELDS => 'grant_type=refresh_token&refresh_token='. $content['refresh_token'],
+            CURLOPT_POSTFIELDS => 'grant_type=refresh_token&refresh_token=' . $content['refresh_token'],
             CURLOPT_HTTPHEADER => array(
                 'Host: api.sosinventory.com',
                 'Content-Type: application/x-www-form-urlencoded',

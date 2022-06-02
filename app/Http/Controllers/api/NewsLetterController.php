@@ -25,7 +25,8 @@ class NewsLetterController extends Controller
         NewsLetter::create([
             'email'     =>  $request->email,
         ]);
-        Mail::to($request->email)->cc("mohsinwebanix@gmail.com")->bcc("mohsin@webanix.in")->send(
+        //To Do
+        Mail::to($request->email)->cc("developerecolink@gmail.com")->send(
             new Subscribe(
                 $request->email,
             )

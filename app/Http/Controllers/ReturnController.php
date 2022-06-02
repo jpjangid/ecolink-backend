@@ -209,20 +209,6 @@ class ReturnController extends Controller
 
         $status = $request->status;
 
-        // Mail::to($placed_order->billing_email)
-        //     ->cc(['lakhansharma.webanix@gmail.com', 'mohsinwebanix@gmail.com'])
-        //     ->send(
-        //         new ReturnMail(
-        //             $user->name,
-        //             $placed_order->order_no,
-        //             $message,
-        //             $placed_order,
-        //             $update_order,
-        //             $status,
-        //             $subject
-        //         )
-        //     );
-        // sendSms($placed_order->billing_mobile, "$message");
 
         $data['message'] = 'Return Order Status Updated';
         return response()->json($data);
