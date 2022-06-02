@@ -26,7 +26,7 @@ use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\TaxRateController;
 use App\Http\Controllers\BulkPricingController;
 use App\Http\Controllers\TechnicalSupportController;
-
+use App\Http\Controllers\api\UserController as APiUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +52,8 @@ Route::get('/', function () {
 //     \Artisan::call('config:clear');
 //     \Artisan::call('optimize:clear');
 // });
-
+Route::post('api/login', [APiUserController::class, 'login']);
+ 
 Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     //Profile Route

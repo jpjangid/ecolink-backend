@@ -12,15 +12,15 @@ class CartController extends Controller
     public function getCartItems(Request $request)
     {
         //Get Cart Items By User id with Product Detail
-        $carts = Cart::select('id','user_id','product_id','quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
+        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
 
-        if($carts->isNotEmpty()){
-            foreach($carts as $cart){
-                $cart->product->image = asset('storage/products/'.$cart->product->image);
+        if ($carts->isNotEmpty()) {
+            foreach ($carts as $cart) {
+                $cart->product->image = asset('storage/products/' . $cart->product->image);
             }
 
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $carts], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);
         }
     }
@@ -41,17 +41,17 @@ class CartController extends Controller
 
         $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
 
-        if(!empty($cart)){
-            if($request->action == 'add'){
-                Cart::where('id',$cart->id)->update([
+        if (!empty($cart)) {
+            if ($request->action == 'add') {
+                Cart::where('id', $cart->id)->update([
                     'quantity'      =>  $cart->quantity + $request->quantity,
                 ]);
-            }else{
-                Cart::where('id',$cart->id)->update([
+            } else {
+                Cart::where('id', $cart->id)->update([
                     'quantity'      =>  $cart->quantity - $request->quantity,
                 ]);
             }
-        }else{
+        } else {
             Cart::create([
                 'user_id'       =>  $request->user_id,
                 'product_id'    =>  $request->product_id,
@@ -59,7 +59,15 @@ class CartController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Item added in cart successfully', 'code' => 200], 200);
+        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
+
+        if ($carts->isNotEmpty()) {
+            foreach ($carts as $cart) {
+                $cart->product->image = asset('storage/products/' . $cart->product->image);
+            }
+        }
+
+        return response()->json(['message' => 'Item added in cart successfully', 'code' => 200, 'data' => $carts], 200);
     }
 
     public function deleteCartItems(Request $request)
@@ -75,11 +83,11 @@ class CartController extends Controller
 
         $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
 
-        if(!empty($cart)){
+        if (!empty($cart)) {
             $cart->delete();
-            
+
             return response()->json(['message' => 'Product delete from cart successfully', 'code' => 200], 200);
-        }else{
+        } else {
             return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);
         }
     }

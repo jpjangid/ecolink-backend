@@ -45,6 +45,7 @@ Route::middleware('auth:api')->group(function () {
 
     //Route For Get Cart Items
     Route::post('getCartItems', [CartController::class, 'getCartItems']);
+    
     //Route For Add Cart Items
     Route::post('addCartItems', [CartController::class, 'addCartItems']);
     //Route For Delete Cart Items

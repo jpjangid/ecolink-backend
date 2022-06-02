@@ -137,25 +137,34 @@ class UserController extends Controller
             'password' => $request->password,
         ];
 
-        $user = DB::table('users')->where('email',$request->email)->first();
+        $user = DB::table('users')->where('email', $request->email)->first();
 
-        if($user->flag == 1){
+        if ($user->flag == 1) {
             return response()->json(['message' => 'User is deactive', 'code' => 400], 400);
-        }
-
-        if (auth()->attempt($login_credentials)) {
-            //generate the token for the user
-            $token = auth()->user()->createToken('MyApp')->accessToken;
-
-            $user = User::find(auth()->user()->id);
-            $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
-
-            $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => auth()->user()->id, 'user' => $user]);
-            //now return this token on success login attempt
-            return response()->json(['message' => 'Hi ' . auth()->user()->name . ', welcome to home', 'code' => 200, 'data' => $data], 200);
         } else {
-            //wrong login credentials, return, user not authorised to our system, return error code 401
-            return response()->json(['error' => 'UnAuthorised Access'], 401);
+
+            if ($user->role_id == 1) {
+                if (auth()->attempt($login_credentials)) {
+
+                    return response()->json([
+                        'user_type' => 'admin',
+                        'redirect_url' => '/admin/home'
+                    ]);
+                } else {
+                    //wrong login credentials, return, user not authorised to our system, return error code 401
+                    return response()->json(['error' => 'UnAuthorised Access'], 401);
+                }
+            } else {
+
+                $token = Str::random(80);
+                $affected = DB::table('users')->where('id', $user->id)->update(['remember_token' => $token]);
+
+                $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
+
+                $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' =>  $user->id, 'user' => $user]);
+                //now return this token on success login attempt
+                return response()->json(['message' => 'Hi ' . $user->id . ', welcome to home', 'code' => 200, 'data' => $data], 200);
+            }
         }
     }
 
