@@ -155,9 +155,8 @@ class UserController extends Controller
                     return response()->json(['error' => 'UnAuthorised Access'], 401);
                 }
             } else {
-
                 $token = Str::random(80);
-                $affected = DB::table('users')->where('id', $user->id)->update(['remember_token' => $token]);
+                $affected = DB::table('users')->where('id', $user->id)->update(['api_token' => $token]);
 
                 $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
