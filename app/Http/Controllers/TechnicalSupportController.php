@@ -26,7 +26,7 @@ class TechnicalSupportController extends Controller
                         'last_name'     => $contact->last_name,
                         'phone'         => $contact->phone,
                         'email'         => $contact->email,
-                        'created_at'    => date('Y-m-d h:i A', strtotime($contact->created_at)),
+                        'created_at'    => date('d-m-Y h:i A', strtotime($contact->created_at)),
                     ]);
                 }
 
@@ -46,7 +46,7 @@ class TechnicalSupportController extends Controller
                          <button class="delete btn btn-danger btn-xs technical_confirm"><i class="fas fa-trash"></i></button>
                       </form>
                      </div>';
-                       return $btn;
+                        return $btn;
                     })
                     ->rawColumns(['action'])
                     ->make(true);

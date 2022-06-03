@@ -25,57 +25,57 @@
                 @csrf
                 <div class="row">
                     <div class="col-md-4">
-                        <label for="name"><span style="color: red;">* </span> Full Name:</label>
-                        <input type="text" class="form-control" name="name" placeholder="Enter Full Name" value="{{ old('name') }}" />
-                        @error('name')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="col-md-4">
                         <label for="email"><span style="color: red;">* </span>Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ old('email') }}" />
+                        <input type="email" class="form-control" name="email" id="email" placeholder=" Enter Email" value="{{ old('email') }}" />
                         @error('email')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
+                        <label for="name"><span style="color: red;">* </span> Full Name:</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder=" Enter Full Name" value="{{ old('name') }}" />
+                        @error('name')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
-                        <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
+                        <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
                         @error('mobile')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="address"><span style="color: red;">* </span>Address:</label>
-                        <input type="text" class="form-control" name="address" placeholder="Enter Address" value="{{ old('address') }}" />
+                        <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address" value="{{ old('address') }}" />
                         @error('address')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
-                        <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ old('country') }}" />
+                        <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country" value="{{ old('country') }}" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="state"><span style="color: red;">* </span>State:</label>
-                        <input type="text" class="form-control" name="state" placeholder="Enter State" value="{{ old('state') }}" />
+                        <input type="text" class="form-control" name="state" id="state" placeholder="Enter State" value="{{ old('state') }}" />
                         @error('state')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="city"><span style="color: red;">* </span>City:</label>
-                        <input type="text" class="form-control" name="city" placeholder="Enter City" value="{{ old('city') }}" />
+                        <input type="text" class="form-control" name="city" id="city" placeholder="Enter City" value="{{ old('city') }}" />
                         @error('city')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="pincode"><span style="color: red;">* </span>Postal:</label>
-                        <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode" value="{{ old('pincode') }}" />
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Pincode" value="{{ old('pincode') }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -106,6 +106,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <input type="hidden" name="status" id="flag" value="{{ old('flag')}}">
                     <div class="col-md-12 mt-2">
                         <button type="submit" class="btn btn-info">Register</button>
                     </div>
@@ -117,6 +118,36 @@
 @endsection
 @section('js')
 <script type=text/javascript>
+    $('#email').on('change', function() {
+        var email = this.value;
+        $.ajax({
+            url: "{{url('admin/users/userinfo')}}",
+            type: "POST",
+            data: {
+                email: email,
+                _token: '{{csrf_token()}}'
+            },
+            dataType: 'json',
+            success: function(result) {
+                console.log(result);
+                document.getElementById("name").value = result.name;
+                document.getElementById("mobile").value = result.mobile;
+                document.getElementById("address").value = result.address;
+                document.getElementById("country").value = result.country;
+                document.getElementById("state").value = result.state;
+                document.getElementById("city").value = result.city;
+                document.getElementById("pincode").value = result.pincode;
+                document.getElementById("flag").value = result.flag;
+                $('#role_id').select2("trigger", 'select', {
+                    data: {
+                        id: result.role_id
+                    }
+                });
+            }
+        });
+    });
+
+
     $('#state').on('change', function() {
         var state = this.value;
         $("#city").html('');

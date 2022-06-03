@@ -26,7 +26,7 @@ class BulkPricingController extends Controller
                         'last_name'     => $contact->last_name,
                         'phone'         => $contact->phone,
                         'email'         => $contact->email,
-                        'created_at'    => date('Y-m-d h:i A', strtotime($contact->created_at)),
+                        'created_at'    => date('d-m-Y h:i A', strtotime($contact->created_at)),
                     ]);
                 }
 

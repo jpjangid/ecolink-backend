@@ -68,6 +68,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::put('update/{id}', [UserController::class, 'update']);
         Route::get('delete/{id}', [UserController::class, 'destroy']);
         Route::post('/update_status', [UserController::class, 'update_status']);
+        Route::post('/userinfo', [UserController::class, 'userinfo']);
     });
 
 

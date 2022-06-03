@@ -60,7 +60,7 @@ class UserController extends Controller
                         // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
-                    ->rawColumns(['action','active'])
+                    ->rawColumns(['action', 'active'])
                     ->make(true);
             }
             return view('users.index');
@@ -83,80 +83,88 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        /* Validating Input fields */
-        $request->validate([
-            'name'              =>  'required|regex:/^[\pL\s\-]+$/u',
-            'email'             =>  'required|email|max:255|unique:users,email',
-            'mobile'            =>  'required|digits:10|unique:users,mobile',
-            'address'           =>  'required',
-            'state'             =>  'required|regex:/^[\pL\s\-]+$/u',
-            'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
-            'pincode'           =>  'required',
-            'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
-            'password'          =>  'required|min:8',
-            'role_id'           =>  'required',
-            'profile_image'     =>  'required'
-        ], [
-            'name.required'             =>  'Please Enter Name',
-            'name.regex'                =>  'Please Enter Name in alphabets',
-            'email.required'            =>  'Please Enter Email',
-            'mobile.required'           =>  'Please Enter Mobile No.',
-            'address.required'          =>  'Please Enter Address',
-            'state.required'            =>  'Please Enter State',
-            'name.regex'                =>  'Please Enter State in alphabets',
-            'city.required'             =>  'Please Enter City',
-            'name.regex'                =>  'Please Enter City in alphabets',
-            'pincode.required'          =>  'Please Enter Pincode',
-            'country.required'          =>  'Please Enter Country',
-            'country.regex'                =>  'Please Enter Country in alphabets',
-            'role_id.required'          =>  'Please Select Role',
-            'mobile.numeric'            =>  'The Mobile No. must be numeric',
-            'password.required'         =>  'Please Enter Password',
-            'profile_image.required'    =>  'Please Select Profile Image',
-        ]);
-
-        /* Storing Featured Image on local disk */
-        $image_name = "";
-        if ($request->hasFile('profile_image')) {
+        if ($request->status == 1) {
+            $user = User::where('email', $request->email)->first();
+            $user->flag   = '0';
+            $user->update();
+            return redirect('admin/users')->with('success', 'User has been added successfully');
+        } else {
             $request->validate([
-                'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'name'              =>  'required|regex:/^[\pL\s\-]+$/u',
+                'email'             =>  'required|email|max:255|unique:users,email',
+                'mobile'            =>  'required|digits:10|unique:users,mobile',
+                'address'           =>  'required',
+                'state'             =>  'required|regex:/^[\pL\s\-]+$/u',
+                'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
+                'pincode'           =>  'required',
+                'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
+                'password'          =>  'required|min:8',
+                'role_id'           =>  'required',
+                'profile_image'     =>  'required'
+            ], [
+                'name.required'             =>  'Please Enter Name',
+                'name.regex'                =>  'Please Enter Name in alphabets',
+                'email.required'            =>  'Please Enter Email',
+                'mobile.required'           =>  'Please Enter Mobile No.',
+                'address.required'          =>  'Please Enter Address',
+                'state.required'            =>  'Please Enter State',
+                'name.regex'                =>  'Please Enter State in alphabets',
+                'city.required'             =>  'Please Enter City',
+                'name.regex'                =>  'Please Enter City in alphabets',
+                'pincode.required'          =>  'Please Enter Pincode',
+                'country.required'          =>  'Please Enter Country',
+                'country.regex'                =>  'Please Enter Country in alphabets',
+                'role_id.required'          =>  'Please Select Role',
+                'mobile.numeric'            =>  'The Mobile No. must be numeric',
+                'password.required'         =>  'Please Enter Password',
+                'profile_image.required'    =>  'Please Select Profile Image',
             ]);
+
+            /* Storing Featured Image on local disk */
+            $image_name = "";
             if ($request->hasFile('profile_image')) {
-                $file = $request->file('profile_image');
-                $image_name = $file->getClientOriginalName();
-                $path = Storage::putFileAs('public/profile_image/', $file, $image_name);
+                $request->validate([
+                    'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                ]);
+                if ($request->hasFile('profile_image')) {
+                    $file = $request->file('profile_image');
+                    $image_name = $file->getClientOriginalName();
+                    $path = Storage::putFileAs('public/profile_image/', $file, $image_name);
+                }
             }
+
+            /* Hashing password */
+            $pass = Hash::make($request['password']);
+
+            /* Storing Data in Table */
+            $user = User::create([
+                'name'                  =>  $request['name'],
+                'email'                 =>  $request['email'],
+                'mobile'                =>  $request['mobile'],
+                'address'               =>  $request['address'],
+                'country'               =>  $request['country'],
+                'state'                 =>  $request['state'],
+                'city'                  =>  $request['city'],
+                'pincode'               =>  $request['pincode'],
+                'password'              =>  $pass,
+                'role_id'               =>  $request['role_id'],
+                'profile_image'         =>  $image_name,
+            ]);
+
+            UserAddress::create([
+                'user_id'       =>  $user->id,
+                'name'          =>  $request['name'],
+                'email'         =>  $request['email'],
+                'mobile'        =>  $request['mobile'],
+                'address'       =>  $request['address'],
+                'country'       =>  $request['country'],
+                'state'         =>  $request['state'],
+                'city'          =>  $request['city'],
+                'zip'           =>  $request['pincode'],
+            ]);
         }
+        /* Validating Input fields */
 
-        /* Hashing password */
-        $pass = Hash::make($request['password']);
-
-        /* Storing Data in Table */
-        $user = User::create([
-            'name'                  =>  $request['name'],
-            'email'                 =>  $request['email'],
-            'mobile'                =>  $request['mobile'],
-            'address'               =>  $request['address'],
-            'country'               =>  $request['country'],
-            'state'                 =>  $request['state'],
-            'city'                  =>  $request['city'],
-            'pincode'               =>  $request['pincode'],
-            'password'              =>  $pass,
-            'role_id'               =>  $request['role_id'],
-            'profile_image'         =>  $image_name,
-        ]);
-
-        UserAddress::create([
-            'user_id'       =>  $user->id,
-            'name'          =>  $request['name'],
-            'email'         =>  $request['email'],
-            'mobile'        =>  $request['mobile'],
-            'address'       =>  $request['address'],
-            'country'       =>  $request['country'],
-            'state'         =>  $request['state'],
-            'city'          =>  $request['city'],
-            'zip'           =>  $request['pincode'],
-        ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
         return redirect('admin/users')->with('success', 'User has been added successfully');
@@ -271,5 +279,13 @@ class UserController extends Controller
             $data['msg'] = 'success';
             return response()->json($data);
         }
+    }
+
+    public function userinfo(Request $request)
+    {
+        // if (strpos($request->email, 'OPD') !== false) {
+        $data = User::where(['email' => $request->email, 'flag' => '1'])->first();
+        // dd($data);
+        return response()->json($data);
     }
 }

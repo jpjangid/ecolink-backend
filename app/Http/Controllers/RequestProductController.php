@@ -26,7 +26,7 @@ class RequestProductController extends Controller
                         'last_name'     => $contact->last_name,
                         'phone'         => $contact->phone,
                         'email'         => $contact->email,
-                        'created_at'    => date('Y-m-d h:i A', strtotime($contact->created_at)),
+                        'created_at'    => date('d-m-Y h:i A', strtotime($contact->created_at)),
                     ]);
                 }
 
@@ -38,7 +38,7 @@ class RequestProductController extends Controller
                         $delete_url = url('admin/requestproduct/delete', $row['id']);
                         $edit_url = url('admin/requestproduct/edit', $row['id']);
                         $show_url = url('admin/requestproduct/show', $row['id']);
-                          $btn = '<div style="display:flex;">
+                        $btn = '<div style="display:flex;">
                          <a class="btn btn-info btn-xs ml-1" href="' . $show_url . '" style="margin-right: 2px;"><i class="fa fa-eye"></i></a>
                         <form action="' . $delete_url . '" method="post">
                           <input type="hidden" name="_token" value="' . csrf_token() . '">
