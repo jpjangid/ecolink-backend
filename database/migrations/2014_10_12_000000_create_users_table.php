@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->string('profile_image')->nullable();
             $table->tinyInteger('flag')->default(0);
             $table->tinyInteger('email_verified')->default(0);
+            $table->string('api_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
