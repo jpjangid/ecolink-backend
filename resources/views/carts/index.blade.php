@@ -41,7 +41,7 @@
         <table id="cartTable" class="table table-striped table-bordered" style="width:100%">
             <thead>
                 <tr class="text-center">
-                    <th>Created Date</th>
+                    <th>Created Date Time</th>
                     <th>User</th>
                     <th>Product</th>
                     <th>Quantity</th>

@@ -53,7 +53,7 @@ Route::get('/', function () {
 //     \Artisan::call('optimize:clear');
 // });
 Route::post('api/login', [APiUserController::class, 'login']);
- 
+
 Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     //Profile Route
@@ -225,7 +225,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/store', [CartController::class, 'store']);
         Route::get('/edit/{id}', [CartController::class, 'edit']);
         Route::put('/update/{id}', [CartController::class, 'update']);
-        Route::get('/delete/{id}', [CartController::class, 'destroy']);
+        Route::delete('/delete/{id}', [CartController::class, 'destroy']);
     });
 
     Route::prefix('wishlists')->group(function () {

@@ -29,12 +29,12 @@ class HomeController extends Controller
     public function index()
     {
         if (auth()->user()->role_id == 1) {
-            $contacts = ContactUs::where('flag', '0')->latest()->take(10)->get();
+            $contacts = ContactUs::where(['type' => 'contact', 'flag' => '0'])->latest()->take(10)->get();
             $askchemists = ContactUs::where(['type' => 'askchemist', 'flag' => '0'])->latest()->take(2)->get();
             $productrequests = ContactUs::where(['type' => 'productrequest', 'flag' => '0'])->latest()->take(2)->get();
             $technicals = ContactUs::where(['type' => 'technical', 'flag' => '0'])->latest()->take(2)->get();
             $bulkpricings = ContactUs::where(['type' => 'bulkpricing', 'flag' => '0'])->latest()->take(2)->get();
-            $orders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with('user:id,name,mobile', 'items:id,order_id,product_id', 'items.product')->orderby('created_at', 'desc')->latest()->take(10)->get();
+            $orders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with('user:id,name,mobile', 'items:id,order_id,product_id', 'items.product')->orderby('created_at', 'desc')->latest()->take(15)->get();
             $orderCount = Order::where('flag', '0')->get()->flatten();
             $enquireCount = ContactUs::where('flag', '0')->get()->flatten();
             $productCount = Product::where('flag', '0')->get()->flatten();
