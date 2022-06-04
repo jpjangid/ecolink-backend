@@ -135,7 +135,7 @@
 
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label class="required form-label" for="input_2">Please describe in detail your question</label>
+                        <label class="required form-label" for="input_2">Please Describe Your Question In Detail</label>
                         <input type="text" class="form-control" disabled name="input_2" id="input_2" placeholder="Please Enter" value="{{ $contact->question->input_2 }}">
                         @error('input_2')
                         <span class="error invalid-feedback">{{ $message }}</span>

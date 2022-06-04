@@ -35,7 +35,7 @@ class PageController extends Controller
                 /* Sending data through yajra datatable for server side rendering */
                 return Datatables::of($pages)
                     ->addIndexColumn()
-                    /* Status Active and Deactive Checkbox */
+                    /* Status Active and Deactivated Checkbox */
                     ->addColumn('active', function ($row) {
                         $checked = $row['status'] == '1' ? 'checked' : '';
                         $active  = '<div class="form-check form-switch form-check-custom form-check-solid">

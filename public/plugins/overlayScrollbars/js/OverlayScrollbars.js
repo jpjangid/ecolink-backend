@@ -3333,7 +3333,7 @@
                         }
                     }
 
-                    //activate or deactivate size auto capability
+                    //activate or Deactivated size auto capability
                     if (sizeAutoCapableChanged) {
                         if (sizeAutoCapable) {
                             if (!_contentGlueElement) {

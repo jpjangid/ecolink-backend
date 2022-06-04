@@ -74,8 +74,8 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
-                        <label for="pincode"><span style="color: red;">* </span>Postal:</label>
-                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Pincode" value="{{ old('pincode') }}" />
+                        <label for="pincode"><span style="color: red;">* </span>Postal Code:</label>
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Pincode Code" value="{{ old('pincode') }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -98,6 +98,9 @@
                             <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image">
                             <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
                         </div>
+                        @error('profile_image')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="password"><span style="color: red;">* </span>Password:</label>
@@ -130,19 +133,21 @@
             dataType: 'json',
             success: function(result) {
                 console.log(result);
-                document.getElementById("name").value = result.name;
-                document.getElementById("mobile").value = result.mobile;
-                document.getElementById("address").value = result.address;
-                document.getElementById("country").value = result.country;
-                document.getElementById("state").value = result.state;
-                document.getElementById("city").value = result.city;
-                document.getElementById("pincode").value = result.pincode;
-                document.getElementById("flag").value = result.flag;
-                $('#role_id').select2("trigger", 'select', {
-                    data: {
-                        id: result.role_id
-                    }
-                });
+                if (result.flag == '1') {
+                    document.getElementById("name").value = result.name;
+                    document.getElementById("mobile").value = result.mobile;
+                    document.getElementById("address").value = result.address;
+                    document.getElementById("country").value = result.country;
+                    document.getElementById("state").value = result.state;
+                    document.getElementById("city").value = result.city;
+                    document.getElementById("pincode").value = result.pincode;
+                    document.getElementById("flag").value = result.flag;
+                    $('#role_id').select2("trigger", 'select', {
+                        data: {
+                            id: result.role_id
+                        }
+                    });
+                }
             }
         });
     });

@@ -38,7 +38,7 @@ class CreateProductsTable extends Migration
             $table->unsignedInteger('sold_individually')->nullable();
             $table->unsignedInteger('minimum_qty')->nullable();
             $table->float('weight')->nullable();
-            $table->float('lenght')->nullable();
+            $table->float('length')->nullable();
             $table->float('width')->nullable();
             $table->float('height')->nullable();
             $table->string('shipping_class')->nullable();
