@@ -197,7 +197,7 @@
                     <!-- Page image -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="og_image"><span style="color: red;">* </span>OG Image:</label>
+                            <label for="og_image"><span style="color: red;"> </span>OG Image:</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="og_image">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>

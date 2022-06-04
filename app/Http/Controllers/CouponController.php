@@ -78,8 +78,7 @@ class CouponController extends Controller
             $role = DB::table('roles')->where('name', 'client')->first();
             $users = DB::table('users')->where('role_id', $role->id)->get();
             $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
-            $categories = DB::table('categories')->where(['flag' => '0'])->get();
-
+            $categories = DB::table('categories')->where('parent_id', '=', null)->where(['flag' => '0', 'status' => '1'])->get();
             return view('coupons.create', compact(
                 'categories',
                 'users',

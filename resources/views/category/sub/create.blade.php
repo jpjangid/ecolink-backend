@@ -54,7 +54,7 @@
                             <select class="form-control select2bs4 @error('parent_id') is-invalid @enderror" name="parent_id">
                                 <option value="">Select Parent Category</option>
                                 @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" {{ old('parent_id') == $category->id ? "selected" : "" }}>{{ $category->name }}</option>
                                 @endforeach
                             </select>
                             @error('parent_id')
