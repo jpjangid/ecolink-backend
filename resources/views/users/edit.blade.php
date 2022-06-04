@@ -25,6 +25,13 @@
                 @method('PUT')
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ $user->profile_image != null ? asset('storage/profile_image/'.$user->profile_image) :asset('default.jpg') }}" class="img-circle" alt="{{ $user->name }}" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <label for="name"><span style="color: red;">* </span> Full Name:</label>
                         <input type="text" class="form-control" name="name" placeholder="Enter Full Name" value="{{ $user->name }}" />
@@ -39,49 +46,49 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
                         <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" placeholder="Enter Mobile No." value="{{ $user->mobile }}" />
                         @error('mobile')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="address"><span style="color: red;">* </span>Address:</label>
                         <input type="text" class="form-control" name="address" placeholder="Enter Address" value="{{ $user->address }}" />
                         @error('address')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
                         <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ $user->country }}" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="state"><span style="color: red;">* </span>State:</label>
                         <input type="text" class="form-control" name="state" placeholder="Enter State" value="{{ $user->state }}" />
                         @error('state')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="city"><span style="color: red;">* </span>City:</label>
                         <input type="text" class="form-control" name="city" placeholder="Enter City" value="{{ $user->city }}" />
                         @error('city')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="pincode"><span style="color: red;">* </span>Postal:</label>
                         <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode" value="{{ $user->pincode }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="role_id"><span style="color: red;">* </span>Role:</label>
                         <select class="form-control select2bs4" name="role_id" id="role_id">
                             <option value="">Select Role</option>
@@ -93,19 +100,19 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
-                        <label for="profile_image">Profile Image:</label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image">
-                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="password">Password:</label>
                         <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
                         @error('password')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
+                    </div>
+                    <div class="col-md-8 mt-2">
+                        <label for="profile_image">Profile Image:</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);">
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                        </div>
                     </div>
                     <div class="col-md-12 mt-2">
                         <button type="submit" class="btn btn-info">Update</button>
@@ -135,57 +142,16 @@
 
     });
 
-    function getCity(state) {
-        var state = state;
-        var old_city = "{{ $user->city }}";
-        $("#city").html('');
-        $("#pincode").html('');
-        $("#pincode").html("<option value=''>Select Pincode</option>");
-        $.ajax({
-            url: "{{url('citylist')}}",
-            type: "POST",
-            data: {
-                state: state,
-                _token: '{{csrf_token()}}'
-            },
-            dataType: 'json',
-            success: function(result) {
-                $("#city").html("<option value=''>Select City</option>");
-                $.each(result.cities, function(key, value) {
-                    if (old_city == value.city) {
-                        $("#city").append('<option selected value="' + value.city + '">' + value.city + '</option>');
-                        getPincode(value.city);
-                    } else {
-                        $("#city").append('<option value="' + value.city + '">' + value.city + '</option>');
-                    }
-                });
-            }
-        });
-    }
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-    function getPincode(city) {
-        var city = city;
-        var old_pincode = "{{ $user->pincode }}";
-        $("#pincode").html('');
-        $.ajax({
-            url: "{{url('pincodelist')}}",
-            type: "POST",
-            data: {
-                city: city,
-                _token: '{{csrf_token()}}'
-            },
-            dataType: 'json',
-            success: function(result) {
-                $("#pincode").html("<option value=''>Select Pincode</option>");
-                $.each(result.pincodes, function(key, value) {
-                    if (old_pincode == value.pincode) {
-                        $("#pincode").append('<option selected value="' + value.pincode + '">' + value.pincode + '</option>');
-                    } else {
-                        $("#pincode").append('<option value="' + value.pincode + '">' + value.pincode + '</option>');
-                    }
-                });
-            }
-        });
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 </script>
 @endsection

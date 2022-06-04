@@ -24,6 +24,13 @@
             <form method="post" action="{{ url('admin/users/store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ asset('default.jpg') }}" class="img-circle" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <label for="email"><span style="color: red;">* </span>Email:</label>
                         <input type="email" class="form-control" name="email" id="email" placeholder=" Enter Email" value="{{ old('email') }}" />
@@ -45,42 +52,42 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="address"><span style="color: red;">* </span>Address:</label>
                         <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address" value="{{ old('address') }}" />
                         @error('address')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
                         <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country" value="{{ old('country') }}" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="state"><span style="color: red;">* </span>State:</label>
                         <input type="text" class="form-control" name="state" id="state" placeholder="Enter State" value="{{ old('state') }}" />
                         @error('state')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="city"><span style="color: red;">* </span>City:</label>
                         <input type="text" class="form-control" name="city" id="city" placeholder="Enter City" value="{{ old('city') }}" />
                         @error('city')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="pincode"><span style="color: red;">* </span>Postal:</label>
                         <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Pincode" value="{{ old('pincode') }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="role_id"><span style="color: red;">* </span>Role:</label>
                         <select class="form-control select2bs4" name="role_id" id="role_id">
                             <option value="">Select Role</option>
@@ -92,19 +99,19 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
-                        <label for="profile_image"><span style="color: red;">* </span>Profile Image:</label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image">
-                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="password"><span style="color: red;">* </span>Password:</label>
                         <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
                         @error('password')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
+                    </div>
+                    <div class="col-md-8 mt-2">
+                        <label for="profile_image"><span style="color: red;">* </span>Profile Image:</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);">
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                        </div>
                     </div>
                     <input type="hidden" name="status" id="flag" value="{{ old('flag')}}">
                     <div class="col-md-12 mt-2">
@@ -147,101 +154,16 @@
         });
     });
 
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-    $('#state').on('change', function() {
-        var state = this.value;
-        $("#city").html('');
-        $.ajax({
-            url: "{{url('citylist')}}",
-            type: "POST",
-            data: {
-                state: state,
-                _token: '{{csrf_token()}}'
-            },
-            dataType: 'json',
-            success: function(result) {
-                $('#city').html('<option value="">Select City</option>');
-                $.each(result.cities, function(key, value) {
-                    $("#city").append('<option value="' + value.city + '">' + value.city + '</option>');
-                });
-            }
-        });
-    });
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
 
-    $('#city').on('change', function() {
-        var city = this.value;
-        $("#pincode").html('');
-        $.ajax({
-            url: "{{url('pincodelist')}}",
-            type: "POST",
-            data: {
-                city: city,
-                _token: '{{csrf_token()}}'
-            },
-            dataType: 'json',
-            success: function(result) {
-                $('#pincode').html('<option value="">Select Pincode</option>');
-                $.each(result.pincodes, function(key, value) {
-                    $("#pincode").append('<option value="' + value.pincode + '">' + value.pincode + '</option>');
-                });
-            }
-        });
-    });
-
-    if ($("#state > option:selected").val() != "") {
-        var state = $("#state > option:selected").val();
-        getCity(state);
-    }
-
-    function getCity(state) {
-        var state = state;
-        var old_city = "{{ old('city') }}";
-        $("#city").html('');
-        $.ajax({
-            url: "{{url('citylist')}}",
-            type: "POST",
-            data: {
-                state: state,
-                _token: '{{csrf_token()}}'
-            },
-            dataType: 'json',
-            success: function(result) {
-                $("#city").html("<option value=''>Select City</option>");
-                $.each(result.cities, function(key, value) {
-                    if (old_city == value.city) {
-                        $("#city").append('<option selected value="' + value.city + '">' + value.city + '</option>');
-                        getPincode(value.city);
-                    } else {
-                        $("#city").append('<option value="' + value.city + '">' + value.city + '</option>');
-                    }
-                });
-            }
-        });
-    }
-
-    function getPincode(city) {
-        var city = city;
-        var old_pincode = "{{ old('pincode') }}";
-        $("#pincode").html('');
-        $.ajax({
-            url: "{{url('pincodelist')}}",
-            type: "POST",
-            data: {
-                city: city,
-                _token: '{{csrf_token()}}'
-            },
-            dataType: 'json',
-            success: function(result) {
-                $("#pincode").html("<option value=''>Select Pincode</option>");
-                $.each(result.pincodes, function(key, value) {
-                    if (old_pincode == value.pincode) {
-                        $("#pincode").append('<option selected value="' + value.pincode + '">' + value.pincode + '</option>');
-                    } else {
-                        $("#pincode").append('<option value="' + value.pincode + '">' + value.pincode + '</option>');
-                    }
-                });
-            }
-        });
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 </script>
 @endsection
