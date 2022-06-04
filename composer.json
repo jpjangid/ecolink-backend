@@ -33,7 +33,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helper/CheckPermission.php"
+            "app/Helper/CheckPermission.php",
+            "app/Helper/GetFedexAuthToken.php"
         ]
     },
     "autoload-dev": {

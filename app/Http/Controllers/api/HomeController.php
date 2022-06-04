@@ -140,9 +140,14 @@ class HomeController extends Controller
                 }
             }
         }
-
+        
         if ($products->isNotEmpty()) {
-            return response()->json(['message' => 'Product filtered successfully', 'code' => 200, 'data' => $products], 200);
+            $newproducts = array();
+            foreach ($products as $product) {
+                array_push($newproducts, $product);
+            }
+            
+            return response()->json(['message' => 'Product filtered successfully', 'code' => 200, 'data' => $newproducts], 200);
         } else {
             return response()->json(['message' => 'No Products Found', 'code' => 400], 400);
         }

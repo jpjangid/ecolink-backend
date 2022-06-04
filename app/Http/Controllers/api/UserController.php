@@ -138,6 +138,10 @@ class UserController extends Controller
         ];
 
         $user = DB::table('users')->where('email', $request->email)->first();
+        
+        if(empty($user)){
+            return response()->json(['message' => 'User not found', 'code' => 400], 400);
+        }
 
         if ($user->flag == 1) {
             return response()->json(['message' => 'User is deactive', 'code' => 400], 400);
