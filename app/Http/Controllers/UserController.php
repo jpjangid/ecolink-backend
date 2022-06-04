@@ -57,7 +57,7 @@ class UserController extends Controller
                         $edit_url = url('admin/users/edit', $row['id']);
                         $btn = '';
                         $btn .= '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
