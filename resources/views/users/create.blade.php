@@ -27,7 +27,7 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <img src="{{ asset('default.jpg') }}" class="img-circle" width="150" height="150" id="blah"><br>
+                                <img src="{{ asset('default.jpg') }}" class="img-rounded" width="150" height="150" id="blah"><br>
                             </div>
                         </div>
                     </div>

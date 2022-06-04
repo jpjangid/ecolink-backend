@@ -28,7 +28,7 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <img src="{{ $user->profile_image != null ? asset('storage/profile_image/'.$user->profile_image) :asset('default.jpg') }}" class="img-circle" alt="{{ $user->name }}" width="150" height="150" id="blah"><br>
+                                <img src="{{ $user->profile_image != null ? asset('storage/profile_image/'.$user->profile_image) :asset('default.jpg') }}" class="img-rounded" alt="{{ $user->name }}" width="150" height="150" id="blah"><br>
                             </div>
                         </div>
                     </div>

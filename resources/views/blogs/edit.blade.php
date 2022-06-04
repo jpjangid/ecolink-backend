@@ -28,7 +28,7 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <img src="{{ $blog->image != null ? asset('storage/blogs/'.$blog->image) : asset('default.jpg') }}" class="img-circle" alt="{{ $blog->title }}" width="150" height="150" id="blah"><br>
+                                <img src="{{ $blog->image != null ? asset('storage/blogs/'.$blog->image) : asset('default.jpg') }}" class="img-rounded" alt="{{ $blog->title }}" width="150" height="150" id="blah"><br>
                             </div>
                         </div>
                     </div>
