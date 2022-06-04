@@ -20,7 +20,8 @@ class UserController extends Controller
         if (checkpermission('UserController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->where('flag', $request->active)->get();
+                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->whereIn('flag', $active)->get();
 
                 /* Converting Selected Data into desired format */
                 $users = new Collection;

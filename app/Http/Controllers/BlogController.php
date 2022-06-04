@@ -17,7 +17,8 @@ class BlogController extends Controller
         if (checkpermission('BlogController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->where('status', $request->active)->orderBy('publish_date','asc')->get();
+                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->whereIn('status', $active)->orderBy('publish_date','asc')->get();
 
                 /* Converting Selected Data into desired format */
                 $blogs = new Collection;
