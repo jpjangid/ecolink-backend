@@ -92,7 +92,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="publish_date"><span style="color: red;">* </span>Publish Date</label>
-                            <input type="date" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ old('publish_date')}}" placeholder="Please Enter Meta Tag" />
+                            <input type="datetime-local" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ date('Y-m-d\TH:i') }}" placeholder="Please Enter Meta Tag" />
                             @error('publish_date')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -105,8 +105,9 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Publish</option>
+                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Draft</option>
+                                <option value="2" {{ old('status') == '2' ? 'selected' : '' }}>Schedule</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
