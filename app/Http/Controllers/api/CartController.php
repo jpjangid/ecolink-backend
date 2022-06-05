@@ -83,10 +83,10 @@ class CartController extends Controller
 
         $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
 
-        $remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
-
         if (!empty($cart)) {
             $cart->delete();
+
+            $remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
 
             return response()->json(['message' => 'Product delete from cart successfully', 'data' => $remainCartItems, 'code' => 200], 200);
         } else {

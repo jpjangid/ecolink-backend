@@ -35,7 +35,7 @@ class CategoryController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $category = Category::where(['slug' => $request->slug,'flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price','products.ratings:id,rating,product_id')->first();
+        $category = Category::where(['slug' => $request->slug,'flag' => 0, 'parent_id' => null,'status' => 1])->with('subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty','products.ratings:id,rating,product_id')->first();
 
         if(!empty($category)){
             $category->image = asset('storage/category/'.$category->image);
