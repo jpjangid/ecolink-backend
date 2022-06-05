@@ -12,7 +12,7 @@ class CartController extends Controller
     public function getCartItems(Request $request)
     {
         //Get Cart Items By User id with Product Detail
-        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
+        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
 
         if ($carts->isNotEmpty()) {
             foreach ($carts as $cart) {
@@ -59,7 +59,7 @@ class CartController extends Controller
             ]);
         }
 
-        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
+        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
 
         if ($carts->isNotEmpty()) {
             foreach ($carts as $cart) {
@@ -83,10 +83,12 @@ class CartController extends Controller
 
         $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
 
+        $remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
+
         if (!empty($cart)) {
             $cart->delete();
 
-            return response()->json(['message' => 'Product delete from cart successfully', 'code' => 200], 200);
+            return response()->json(['message' => 'Product delete from cart successfully', 'data' => $remainCartItems, 'code' => 200], 200);
         } else {
             return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);
         }

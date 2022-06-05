@@ -89,15 +89,17 @@ class HomeController extends Controller
     public function filterProduct(Request $request)
     {
         if (!empty($request->category)) {
-            $categories = DB::table('categories')->select('id')->whereIn('id', $request->category)->orWhereIn('parent_id', $request->category)->get();
+            $categories = DB::table('categories')->select('id')->where('parent_id', $request->parent_id)->whereIn('id', $request->category)->get();
         } else {
-            $categories = DB::table('categories')->select('id', 'parent_id')->get();
+            $categories = DB::table('categories')->select('id', 'parent_id')->where('parent_id', $request->parent_id)->get();
         }
 
         $category_ids = [];
         foreach ($categories as $category) {
             array_push($category_ids, $category->id);
         }
+
+        array_push($category_ids, $request->parent_id);
 
         $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->with('ratings:id,rating,product_id')->whereIn('parent_id', $category_ids)->where(['status' => 1])->get();
 
@@ -138,9 +140,14 @@ class HomeController extends Controller
                 }
             }
         }
-
+        
         if ($products->isNotEmpty()) {
-            return response()->json(['message' => 'Product filtered successfully', 'code' => 200, 'data' => $products], 200);
+            $newproducts = array();
+            foreach ($products as $product) {
+                array_push($newproducts, $product);
+            }
+            
+            return response()->json(['message' => 'Product filtered successfully', 'code' => 200, 'data' => $newproducts], 200);
         } else {
             return response()->json(['message' => 'No Products Found', 'code' => 400], 400);
         }

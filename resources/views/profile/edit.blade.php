@@ -31,6 +31,7 @@
             </div>
         </div>
     </div>
+    <div id="loader"></div>
     <div class="card">
         <div class="card-body">
             <form method="post" action="{{ url('admin/profile/update',auth()->user()->id) }}" enctype="multipart/form-data">

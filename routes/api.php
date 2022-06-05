@@ -53,6 +53,10 @@ Route::middleware('auth:api')->group(function () {
 
     //Route For Checkout
     Route::post('checkout', [CheckoutController::class, 'index']);
+    //Route For Get Fedex Shipping Rates
+    Route::post('get-fedex-rates', [CheckoutController::class, 'getFedexShippingRates']);
+    //Route For Get Saia Shipping Rates
+    Route::post('get-saia-rates', [CheckoutController::class, 'getSaiaShippingRates']);
 
     //Route For Get UserAddresses
     Route::post('getUserAddresses', [UserAddressController::class, 'index']);

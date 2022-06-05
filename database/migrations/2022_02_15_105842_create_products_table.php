@@ -15,6 +15,7 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('wp_id')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('name')->nullable();
             $table->string('variant')->nullable();

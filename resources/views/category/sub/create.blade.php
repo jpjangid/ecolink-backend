@@ -18,12 +18,20 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <div id="loader"></div>
 
     <div class="card">
         <div class="card-body">
             <form action="{{ url('admin/sub/categories/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ asset('default.jpg') }}" class="img-rounded" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Category Title -->
                     <div class="col-md-4">
@@ -63,20 +71,6 @@
                         </div>
                     </div>
 
-                    <!-- Category image -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="image"><span style="color: red;">* </span>Featured Image:</label>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
-                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                            </div>
-                            @error('image')
-                            <span class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
                     <!-- alt title-->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -99,6 +93,20 @@
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Category image -->
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="image"><span style="color: red;">* </span>Featured Image:</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
+                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                            </div>
+                            @error('image')
+                            <span class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -230,24 +238,17 @@
 </div>
 @endsection
 @section('js')
+<script type=text/javascript>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-<!-- Page specific script -->
-<!-- <script type="text/javascript">
-    $(document).on('keydown', '#keywords', function() {
-        if ($('#keywords').val() != "") {
-            var keywords = $('#keywords').val();
-            keywords = keywords.replace(/\s/g, ",");
-            $('#keywords').val(keywords);
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
+
+            reader.readAsDataURL(input.files[0]);
         }
-    });
-
-    $(document).on('keydown', '#tags', function() {
-        if ($('#tags').val() != "") {
-            var tags = $('#tags').val();
-            tags = tags.replace(/\s/g, ",");
-            $('#tags').val(tags);
-        }
-    });
-</script> -->
-
+    }
+</script>
 @endsection

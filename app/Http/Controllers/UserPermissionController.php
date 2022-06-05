@@ -17,18 +17,16 @@ class UserPermissionController extends Controller
     {
         if (checkpermission('UserPermissionController@index')) {
             if (request()->ajax()) {
-                $allusers  = User::where(['role_id' => 1, 'flag' => 0])->with('role')->get();
+                $allusers  = User::where(['role_id' => 1, 'flag' => 0])->where('id','!=',auth()->user()->id)->with('role')->get();
 
                 /* Converting Selected Data into desired format */
                 $users = new Collection;
                 foreach ($allusers as $user) {
-                    if($user->id != 1){
-                        $users->push([
-                            'id'            =>  $user->id,
-                            'name'          =>  $user->name,
-                            'role'          =>  $user->role->name,
-                        ]);
-                    }
+                    $users->push([
+                        'id'            =>  $user->id,
+                        'name'          =>  $user->name,
+                        'role'          =>  $user->role->name,
+                    ]);
                 }
                 return Datatables::of($users)
                     ->addIndexColumn()
