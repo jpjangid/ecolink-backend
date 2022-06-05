@@ -24,6 +24,13 @@
             <form action="{{ url('admin/pages/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ asset('default.jpg') }}" class="img-rounded" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Page Title -->
                     <div class="col-md-4">
@@ -78,7 +85,7 @@
                         <div class="form-group">
                             <label for="image">Featured Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
+                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('image')
@@ -242,4 +249,17 @@
 </div>
 @endsection
 @section('js')
+<script type=text/javascript>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 @endsection

@@ -24,6 +24,13 @@
             <form action="{{ url('admin/products/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ asset('default.jpg') }}" class="img-rounded" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Product Title -->
                     <div class="col-md-4">
@@ -139,11 +146,11 @@
                     </div>
 
                     <!-- Product Image -->
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
+                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('image')
@@ -455,25 +462,19 @@
 </div>
 @endsection
 @section('js')
+<script type=text/javascript>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-<!-- Page specific script -->
-<!-- <script type="text/javascript">
-    $(document).on('keydown', '#keywords', function() {
-        if ($('#keywords').val() != "") {
-            var keywords = $('#keywords').val();
-            keywords = keywords.replace(/\s/g, ",");
-            $('#keywords').val(keywords);
-        }
-    });
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
 
-    $(document).on('keydown', '#tags', function() {
-        if ($('#tags').val() != "") {
-            var tags = $('#tags').val();
-            tags = tags.replace(/\s/g, ",");
-            $('#tags').val(tags);
+            reader.readAsDataURL(input.files[0]);
         }
-    });
-</script> -->
+    }
+</script>
 <script>
     $(document).on('change', '#regular_price', function() {
         var dis_type = $('#dis_type').val();
