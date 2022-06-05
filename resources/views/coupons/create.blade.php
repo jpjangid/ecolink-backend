@@ -117,14 +117,20 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="offer_start">Offer Start</label>
-                            <input type="datetime-local" class="form-control form-control-solid" name="offer_start" id="offer_start" placeholder="Please Enter Offer Start" value="{{ old('offer_start') }}">
+                            <input type="datetime-local" class="form-control form-control-solid @error('offer_start') is-invalid @enderror" name="offer_start" id="offer_start" placeholder="Please Enter Offer Start" value="{{ old('offer_start') }}">
+                            @error('offer_start')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="offer_end">Offer End</label>
-                            <input type="datetime-local" class="form-control form-control-solid" name="offer_end" id="offer_end" placeholder="Please Enter Offer End" value="{{ old('offer_end') }}">
+                            <input type="datetime-local" class="form-control form-control-solid @error('offer_end') is-invalid @enderror" name="offer_end" id="offer_end" placeholder="Please Enter Offer End" value="{{ old('offer_end') }}">
+                            @error('offer_end')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 

@@ -2,23 +2,6 @@
 
 @section('title', 'Add Blog')
 
-@section('css')
-<style type="text/css">
-    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-        background: transparent;
-        bottom: 0;
-        color: transparent;
-        cursor: pointer;
-        height: 35px;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 28px;
-        width: auto;
-    }
-</style>
-@endsection
-
 @section('content')
 <div class="content">
     <div class="content-header">
