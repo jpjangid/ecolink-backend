@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\OrderItems;
 use App\Models\UserAddress;
 use App\Models\CouponUsedBy;
@@ -544,6 +545,14 @@ class OrderController extends Controller
         ));
 
         $response = curl_exec($curl);
+        // $data = json_decode($response, true);
+        // foreach ($data['data'] as $key => $item){
+        //     $product = Product::select('id')->where('sku', $item['sku'])->first();
+        //     if(!empty($product)){
+        //         $product->wp_id = $item['id'];
+        //         $product->update();
+        //     }
+        // }
 
         curl_close($curl);
         return $response;

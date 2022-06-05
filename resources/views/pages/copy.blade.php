@@ -72,7 +72,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="parent_id">Parent Page</label>
-                            <select class="form-control form-control-solid @error('parent_id') is-invalid @enderror" name="parent_id">
+                            <select class="form-control form-control-solid @error('parent_id') is-invalid @enderror select2bs4" name="parent_id">
                                 <option value="">Select Parent Page</option>
                                 @foreach($parentpages as $parentpage)
                                 <option value="{{ $parentpage->id }}" {{ $page->parent_id == $parentpage->id ? 'selected' : '' }}>{{ $parentpage->title }}</option>
