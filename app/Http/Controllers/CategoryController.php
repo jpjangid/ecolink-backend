@@ -36,7 +36,7 @@ class CategoryController extends Controller
                 /* Sending data through yajra datatable for server side rendering */
                 return Datatables::of($categories)
                     ->addIndexColumn()
-                    /* Status Active and Deactive Checkbox */
+                    /* Status Active and Deactivated Checkbox */
                     ->addColumn('active', function ($row) {
                         $checked = $row['status'] == '1' ? 'checked' : '';
                         $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -256,10 +256,10 @@ class CategoryController extends Controller
             }
 
             $carts = Cart::whereIn('product_id', $product_ids)->get();
-            if($carts->isNotEmpty()){
+            if ($carts->isNotEmpty()) {
                 return redirect('admin/categories')->with('danger', 'Product is present in cart.');
             }
-            
+
             $category->update(['flag' => 1, 'status' => 0]);
             if ($category->subcategory->isNotEmpty()) {
                 foreach ($category->subcategory as $subcategory) {
@@ -308,7 +308,7 @@ class CategoryController extends Controller
                 /* Sending data through yajra datatable for server side rendering */
                 return Datatables::of($categories)
                     ->addIndexColumn()
-                    /* Status Active and Deactive Checkbox */
+                    /* Status Active and Deactivated Checkbox */
                     ->addColumn('active', function ($row) {
                         $checked = $row['status'] == '1' ? 'checked' : '';
                         $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -534,7 +534,7 @@ class CategoryController extends Controller
             }
 
             $carts = Cart::whereIn('product_id', $product_ids)->get();
-            if($carts->isNotEmpty()){
+            if ($carts->isNotEmpty()) {
                 return redirect('admin/sub/categories')->with('danger', 'Product is present in cart.');
             }
 

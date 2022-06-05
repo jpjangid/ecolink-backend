@@ -2297,12 +2297,12 @@ function () {
     value: function disable() {
       // close codeview if codeview is opend
       if (this.invoke('codeview.isActivated')) {
-        this.invoke('codeview.deactivate');
+        this.invoke('codeview.Deactivated');
       }
 
       this.layoutInfo.editable.attr('contenteditable', false);
       this.options.editing = false;
-      this.invoke('toolbar.deactivate', true);
+      this.invoke('toolbar.Deactivated', true);
       this.triggerEvent('disable', true);
     }
   }, {
@@ -6456,7 +6456,7 @@ function () {
     key: "toggle",
     value: function toggle() {
       if (this.isActivated()) {
-        this.deactivate();
+        this.Deactivated();
       } else {
         this.activate();
       }
@@ -6564,13 +6564,13 @@ function () {
       }
     }
     /**
-     * deactivate code view
+     * Deactivated code view
      */
 
   }, {
-    key: "deactivate",
-    value: function deactivate() {
-      // deactivate CodeMirror as codable
+    key: "Deactivated",
+    value: function Deactivated() {
+      // Deactivated CodeMirror as codable
       if (env.hasCodeMirror) {
         var cmEditor = this.$codable.data('cmEditor');
         this.$codable.val(cmEditor.getValue());
@@ -6594,7 +6594,7 @@ function () {
     key: "destroy",
     value: function destroy() {
       if (this.isActivated()) {
-        this.deactivate();
+        this.Deactivated();
       }
     }
   }]);
@@ -8169,9 +8169,9 @@ function () {
       var editorOffsetTop = this.$editor.offset().top;
       var editorOffsetBottom = editorOffsetTop + editorHeight;
       var activateOffset = editorOffsetTop - otherBarHeight;
-      var deactivateOffsetBottom = editorOffsetBottom - otherBarHeight - toolbarHeight - statusbarHeight;
+      var DeactivatedOffsetBottom = editorOffsetBottom - otherBarHeight - toolbarHeight - statusbarHeight;
 
-      if (!this.isFollowing && currentOffset > activateOffset && currentOffset < deactivateOffsetBottom - toolbarHeight) {
+      if (!this.isFollowing && currentOffset > activateOffset && currentOffset < DeactivatedOffsetBottom - toolbarHeight) {
         this.isFollowing = true;
         this.$editable.css({
           marginTop: this.$toolbar.outerHeight()
@@ -8182,7 +8182,7 @@ function () {
           width: editorWidth,
           zIndex: 1000
         });
-      } else if (this.isFollowing && (currentOffset < activateOffset || currentOffset > deactivateOffsetBottom)) {
+      } else if (this.isFollowing && (currentOffset < activateOffset || currentOffset > DeactivatedOffsetBottom)) {
         this.isFollowing = false;
         this.$toolbar.css({
           position: 'relative',
@@ -8222,7 +8222,7 @@ function () {
       this.ui.toggleBtnActive(this.$toolbar.find('.btn-codeview'), isCodeview);
 
       if (isCodeview) {
-        this.deactivate();
+        this.Deactivated();
       } else {
         this.activate();
       }
@@ -8239,8 +8239,8 @@ function () {
       this.ui.toggleBtn($btn, true);
     }
   }, {
-    key: "deactivate",
-    value: function deactivate(isIncludeCodeview) {
+    key: "Deactivated",
+    value: function Deactivated(isIncludeCodeview) {
       var $btn = this.$toolbar.find('button');
 
       if (!isIncludeCodeview) {

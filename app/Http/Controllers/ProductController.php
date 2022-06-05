@@ -36,7 +36,7 @@ class ProductController extends Controller
                 /* Sending data through yajra datatable for server side rendering */
                 return Datatables::of($products)
                     ->addIndexColumn()
-                    /* Status Active and Deactive Checkbox */
+                    /* Status Active and Deactivated Checkbox */
                     ->addColumn('active', function ($row) {
                         $checked = $row['status'] == '1' ? 'checked' : '';
                         $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -100,7 +100,7 @@ class ProductController extends Controller
             'weight'                =>  'required',
             'height'                =>  'required',
             'width'                 =>  'required',
-            'lenght'                =>  'required',
+            'length'                =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'variant.required'              =>  'Please Enter Product Variant Name',
@@ -116,7 +116,7 @@ class ProductController extends Controller
             'weight.required'               =>  'Please Enter Weight',
             'height.required'               =>  'Please Enter Height',
             'width.required'                =>  'Please Enter Width',
-            'lenght.required'               =>  'Please Enter Lenght',
+            'length.required'               =>  'Please Enter length',
         ]);
 
         /* Storing OG Image on local disk */
@@ -171,7 +171,7 @@ class ProductController extends Controller
             'sold_individually'     =>  $request->sold_individually,
             'minimum_qty'           =>  $request->minimum_qty,
             'weight'                =>  $request->weight,
-            'lenght'                =>  $request->lenght,
+            'length'                =>  $request->length,
             'width'                 =>  $request->width,
             'height'                =>  $request->height,
             'shipping_class'        =>  $request->shipping_class,
@@ -231,7 +231,7 @@ class ProductController extends Controller
             'weight'                =>  'required',
             'height'                =>  'required',
             'width'                 =>  'required',
-            'lenght'                =>  'required',
+            'length'                =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'variant.required'              =>  'Please Enter Product Variant Name',
@@ -246,7 +246,7 @@ class ProductController extends Controller
             'weight.required'               =>  'Please Enter Weight',
             'height.required'               =>  'Please Enter Height',
             'width.required'                =>  'Please Enter Width',
-            'lenght.required'               =>  'Please Enter Lenght',
+            'length.required'               =>  'Please Enter length',
         ]);
 
         /* Fetching Blog Data using Id */
@@ -303,7 +303,7 @@ class ProductController extends Controller
         $product->sold_individually     =  $request->sold_individually;
         $product->minimum_qty           =  $request->minimum_qty;
         $product->weight                =  $request->weight;
-        $product->lenght                =  $request->lenght;
+        $product->length                =  $request->length;
         $product->width                 =  $request->width;
         $product->height                =  $request->height;
         $product->shipping_class        =  $request->shipping_class;
@@ -322,7 +322,7 @@ class ProductController extends Controller
         if (checkpermission('ProductController@destroy')) {
             $carts = Cart::where('product_id', $id)->get();
 
-            if($carts->isNotEmpty()){
+            if ($carts->isNotEmpty()) {
                 return redirect('admin/products')->with('danger', 'Product is present in cart.');
             }
 

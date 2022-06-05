@@ -48,7 +48,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="slug"><span style="color: red;">* </span>Slug</label>
-                            <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ old('slug')}}" placeholder="Please enter slug of blog" />
+                            <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ old('slug')}}" placeholder="Please Enter Slug Of Blog" />
                             @error('slug')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror

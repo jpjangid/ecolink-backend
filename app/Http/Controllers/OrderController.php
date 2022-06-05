@@ -42,7 +42,7 @@ class OrderController extends Controller
                             'total'             => number_format((float)$order->total_amount, 2, '.', ''),
                             'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
                             'order_comments'    => $order->order_comments,
-                            'active'            => $order->user->flag == 0 ? 'Active' : 'Deactive'
+                            'active'            => $order->user->flag == 0 ? 'Active' : 'Deactivated'
                         ]);
                     }
                 }

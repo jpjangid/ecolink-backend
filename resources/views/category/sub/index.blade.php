@@ -38,7 +38,7 @@
                             <select id="active" class="form-control">
                                 <option value="all">All</option>
                                 <option value="1">Active</option>
-                                <option value="0">Deactive</option>
+                                <option value="0">Inactive</option>
                             </select>
                         </div>
                     </div>
@@ -85,12 +85,12 @@
                 });
         });
     });
-    
+
     $(function() {
         datatable();
     });
 
-    $(document).on('change', '#active', function(){
+    $(document).on('change', '#active', function() {
         var id = $('#active').val();
         datatable();
     });

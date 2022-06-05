@@ -37,7 +37,7 @@ class CouponController extends Controller
                 /* Sending data through yajra datatable for server side rendering */
                 return Datatables::of($coupons)
                     ->addIndexColumn()
-                    /* Status Active and Deactive Checkbox */
+                    /* Status Active and Deactivated Checkbox */
                     ->addColumn('active', function ($row) {
                         $checked = $row['show_in_front'] == '1' ? 'checked' : '';
                         $active  = '<div class="form-check form-switch form-check-custom form-check-solid" style="padding-left: 3.75rem !important">
@@ -79,8 +79,7 @@ class CouponController extends Controller
             $role = DB::table('roles')->where('name', 'client')->first();
             $users = DB::table('users')->where('role_id', $role->id)->get();
             $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->get();
-            $categories = DB::table('categories')->where(['flag' => '0'])->get();
-
+            $categories = DB::table('categories')->where('parent_id', '=', null)->where(['flag' => '0', 'status' => '1'])->get();
             return view('coupons.create', compact(
                 'categories',
                 'users',
@@ -102,7 +101,7 @@ class CouponController extends Controller
             'offer_start'   =>  'date',
             'offer_end'     =>  'date|after:offer_start',
         ], [
-            'name.required'             =>  'Name is required',
+            'name.required'             =>  'Coupan Name is required',
             'code.required'             =>  'Coupon Code is required',
             'type.required'             =>  'Coupon Type is required',
             'show_in_front.required'    =>  'This Field is required',

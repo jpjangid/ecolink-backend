@@ -81,9 +81,9 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label for="pincode"><span style="color: red;">* </span>Postal:</label>
-                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Pincode" value="{{ old('pincode') }}" />
+                    <div class="col-md-4">
+                        <label for="pincode"><span style="color: red;">* </span>Postal Code:</label>
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Pincode Code" value="{{ old('pincode') }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -138,19 +138,21 @@
             dataType: 'json',
             success: function(result) {
                 console.log(result);
-                document.getElementById("name").value = result.name;
-                document.getElementById("mobile").value = result.mobile;
-                document.getElementById("address").value = result.address;
-                document.getElementById("country").value = result.country;
-                document.getElementById("state").value = result.state;
-                document.getElementById("city").value = result.city;
-                document.getElementById("pincode").value = result.pincode;
-                document.getElementById("flag").value = result.flag;
-                $('#role_id').select2("trigger", 'select', {
-                    data: {
-                        id: result.role_id
-                    }
-                });
+                if (result.flag == '1') {
+                    document.getElementById("name").value = result.name;
+                    document.getElementById("mobile").value = result.mobile;
+                    document.getElementById("address").value = result.address;
+                    document.getElementById("country").value = result.country;
+                    document.getElementById("state").value = result.state;
+                    document.getElementById("city").value = result.city;
+                    document.getElementById("pincode").value = result.pincode;
+                    document.getElementById("flag").value = result.flag;
+                    $('#role_id').select2("trigger", 'select', {
+                        data: {
+                            id: result.role_id
+                        }
+                    });
+                }
             }
         });
     });

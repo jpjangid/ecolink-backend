@@ -44,7 +44,7 @@ class UserController extends Controller
                 /* Sending data through yajra datatable for server side rendering */
                 return Datatables::of($users)
                     ->addIndexColumn()
-                    /* Status Active and Deactive Checkbox */
+                    /* Status Active and Deactivated Checkbox */
                     ->addColumn('active', function ($row) {
                         $checked = $row['flag'] == '0' ? 'checked' : '';
                         $active  = '<div class="form-check form-switch form-check-custom form-check-solid">
@@ -297,9 +297,7 @@ class UserController extends Controller
 
     public function userinfo(Request $request)
     {
-        // if (strpos($request->email, 'OPD') !== false) {
         $data = User::where(['email' => $request->email, 'flag' => '1'])->first();
-        // dd($data);
         return response()->json($data);
     }
 }

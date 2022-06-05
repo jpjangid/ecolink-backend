@@ -38,7 +38,7 @@
                             <select id="active" class="form-control">
                                 <option value="all">All</option>
                                 <option value="0">Active</option>
-                                <option value="1">Deactive</option>
+                                <option value="1">Deactivated</option>
                             </select>
                         </div>
                     </div>

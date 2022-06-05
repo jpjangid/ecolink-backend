@@ -144,7 +144,7 @@ class UserController extends Controller
         }
 
         if ($user->flag == 1) {
-            return response()->json(['message' => 'User is deactive', 'code' => 400], 400);
+            return response()->json(['message' => 'User is Deactivated', 'code' => 400], 400);
         } else {
 
             if ($user->role_id == 1) {

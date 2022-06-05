@@ -72,8 +72,8 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Category</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>

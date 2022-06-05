@@ -70,7 +70,7 @@ class NewsLetterController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'email'     =>  'required|email',
+            'email'     =>  'required|email|unique:news_letters,email',
         ]);
 
         /* Storing Data in Table */
