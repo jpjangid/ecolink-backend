@@ -83,7 +83,7 @@
                     </div>
 
                     <!-- Page image -->
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="image">Featured Image:</label>
                             <div class="custom-file">
