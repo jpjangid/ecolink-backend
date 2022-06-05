@@ -440,6 +440,7 @@
 				</li>
 				@endif
 
+				@if(auth()->user()->role_id == 1)
 				@if(checkpermission('UserPermissionController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/userpermissions') }}" class="nav-link">
@@ -449,6 +450,7 @@
 						</p>
 					</a>
 				</li>
+				@endif
 				@endif
 			</ul>
 		</nav>

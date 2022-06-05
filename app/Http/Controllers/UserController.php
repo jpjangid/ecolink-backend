@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Location;
+use App\Models\Permission;
+use App\Models\RoleHasPermission;
 use App\Models\UserAddress;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -163,6 +165,17 @@ class UserController extends Controller
                 'city'          =>  $request['city'],
                 'zip'           =>  $request['pincode'],
             ]);
+
+            if($request['role_id'] != 2){
+                $permissions = Permission::all();
+                foreach($permissions as $permission){
+                    RoleHasPermission::create([
+                        'permission_id'     => $permission->id,
+                        'user_id'           => $user->id,
+                        'role_id'           => $request['role_id']
+                    ]);
+                }
+            }
         }
         /* Validating Input fields */
 
