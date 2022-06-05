@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use App\Models\BlogCategory;
 
 class BlogController extends Controller
 {
@@ -74,7 +75,8 @@ class BlogController extends Controller
     {
         if (checkpermission('BlogController@create')) {
             /* Loading Create Page */
-            return view('blogs.create');
+            $blogcategories = BlogCategory::where('flag', '0')->get();
+            return view('blogs.create', compact('blogcategories'));
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }
@@ -169,8 +171,8 @@ class BlogController extends Controller
         if (checkpermission('BlogController@edit')) {
             /* Getting Blog data for edit using Id */
             $blog = DB::table('blogs')->find($id);
-
-            return view('blogs.edit', compact('blog', 'id'));
+            $blogcategories = BlogCategory::where('flag', '0')->get();
+            return view('blogs.edit', compact('blog', 'id', 'blogcategories'));
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }

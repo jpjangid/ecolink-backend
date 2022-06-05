@@ -72,9 +72,9 @@
                             <label class="required form-label" for="category"><span style="color: red;">* </span>Category</label>
                             <select class="form-control @error('category') is-invalid @enderror" name="category">
                                 <option value="">Select Blog Category</option>
-                                <option value="beauty" {{ old('category') == 'beauty' ? 'selected' : '' }}>Beauty</option>
-                                <option value="cosmetic" {{ old('category') == 'cosmetic' ? 'selected' : '' }}>Cosmetic</option>
-                                <option value="fashion" {{ old('category') == 'fashion' ? 'selected' : '' }}>Fashion</option>
+                                @foreach( $blogcategories as $blogcategory)
+                                <option value="{{ $blogcategory->blog_category}}" {{ old('category') == $blogcategory->blog_category ? 'selected' : '' }}> {{ $blogcategory->blog_category}}</option>
+                                @endforeach
                             </select>
                             @error('category')
                             <span class="error invalid-feedback">{{ $message }}</span>
