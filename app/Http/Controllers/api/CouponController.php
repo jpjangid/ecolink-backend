@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CouponController extends Controller
@@ -20,10 +21,13 @@ class CouponController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
+        
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
         $coupon = Coupon::where('id', $request->coupon_id)->with('coupon_used')->get();
 
-        $carts = Cart::where('user_id', $request->user_id)->with('product')->get();
+        $carts = Cart::where('user_id', $user->id)->with('product')->get();
 
         $order_total = 0;
         $payable = 0;

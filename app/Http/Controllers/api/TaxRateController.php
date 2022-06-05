@@ -38,8 +38,11 @@ class TaxRateController extends Controller
         if($validator->fails()){
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);       
         }
+        
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
-        $user = User::find($request->user_id);
+        $user = User::find($user->id);
 
         if(!empty($user)){
             $user->tax_exempt = $user->tax_exempt == 0 ? 1 : 0;

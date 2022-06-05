@@ -192,7 +192,10 @@ class UserController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $user = User::find($request->user_id);
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $user = User::find($user->id);
         $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
         if (!empty($user)) {
@@ -262,11 +265,14 @@ class UserController extends Controller
 
     public function editUserInfo(Request $request)
     {
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
         $validator = Validator::make($request->all(), [
             'name'          =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
-            'email'         =>  'required|email|unique:users,email,' . $request->user_id,
+            'email'         =>  'required|email|unique:users,email,' . $user->id,
             'password'      =>  'min:8',
-            'mobile'        =>  'required|digits:10|unique:users,mobile,' . $request->user_id,
+            'mobile'        =>  'required|digits:10|unique:users,mobile,' . $user->id,
             'address'       =>  'required',
             'state'         =>  'required|regex:/^[\pL\s\-]+$/u',
             'city'          =>  'required|regex:/^[\pL\s\-]+$/u',
@@ -290,7 +296,7 @@ class UserController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $user = User::find($request->user_id);
+        $user = User::find($user->id);
 
         if (!empty($user)) {
             /* Storing Featured Image on local disk */
