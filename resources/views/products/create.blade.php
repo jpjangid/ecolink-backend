@@ -43,7 +43,7 @@
                             @enderror
                         </div>
                     </div>
-                    
+
                     <!-- Product Variant -->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -521,6 +521,19 @@
             $('#sale_price').val(price);
         }
     }
+
+    $(document).on('keyup', '#discount', function() {
+        var type = $('#dis_type').val();
+        var discount = $('#discount').val();
+
+        if (type == 'percentage') {
+            discount = discount > 100 ? '' : discount;
+            if (discount == '') {
+                alert('Discount in percentage should be lower or equal to 100%');
+            }
+        }
+        $('#discount').val(discount);
+    });
 </script>
 
 @endsection

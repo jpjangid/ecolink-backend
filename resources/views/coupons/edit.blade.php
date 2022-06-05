@@ -205,6 +205,19 @@
         input_show_hide(type);
     });
 
+    $(document).on('keyup', '#discount', function() {
+        var type = $('#disc_type').val();
+        var discount = $('#discount').val();
+
+        if (type == 'percent') {
+            discount = discount > 100 ? '' : discount;
+            if (discount == '') {
+                alert('Discount in percent should be lower or equal to 100%');
+            }
+        }
+        $('#discount').val(discount);
+    });
+
     function input_show_hide(type) {
         if (type == 'merchandise') {
             $('#brand_id').show();
