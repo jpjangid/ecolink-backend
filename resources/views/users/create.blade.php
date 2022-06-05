@@ -93,7 +93,7 @@
                         <select class="form-control select2bs4" name="role_id" id="role_id">
                             <option value="">Select Role</option>
                             @foreach($roles as $role)
-                            <option value="{{$role->id}}" {{old('role_id') == $role->id ? 'selected' : ''}}>{{$role->name}}</option>
+                            <option value="{{$role->id}}" {{old('role_id') == $role->id ? 'selected' : ''}}>{{$role->title}}</option>
                             @endforeach
                         </select>
                         @error('role_id')
