@@ -13,11 +13,14 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
-        $user = DB::table('users')->select('id', 'name', 'email', 'address', 'city', 'state', 'country', 'pincode', 'mobile')->find($request->user_id);
+        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product')->get();
 
-        $addresses = DB::table('user_addresses')->where('user_id', $request->user_id)->get();
+        $user = DB::table('users')->select('id', 'name', 'email', 'address', 'city', 'state', 'country', 'pincode', 'mobile')->find($user->id);
+
+        $addresses = DB::table('user_addresses')->where('user_id', $user->id)->get();
 
         $order_total = 0;
         $payable = 0;
@@ -43,7 +46,7 @@ class CheckoutController extends Controller
 
         $current = date('Y-m-d H:i:s');
 
-        $coupons = Coupon::select('id', 'name', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current]])->orWhere('user_id', $request->user_id)->get();
+        $coupons = Coupon::select('id', 'name', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current]])->orWhere('user_id', $user->id)->get();
 
         $data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses]);
 

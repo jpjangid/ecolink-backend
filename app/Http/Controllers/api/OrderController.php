@@ -29,7 +29,10 @@ class OrderController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $orders = Order::where('user_id', $request->user_id)->with('items.product')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $orders = Order::where('user_id', $user->id)->with('items.product')->get();
 
         if ($orders->isNotEmpty()) {
             foreach ($orders as $order) {
@@ -76,13 +79,16 @@ class OrderController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $cartItems = Cart::where('user_id', $request->user_id)->with('product')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
 
         $orderNumber = $this->order_no();
 
         if (isset($request->addressSelect) && $request->addressSelect == 1) {
             $UserAddress = new UserAddress;
-            $UserAddress->user_id   = $request->user_id;
+            $UserAddress->user_id   = $user->id;
             $UserAddress->name      = $request->billing_name;
             $UserAddress->mobile    = $request->billing_mobile;
             $UserAddress->address   = $request->billing_address;
@@ -94,7 +100,7 @@ class OrderController extends Controller
 
             if ($request->sameAsShip == 0) {
                 $UserAddress = new UserAddress;
-                $UserAddress->user_id   = $request->user_id;
+                $UserAddress->user_id   = $user->id;
                 $UserAddress->name      = $request->shipping_name;
                 $UserAddress->mobile    = $request->shipping_mobile;
                 $UserAddress->address   = $request->shipping_address;
@@ -117,7 +123,7 @@ class OrderController extends Controller
 
         $order = Order::create([
             'order_no'                  =>  $orderNumber,
-            'user_id'                   =>  $request->user_id,
+            'user_id'                   =>  $user->id,
             'order_amount'              =>  $request->order_amount,
             'discount_applied'          =>  $discount,
             'total_amount'              =>  $request->total_amount,
@@ -164,7 +170,7 @@ class OrderController extends Controller
             if ($coupon->type == 'merchandise' || $coupon->type == 'global' || $coupon->type == 'personal_code' || $coupon->type == 'cart_value_discount') {
                 CouponUsedBy::create([
                     'coupon_id'         =>  $coupon->id,
-                    'user_id'           =>  $request->user_id,
+                    'user_id'           =>  $user->id,
                     'order_id'          =>  $order->id,
                     'amount'            =>  $request->coupon_discount,
                     'applied_times'     =>  1,
@@ -433,8 +439,11 @@ class OrderController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
+        
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
-        $order = Order::where(['id' => $request->id, 'user_id' => $request->user_id])->first();
+        $order = Order::where(['id' => $request->id, 'user_id' => $user->id])->first();
 
         if (!empty($order)) {
             $order->status = 'cancelled';

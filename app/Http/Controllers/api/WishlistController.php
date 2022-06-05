@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class WishlistController extends Controller
@@ -12,7 +13,9 @@ class WishlistController extends Controller
     public function getWishlistItems(Request $request)
     {
         //Get wishlist Items By User id with Product Detail
-        $wishlists = Wishlist::select('id','user_id','product_id')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+        $wishlists = Wishlist::select('id','user_id','product_id')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt')->get();
 
         if($wishlists->isNotEmpty()){
             foreach($wishlists as $wishlist){
@@ -37,13 +40,16 @@ class WishlistController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $wishlist = Wishlist::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $wishlist = Wishlist::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
 
         if(!empty($wishlist)){
             return response()->json(['message' => 'Item already present in Wishlist', 'code' => 200], 200);
         }else{
             wishlist::create([
-                'user_id'       =>  $request->user_id,
+                'user_id'       =>  $user->id,
                 'product_id'    =>  $request->product_id,
             ]);
         }
@@ -63,7 +69,10 @@ class WishlistController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $wishlist = Wishlist::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $wishlist = Wishlist::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
 
         if(!empty($wishlist)){
             $wishlist->delete();

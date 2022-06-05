@@ -24,7 +24,10 @@ class ReturnController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $return_orders = ReturnItems::where('user_id', $request->user_id)->with('item','order')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $return_orders = ReturnItems::where('user_id', $user->id)->with('item','order')->get();
 
         if($return_orders->isNotEmpty()){
             foreach($return_orders as $item){
@@ -56,9 +59,12 @@ class ReturnController extends Controller
         $amount = $product->sale_price * $request->quantity;
         $orderNumber = $this->order_no();
 
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
         $return = ReturnItems::create([
             'return_no'         =>  $orderNumber,
-            'user_id'           =>  $request->user_id,
+            'user_id'           =>  $user->id,
             'order_id'          =>  $request->order_id,
             'order_item_id'     =>  $request->order_item_id,
             'product_id'        =>  $request->product_id,
