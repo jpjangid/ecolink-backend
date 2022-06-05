@@ -36,7 +36,7 @@
                             @enderror
                         </div>
                     </div>
-                    
+
                     <!-- Product Variant -->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -170,8 +170,8 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Status</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ $product->status == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ $product->status == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ $product->status == '1' ? 'selected' : '' }}>Active </option>
+                                <option value="0" {{ $product->status == '0' ? 'selected' : '' }}>Inactive</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -255,12 +255,12 @@
                         </div>
                     </div>
 
-                    <!-- Lenght-->
+                    <!-- length-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="lenght">Lenght</label>
-                            <input type="number" step=".01" class="form-control @error('lenght') is-invalid @enderror" name="lenght" id="lenght" placeholder="Please Enter Lenght" value="{{ $product->lenght }}">
-                            @error('lenght')
+                            <label class="required form-label" for="length">length</label>
+                            <input type="number" step=".01" class="form-control @error('length') is-invalid @enderror" name="length" id="length" placeholder="Please Enter length" value="{{ $product->length }}">
+                            @error('length')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
@@ -292,7 +292,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="shipping_class">Shipping Class</label>
-                            <input type="text" step=".01" class="form-control @error('Shipping Class') is-invalid @enderror" name="shipping_class" id="shipping_class" placeholder="Please Enter shipping_class" value="{{ $product->shipping_class }}">
+                            <input type="text" step=".01" class="form-control @error('Shipping Class') is-invalid @enderror" name="shipping_class" id="shipping_class" placeholder="Please Enter Shipping Class" value="{{ $product->shipping_class }}">
                         </div>
                     </div>
 
@@ -528,5 +528,4 @@
         }
     }
 </script>
-
 @endsection

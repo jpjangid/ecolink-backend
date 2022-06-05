@@ -41,7 +41,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="slug"><span style="color: red;">* </span>Slug</label>
-                            <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ $blog->slug }}" placeholder="Please enter slug of blog" />
+                            <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ $blog->slug }}" placeholder="Please Enter Slug Of Blog" />
                             @error('slug')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -106,8 +106,8 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ $blog->status == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ $blog->status == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ $blog->status == '1' ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ $blog->status == '0' ? 'selected' : '' }}>Inactive</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>

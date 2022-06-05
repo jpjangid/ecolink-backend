@@ -54,7 +54,7 @@
                             <select class="form-control select2bs4 @error('parent_id') is-invalid @enderror" name="parent_id">
                                 <option value="">Select Parent Category</option>
                                 @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" {{ old('parent_id') == $category->id ? "selected" : "" }}>{{ $category->name }}</option>
                                 @endforeach
                             </select>
                             @error('parent_id')
@@ -94,8 +94,8 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Sub Category</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>

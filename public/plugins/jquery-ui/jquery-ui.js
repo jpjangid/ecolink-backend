@@ -10336,7 +10336,7 @@ $.ui.plugin.add( "draggable", "connectToSortable", {
 				// either as another connected Sortable may yet handle the removal.
 				sortable.cancelHelperRemoval = true;
 
-				sortable._trigger( "deactivate", event, uiSortable );
+				sortable._trigger( "Deactivated", event, uiSortable );
 			}
 		} );
 	},
@@ -12885,7 +12885,7 @@ $.widget( "ui.droppable", {
 
 		// Callbacks
 		activate: null,
-		deactivate: null,
+		Deactivated: null,
 		drop: null,
 		out: null,
 		over: null
@@ -12973,12 +12973,12 @@ $.widget( "ui.droppable", {
 		}
 	},
 
-	_deactivate: function( event ) {
+	_Deactivated: function( event ) {
 		var draggable = $.ui.ddmanager.current;
 
 		this._removeActiveClass();
 		if ( draggable ) {
-			this._trigger( "deactivate", event, this.ui( draggable ) );
+			this._trigger( "Deactivated", event, this.ui( draggable ) );
 		}
 	},
 
@@ -13211,7 +13211,7 @@ $.ui.ddmanager = {
 					( draggable.currentItem || draggable.element ) ) ) {
 				this.isout = true;
 				this.isover = false;
-				this._deactivate.call( this, event );
+				this._Deactivated.call( this, event );
 			}
 
 		} );
@@ -15248,7 +15248,7 @@ var widgetsSortable = $.widget( "ui.sortable", $.ui.mouse, {
 		activate: null,
 		beforeStop: null,
 		change: null,
-		deactivate: null,
+		Deactivated: null,
 		out: null,
 		over: null,
 		receive: null,
@@ -15711,7 +15711,7 @@ var widgetsSortable = $.widget( "ui.sortable", $.ui.mouse, {
 
 			//Post deactivating events to containers
 			for ( var i = this.containers.length - 1; i >= 0; i-- ) {
-				this.containers[ i ]._trigger( "deactivate", null, this._uiHash( this ) );
+				this.containers[ i ]._trigger( "Deactivated", null, this._uiHash( this ) );
 				if ( this.containers[ i ].containerCache.over ) {
 					this.containers[ i ]._trigger( "out", null, this._uiHash( this ) );
 					this.containers[ i ].containerCache.over = 0;
@@ -16661,7 +16661,7 @@ var widgetsSortable = $.widget( "ui.sortable", $.ui.mouse, {
 		}
 		for ( i = this.containers.length - 1; i >= 0; i-- ) {
 			if ( !noPropagation ) {
-				delayedTriggers.push( delayEvent( "deactivate", this, this.containers[ i ] ) );
+				delayedTriggers.push( delayEvent( "Deactivated", this, this.containers[ i ] ) );
 			}
 			if ( this.containers[ i ].containerCache.over ) {
 				delayedTriggers.push( delayEvent( "out", this, this.containers[ i ] ) );

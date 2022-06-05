@@ -37,7 +37,7 @@
                         <div class="col-sm-6">
                             <select id="active" class="form-control">
                                 <option value="1">Active</option>
-                                <option value="0">Deactive</option>
+                                <option value="0">Inactive</option>
                             </select>
                         </div>
                     </div>
@@ -92,10 +92,10 @@
         datatable();
     });
 
-    $(document).on('change', '#active', function(){
+    $(document).on('change', '#active', function() {
         datatable();
     });
-    
+
     function datatable() {
         var blogTable = $('#blogTable').DataTable({
             destroy: true,

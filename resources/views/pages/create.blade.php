@@ -104,8 +104,8 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Page</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -197,7 +197,7 @@
                     <!-- Page image -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="og_image"><span style="color: red;">* </span>OG Image:</label>
+                            <label for="og_image"><span style="color: red;"> </span>OG Image:</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="og_image">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>

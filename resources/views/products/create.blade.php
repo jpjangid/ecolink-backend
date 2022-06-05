@@ -35,7 +35,7 @@
                             @enderror
                         </div>
                     </div>
-                    
+
                     <!-- Product Variant -->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -65,7 +65,7 @@
                             <select name="category_id" class="form-control select2bs4 @error('category_id') is-invalid @enderror">
                                 <option value="">Select Category</option>
                                 @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" {{ old("category_id") == $category->id ? "selected":"" }}>{{ $category->name }}</option>
                                 @endforeach
                             </select>
                             @error('category_id')
@@ -169,8 +169,8 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Status</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -254,12 +254,12 @@
                         </div>
                     </div>
 
-                    <!-- Lenght-->
+                    <!-- length-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="lenght"><span style="color: red;">* </span>Lenght</label>
-                            <input type="number" step=".01" class="form-control @error('lenght') is-invalid @enderror" name="lenght" id="lenght" placeholder="Please Enter Lenght" value="{{ old('lenght') }}">
-                            @error('lenght')
+                            <label class="required form-label" for="length"><span style="color: red;">* </span>Length</label>
+                            <input type="number" step=".01" class="form-control @error('length') is-invalid @enderror" name="length" id="length" placeholder="Please Enter Length" value="{{ old('length') }}">
+                            @error('length')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
@@ -291,7 +291,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="shipping_class">Shipping Class</label>
-                            <input type="text" step=".01" class="form-control @error('Shipping Class') is-invalid @enderror" name="shipping_class" id="shipping_class" placeholder="Please Enter shipping_class" value="{{ old('shipping_class') }}">
+                            <input type="text" step=".01" class="form-control @error('Shipping Class') is-invalid @enderror" name="shipping_class" id="shipping_class" placeholder="Please Enter Shipping Class" value="{{ old('shipping_class') }}">
                         </div>
                     </div>
 

@@ -60,10 +60,36 @@
 						@endif
 					</ul>
 				</li>
-
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
 						<i class="nav-icon fas fa-cubes"></i>
+						<p>
+							Blog Category
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						@if(checkpermission('BlogCategoryController@create'))
+						<li class="nav-item">
+							<a href="{{ url('admin/blogcategory/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Blog Category</p>
+							</a>
+						</li>
+						@endif
+						@if(checkpermission('BlogCategoryController@index'))
+						<li class="nav-item">
+							<a href="{{ url('admin/blogcategory') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Blog Category List</p>
+							</a>
+						</li>
+						@endif
+					</ul>
+				</li>
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-blog"></i>
 						<p>
 							Blogs
 							<i class="fas fa-angle-left right"></i>

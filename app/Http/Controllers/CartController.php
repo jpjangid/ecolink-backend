@@ -73,6 +73,10 @@ class CartController extends Controller
             'user_id'       =>  'required',
             'product_id'    =>  'required',
             'quantity'      =>  'required'
+        ], [
+            'user_id.required'       =>  'Please Select User',
+            'product_id.required'    =>  'Please Select Product',
+            'quantity.required'      =>  'Enter Quantity',
         ]);
 
         $cart = Cart::where(['user_id' => $request->user_id, 'product_id' =>  $request->product_id])->first();

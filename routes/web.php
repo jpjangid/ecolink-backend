@@ -26,6 +26,7 @@ use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\TaxRateController;
 use App\Http\Controllers\BulkPricingController;
 use App\Http\Controllers\TechnicalSupportController;
+use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\api\UserController as APiUserController;
 
 /*
@@ -71,7 +72,15 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/userinfo', [UserController::class, 'userinfo']);
     });
 
-
+    Route::prefix('blogcategory')->group(function () {
+        Route::get('/', [BlogCategoryController::class, 'index']);
+        Route::get('/create', [BlogCategoryController::class, 'create']);
+        Route::post('/store', [BlogCategoryController::class, 'store']);
+        Route::get('/edit/{id}', [BlogCategoryController::class, 'edit']);
+        Route::put('/update/{id}', [BlogCategoryController::class, 'update']);
+        Route::delete('/delete/{id}', [BlogCategoryController::class, 'destroy']);
+        Route::post('/update_status', [BlogCategoryController::class, 'update_status']);
+    });
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'index']);
         Route::get('/create', [BlogController::class, 'create']);

@@ -37,7 +37,7 @@
                         <div class="col-sm-6">
                             <select id="active" class="form-control">
                                 <option value="0">Active</option>
-                                <option value="1">Deactive</option>
+                                <option value="1">Deactivated</option>
                             </select>
                         </div>
                     </div>
@@ -73,11 +73,11 @@
         datatable();
     });
 
-    $(document).on('change', '#active', function(){
+    $(document).on('change', '#active', function() {
         datatable();
     });
 
-    function datatable(){
+    function datatable() {
         var table = $('#userTable').DataTable({
             destroy: true,
             scrollY: "55vh",
@@ -163,7 +163,7 @@
                 } else {
                     swal({
                         title: 'Inactive',
-                        text: "User deactivated.",
+                        text: "User Deactivatedd.",
                         icon: 'error',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
