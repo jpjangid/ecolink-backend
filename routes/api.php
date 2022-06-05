@@ -128,3 +128,4 @@ Route::post('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);
 Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
 Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
+Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
