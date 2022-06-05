@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Location;
+use App\Models\Permission;
+use App\Models\RoleHasPermission;
 use App\Models\UserAddress;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -20,7 +22,8 @@ class UserController extends Controller
         if (checkpermission('UserController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->where('flag', $request->active)->get();
+                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->whereIn('flag', $active)->get();
 
                 /* Converting Selected Data into desired format */
                 $users = new Collection;
@@ -57,7 +60,7 @@ class UserController extends Controller
                         $edit_url = url('admin/users/edit', $row['id']);
                         $btn = '';
                         $btn .= '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
@@ -162,6 +165,17 @@ class UserController extends Controller
                 'city'          =>  $request['city'],
                 'zip'           =>  $request['pincode'],
             ]);
+
+            if($request['role_id'] != 2){
+                $permissions = Permission::all();
+                foreach($permissions as $permission){
+                    RoleHasPermission::create([
+                        'permission_id'     => $permission->id,
+                        'user_id'           => $user->id,
+                        'role_id'           => $request['role_id']
+                    ]);
+                }
+            }
         }
         /* Validating Input fields */
 

@@ -18,6 +18,7 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <div id="loader"></div>
 
     <div class="card">
         <div class="card-body">
@@ -25,6 +26,13 @@
                 @method('PUT')
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ $product->image != null ? asset('storage/products/'.$product->image) : asset('default.jpg') }}" class="img-rounded" alt="{{ $product->name }}" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Product Title -->
                     <div class="col-md-4">
@@ -140,11 +148,11 @@
                     </div>
 
                     <!-- Product Image -->
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="image">Featured Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
+                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('image')
@@ -456,25 +464,19 @@
 </div>
 @endsection
 @section('js')
+<script type=text/javascript>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-<!-- Page specific script -->
-<!-- <script type="text/javascript">
-    $(document).on('keydown', '#keywords', function() {
-        if ($('#keywords').val() != "") {
-            var keywords = $('#keywords').val();
-            keywords = keywords.replace(/\s/g, ",");
-            $('#keywords').val(keywords);
-        }
-    });
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
 
-    $(document).on('keydown', '#tags', function() {
-        if ($('#tags').val() != "") {
-            var tags = $('#tags').val();
-            tags = tags.replace(/\s/g, ",");
-            $('#tags').val(tags);
+            reader.readAsDataURL(input.files[0]);
         }
-    });
-</script> -->
+    }
+</script>
 <script>
     $(document).ready(function() {
         var dis_type = $('#dis_type').val();
@@ -527,5 +529,18 @@
             $('#sale_price').val(price);
         }
     }
+
+    $(document).on('keyup', '#discount', function() {
+        var type = $('#dis_type').val();
+        var discount = $('#discount').val();
+
+        if (type == 'percentage') {
+            discount = discount > 100 ? '' : discount;
+            if (discount == '') {
+                alert('Discount in percentage should be lower or equal to 100%');
+            }
+        }
+        $('#discount').val(discount);
+    });
 </script>
 @endsection

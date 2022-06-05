@@ -18,12 +18,20 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <div id="loader"></div>
 
     <div class="card">
         <div class="card-body">
             <form action="{{ url('admin/blogs/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ asset('default.jpg') }}" class="img-rounded" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Blog Title -->
                     <div class="col-md-4">
@@ -43,20 +51,6 @@
                             <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" value="{{ old('slug')}}" placeholder="Please Enter Slug Of Blog" />
                             @error('slug')
                             <span class="error invalid-feedback">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- blog image -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="image"><span style="color: red;">* </span>Featured Image:</label>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
-                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                            </div>
-                            @error('image')
-                            <span class="error invalid-feedback" style="display: block !important;">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -92,7 +86,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="publish_date"><span style="color: red;">* </span>Publish Date</label>
-                            <input type="date" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ old('publish_date')}}" placeholder="Please Enter Meta Tag" />
+                            <input type="datetime-local" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ date('Y-m-d\TH:i') }}" placeholder="Please Enter Meta Tag" />
                             @error('publish_date')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -105,11 +99,26 @@
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Publish Blog</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
                                 <option value="">Select Status</option>
-                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active</option>
-                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
+                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Publish</option>
+                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Draft</option>
+                                <option value="2" {{ old('status') == '2' ? 'selected' : '' }}>Schedule</option>
                             </select>
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- blog image -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="image"><span style="color: red;">* </span>Featured Image:</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
+                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                            </div>
+                            @error('image')
+                            <span class="error invalid-feedback" style="display: block !important;">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -239,24 +248,17 @@
 </div>
 @endsection
 @section('js')
+<script type=text/javascript>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-<!-- Page specific script -->
-<!-- <script type="text/javascript">
-    $(document).on('keydown', '#keywords', function() {
-        if ($('#keywords').val() != "") {
-            var keywords = $('#keywords').val();
-            keywords = keywords.replace(/\s/g, ",");
-            $('#keywords').val(keywords);
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
+
+            reader.readAsDataURL(input.files[0]);
         }
-    });
-
-    $(document).on('keydown', '#tags', function() {
-        if ($('#tags').val() != "") {
-            var tags = $('#tags').val();
-            tags = tags.replace(/\s/g, ",");
-            $('#tags').val(tags);
-        }
-    });
-</script> -->
-
+    }
+</script>
 @endsection

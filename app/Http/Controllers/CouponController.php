@@ -15,7 +15,8 @@ class CouponController extends Controller
         if (checkpermission('CouponController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->where('show_in_front', $request->active)->get();
+                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->whereIn('show_in_front', $active)->get();
 
                 /* Converting Selected Data into desired format */
                 $coupons = new Collection;
@@ -96,13 +97,17 @@ class CouponController extends Controller
             'name'          =>  'required|unique:coupons,name',
             'code'          =>  'required',
             'type'          =>  'required',
-            'show_in_front' =>   'required',
+            'show_in_front' =>  'required',
+            'offer_start'   =>  'date',
+            'offer_end'     =>  'date|after:offer_start',
         ], [
             'name.required'             =>  'Coupan Name is required',
             'code.required'             =>  'Coupon Code is required',
             'type.required'             =>  'Coupon Type is required',
-            'show_in_front.required'    => 'This Field is required',
+            'show_in_front.required'    =>  'This Field is required',
+            'offer_end.after'           =>  'Offer End should be greate than Offer Start'
         ]);
+        dd($request->all());
 
         $days = implode(",", $request->days);
 
@@ -156,15 +161,18 @@ class CouponController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'          =>  'required',
+            'name'          =>  'required|unique:coupons,name',
             'code'          =>  'required',
             'type'          =>  'required',
-            'show_in_front' =>   'required',
+            'show_in_front' =>  'required',
+            'offer_start'   =>  'date',
+            'offer_end'     =>  'date|after:offer_start',
         ], [
             'name.required'             =>  'Name is required',
             'code.required'             =>  'Coupon Code is required',
             'type.required'             =>  'Coupon Type is required',
-            'show_in_front.required'    => 'This Field is required',
+            'show_in_front.required'    =>  'This Field is required',
+            'offer_end.after'           =>  'Offer End should be greate than Offer Start'
         ]);
 
         /* Fetching Blog Data using Id */

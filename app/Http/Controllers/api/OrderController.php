@@ -315,7 +315,7 @@ class OrderController extends Controller
             array_push($items, $itemWeight);
         }
 
-        $token = $this->fedexAuth();
+        $token = getFedexAuthToken();
         $token = json_decode($token);
 
         $curl = curl_init();

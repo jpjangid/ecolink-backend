@@ -18,6 +18,7 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <div id="loader"></div>
 
     <div class="card">
         <div class="card-body">
@@ -25,6 +26,13 @@
                 @method('PUT')
                 @csrf
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <img src="{{ $category->image != null ? asset('storage/category/'.$category->image) : asset('default.jpg') }}" class="img-rounded" alt="{{ $category->name }}" width="150" height="150" id="blah"><br>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Category Title -->
                     <div class="col-md-4">
@@ -45,17 +53,6 @@
                             @error('slug')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
-                        </div>
-                    </div>
-
-                    <!-- Category image -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="image">Featured Image:</label>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image">
-                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                            </div>
                         </div>
                     </div>
 
@@ -82,6 +79,17 @@
                             @error('status')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
+                        </div>
+                    </div>
+
+                    <!-- Category image -->
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="image">Featured Image:</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
+                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                            </div>
                         </div>
                     </div>
 
@@ -213,24 +221,17 @@
 </div>
 @endsection
 @section('js')
+<script type=text/javascript>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-<!-- Page specific script -->
-<!-- <script type="text/javascript">
-    $(document).on('keydown', '#keywords', function() {
-        if ($('#keywords').val() != "") {
-            var keywords = $('#keywords').val();
-            keywords = keywords.replace(/\s/g, ",");
-            $('#keywords').val(keywords);
+            reader.onload = function(e) {
+                $('#blah').attr('src', e.target.result).width(150).height(150);
+            };
+
+            reader.readAsDataURL(input.files[0]);
         }
-    });
-
-    $(document).on('keydown', '#tags', function() {
-        if ($('#tags').val() != "") {
-            var tags = $('#tags').val();
-            tags = tags.replace(/\s/g, ",");
-            $('#tags').val(tags);
-        }
-    });
-</script> -->
-
+    }
+</script>
 @endsection

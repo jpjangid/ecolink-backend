@@ -36,6 +36,7 @@
                         <div class="col-sm-6"></div>
                         <div class="col-sm-6">
                             <select id="active" class="form-control">
+                                <option value="all">All</option>
                                 <option value="0">Active</option>
                                 <option value="1">Deactivated</option>
                             </select>

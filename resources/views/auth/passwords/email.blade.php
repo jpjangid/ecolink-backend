@@ -54,6 +54,7 @@
                                     </span>
                                     @enderror
                                 </div>
+                                <a href="{{ url('/') }}" style="font-size: 14px;" class="form-control">Return to Login Screen</a>
                                 <input type="submit" value="Send Password Reset Link" class="btn text-white btn-block btn-primary">
                             </form>
                         </div>
