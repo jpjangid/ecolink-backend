@@ -73,6 +73,18 @@
     .modal-backdrop {
       position: relative;
     }
+
+    #loader {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.75) url(https://i.stack.imgur.com/hzk6C.gif) no-repeat center center;
+      z-index: 10000;
+    }
   </style>
   @yield('css')
   @yield('script')
@@ -157,6 +169,14 @@
 
     $(".alert").fadeTo(2000, 500).slideUp(500, function() {
       $(".alert").slideUp(1000);
+    });
+  </script>
+  <script>
+    var spinner = $('#loader');
+    $(function() {
+      $('form').submit(function(e) {
+        spinner.show();
+      });
     });
   </script>
   @yield('js')
