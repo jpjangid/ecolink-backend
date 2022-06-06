@@ -153,10 +153,11 @@
     });
 
 
-    $(document).on('change', '.js-switch', function() {
+    $(document).on('change', '.show_in_front', function() {
         var row = $(this).closest('tr');
         let show_in_front = row.find('.show_in_front').val();
         let couponId = row.find('.coupon_id').val();
+        console.log(couponId);
         $.ajax({
             url: "{{ url('admin/coupons/update_status') }}",
             type: "POST",
@@ -167,7 +168,37 @@
                 _token: '{{csrf_token()}}'
             },
             success: function(data) {
-                swal("Good job!", data.message, "success");
+                if (data['msg'] == 'success') {
+                    swal({
+                        title: 'Active!',
+                        text: "Coupan status updated successfully.",
+                        icon: 'success',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK',
+                        timer: 3000
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                } else {
+                    swal({
+                        title: 'Inactive',
+                        text: "Coupan status updated successfully.",
+                        icon: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'OK',
+                        timer: 3000
+                    }).then((result) => {
+                        if (result) {
+                            location.reload();
+                        }
+                    })
+                }
             }
         });
     });
