@@ -22,7 +22,7 @@ class UserController extends Controller
         if (checkpermission('UserController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
                 $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->whereIn('flag', $active)->get();
 
                 /* Converting Selected Data into desired format */
@@ -60,7 +60,7 @@ class UserController extends Controller
                         $edit_url = url('admin/users/edit', $row['id']);
                         $btn = '';
                         $btn .= '<a class="btn btn-primary btn-xs ml-1" href="' . $edit_url . '"><i class="fas fa-edit"></i></a>';
-                        $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
+                        // $btn .= '<a class="btn btn-danger btn-xs ml-1" href="' . $delete_url . '"><i class="fa fa-trash"></i></a>';
                         return $btn;
                     })
                     ->rawColumns(['action', 'active'])
@@ -166,9 +166,9 @@ class UserController extends Controller
                 'zip'           =>  $request['pincode'],
             ]);
 
-            if($request['role_id'] != 2){
+            if ($request['role_id'] != 2) {
                 $permissions = Permission::all();
-                foreach($permissions as $permission){
+                foreach ($permissions as $permission) {
                     RoleHasPermission::create([
                         'permission_id'     => $permission->id,
                         'user_id'           => $user->id,

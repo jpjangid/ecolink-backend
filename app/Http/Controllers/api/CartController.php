@@ -90,12 +90,17 @@ class CartController extends Controller
         $usertoken = request()->bearerToken();
         $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
-        $cart = Cart::where(['user_id' => $user->d, 'product_id' => $request->product_id])->first();
+        $cart = Cart::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
 
         if (!empty($cart)) {
             $cart->delete();
 
             $remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
+            if ($remainCartItems->isNotEmpty()) {
+                foreach ($remainCartItems as $remainCartItem) {
+                    $remainCartItem->product->image = asset('storage/products/' . $remainCartItem->product->image);
+                }
+            }
 
             return response()->json(['message' => 'Product delete from cart successfully', 'data' => $remainCartItems, 'code' => 200], 200);
         } else {

@@ -70,7 +70,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="category"><span style="color: red;">* </span>Category</label>
-                            <select class="form-control @error('category') is-invalid @enderror" name="category">
+                            <select class="form-control select2bs4 @error('category') is-invalid @enderror" name="category">
                                 <option value="">Select Blog Category</option>
                                 @foreach( $blogcategories as $blogcategory)
                                 <option value="{{ $blogcategory->blog_category}}" {{ old('category') == $blogcategory->blog_category ? 'selected' : '' }}> {{ $blogcategory->blog_category}}</option>
