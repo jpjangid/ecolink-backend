@@ -101,43 +101,26 @@ class HomeController extends Controller
 
         array_push($category_ids, $request->parent_id);
 
-        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->with('ratings:id,rating,product_id')->whereIn('parent_id', $category_ids)->where(['status' => 1])->get();
+        $sortbyPrice = !empty($request->price_from) && !empty($request->price_to) ? 1 : 0;
+        $price_from = $request->price_from;
+        $price_to = $request->price_to;
+        $lowtohigh = $request->sortby == 'lowtohigh' ? 1 : 0;
+        $hightolow = $request->sortby == 'hightolow' ? 1 : 0;
+        $name = $request->sortby == 'name' ? 1 : 0;
+
+        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->whereIn('parent_id', $category_ids)->where(['status' => 1])->when($sortbyPrice, function ($q) use ($price_from,$price_to) {
+            $q->where('sale_price', '>=', $price_from)->where('sale_price', '<=', $price_to);
+        })->when($lowtohigh, function ($q) {
+            $q->orderBy('sale_price','asc');
+        })->when($hightolow, function ($q) {
+            $q->orderBy('sale_price','desc');
+        })->when($name, function ($q) {
+            $q->orderBy('name','asc');
+        })->get();
 
         if ($products->isNotEmpty()) {
             foreach ($products as $product) {
                 $product->image = asset('storage/products/' . $product->image);
-                $rate = $product->ratings->avg('rating');
-                $product->rating = number_format((float)$rate, 2, '.', '');
-                unset($product->ratings);
-            }
-        }
-
-        if ($products->isNotEmpty()) {
-            if (!empty($request->rating)) {
-                $products = $products->whereIn('rating', $request->rating);
-            }
-        }
-
-        if ($products->isNotEmpty()) {
-            if (!empty($request->price_from) && !empty($request->price_to)) {
-                $products = $products->where('sale_price', '>=', $request->price_from)->where('sale_price', '<=', $request->price_to);
-            }
-        }
-
-        if ($products->isNotEmpty()) {
-            if (!empty($request->sortby)) {
-                if ($request->sortby == 'lowtohigh') {
-                    $products = $products->sortBy('sale_price');
-                }
-                if ($request->sortby == 'hightolow') {
-                    $products = $products->sortByDesc('sale_price');
-                }
-                if ($request->sortby == 'popularity') {
-                    $products = $products->sortBy('rating');
-                }
-                if ($request->sortby == 'name') {
-                    $products = $products->sortBy('name');
-                }
             }
         }
         
@@ -147,7 +130,7 @@ class HomeController extends Controller
                 array_push($newproducts, $product);
             }
             
-            return response()->json(['message' => 'Product filtered successfully', 'code' => 200, 'data' => $newproducts], 200);
+            return response()->json(['message' => 'Product filtered successfully', 'code' => 200, 'data' => $products], 200);
         } else {
             return response()->json(['message' => 'No Products Found', 'code' => 400], 400);
         }
