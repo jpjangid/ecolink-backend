@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
@@ -12,7 +13,9 @@ class CartController extends Controller
     public function getCartItems(Request $request)
     {
         //Get Cart Items By User id with Product Detail
-        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
 
         if ($carts->isNotEmpty()) {
             foreach ($carts as $cart) {
@@ -39,7 +42,10 @@ class CartController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $cart = Cart::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
 
         if (!empty($cart)) {
             if ($request->action == 'add') {
@@ -53,13 +59,13 @@ class CartController extends Controller
             }
         } else {
             Cart::create([
-                'user_id'       =>  $request->user_id,
+                'user_id'       =>  $user->id,
                 'product_id'    =>  $request->product_id,
                 'quantity'      =>  $request->quantity,
             ]);
         }
 
-        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
+        $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
 
         if ($carts->isNotEmpty()) {
             foreach ($carts as $cart) {
@@ -81,12 +87,15 @@ class CartController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $cart = Cart::where(['user_id' => $request->user_id, 'product_id' => $request->product_id])->first();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
-        $remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $request->user_id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
+        $cart = Cart::where(['user_id' => $user->d, 'product_id' => $request->product_id])->first();
 
         if (!empty($cart)) {
             $cart->delete();
+
+            $remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
 
             return response()->json(['message' => 'Product delete from cart successfully', 'data' => $remainCartItems, 'code' => 200], 200);
         } else {

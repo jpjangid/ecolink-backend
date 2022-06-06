@@ -29,7 +29,10 @@ class OrderController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $orders = Order::where('user_id', $request->user_id)->with('items.product')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $orders = Order::where('user_id', $user->id)->with('items.product')->get();
 
         if ($orders->isNotEmpty()) {
             foreach ($orders as $order) {
@@ -76,13 +79,16 @@ class OrderController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $cartItems = Cart::where('user_id', $request->user_id)->with('product')->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
 
         $orderNumber = $this->order_no();
 
         if (isset($request->addressSelect) && $request->addressSelect == 1) {
             $UserAddress = new UserAddress;
-            $UserAddress->user_id   = $request->user_id;
+            $UserAddress->user_id   = $user->id;
             $UserAddress->name      = $request->billing_name;
             $UserAddress->mobile    = $request->billing_mobile;
             $UserAddress->address   = $request->billing_address;
@@ -94,7 +100,7 @@ class OrderController extends Controller
 
             if ($request->sameAsShip == 0) {
                 $UserAddress = new UserAddress;
-                $UserAddress->user_id   = $request->user_id;
+                $UserAddress->user_id   = $user->id;
                 $UserAddress->name      = $request->shipping_name;
                 $UserAddress->mobile    = $request->shipping_mobile;
                 $UserAddress->address   = $request->shipping_address;
@@ -117,7 +123,7 @@ class OrderController extends Controller
 
         $order = Order::create([
             'order_no'                  =>  $orderNumber,
-            'user_id'                   =>  $request->user_id,
+            'user_id'                   =>  $user->id,
             'order_amount'              =>  $request->order_amount,
             'discount_applied'          =>  $discount,
             'total_amount'              =>  $request->total_amount,
@@ -164,7 +170,7 @@ class OrderController extends Controller
             if ($coupon->type == 'merchandise' || $coupon->type == 'global' || $coupon->type == 'personal_code' || $coupon->type == 'cart_value_discount') {
                 CouponUsedBy::create([
                     'coupon_id'         =>  $coupon->id,
-                    'user_id'           =>  $request->user_id,
+                    'user_id'           =>  $user->id,
                     'order_id'          =>  $order->id,
                     'amount'            =>  $request->coupon_discount,
                     'applied_times'     =>  1,
@@ -291,8 +297,7 @@ class OrderController extends Controller
             </soap:Envelope>',
             CURLOPT_HTTPHEADER => array(
                 'SOAPAction: http://www.SaiaSecure.com/WebService/BOL/Create',
-                'Content-Type: text/xml',
-                'Cookie: TS01cfb1b0=01dd6f358a6e978dc2013abf80935685742949fca51a0ee8b22d3f7e34dfe604d71de42a57432d0fe5203ab25bc1b4ff280cf2e57c'
+                'Content-Type: text/xml'
             ),
         ));
 
@@ -389,8 +394,7 @@ class OrderController extends Controller
                 'Content-Type: application/json',
                 'x-customer-transaction-id: 624deea6-b709-470c-8c39-4b5511281492',
                 'x-locale: en_US',
-                'Authorization: Bearer ' . $token->access_token,
-                'Cookie: _abck=E19AF3FAD6527E1E990819F9CC8CB3CD~-1~YAAQHwTXF8FvlweAAQAA869+JgeB03Iuc9wLacxfX0+U9pyRT6L+sDSP9n2KXNSOH4zLSj4qDNYQtQ4Kcsh5VurQ5Z9BpoqT46XOkSb/Q5fnK77y11npqhaWxLaKuEJJftrXE4fFQgVHPDTrJo1XSyUP09SRvWA11j3rqNgQWGetr9x4FCr+FTmPFKI+FkRUd5fWMf612vRz7oQY5B1npIaotKDuarOiQ0iSwZcvydSuvJEj10lPWYpas0i1ZQUXYHpdi+txH75UWuJwIIB3NnZVWqjEZM3G9LPtHHf036eQs5wRwUNUi7Q95J2CfU3q8rqAvPKaJxxAKvvbiKyUPr22ypowQHTbAalqADWEwrV49VKz4ji13g==~-1~-1~-1; ak_bmsc=0404715F46156A2B67FCB4CEF56F5E76~000000000000000000000000000000~YAAQPHUsMcjvP9+AAQAAxiwy7A+ZV0yXbkVpR/p9EH0SQlDRxhH0daxgmHd3d4mk9KzqpvqbZitICssMd4K/HPlymjvITATej2zfPEnq5vWZB3sGCDfDu3L5Hj19JnsVirLkSAyhA8mBvELuK2he3VHbWLWqP/47ifSqa7cN5XFx/zViRt7wQoWCFvLN83HER//I7dj9gTwO9FeEk5r/ymycAdMS/fZ7BVB35jbEe4Gij9qScOYkFuOjv9NasYZ/5kV5l8UlOtrmOMLgM01pOD648faITRASPY9Q9qs/V9E50dBDYFG0sU4KhZyv+iuOFflHVrU5hk7nn7STb7Vw0J75x2Fr5UuK73j4ucQlDNw8jeb/YzB89a/OFg==; bm_sv=3A1F80F7A318B10F73270023D519B191~YAAQtXUsMd5WqueAAQAA9VaP7A9hJ2EZvh9yQGm6F3HAWnigyAflyeQt69/h6N6/nxlB/SdjXAGcxGVOyBJPc5++PVLt1pWtJCsKp4pSlyePIsUBroC5oakzTDXHBEJtS10u30DLIG5Jk9J9pZgZ0Bz3Xb91tGnLkJpMQwWURCVBn1pcFr0Gi01reKJPP21GZi+h3UxbxngaBI9QVH6stsl7rMhMJAQ1rwM1G8pJbr0C/ubD4LukosjIZN7/MEw=~1'
+                'Authorization: Bearer ' . $token->access_token . ''
             ),
         ));
 
@@ -415,8 +419,7 @@ class OrderController extends Controller
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => 'grant_type=client_credentials&client_id=l7df29a700b97d4d079e4b0d3ea2363d32&client_secret=4a80d56001e84d06ac4cdb5efae564d8',
             CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'Cookie: _abck=E19AF3FAD6527E1E990819F9CC8CB3CD~-1~YAAQHwTXF8FvlweAAQAA869+JgeB03Iuc9wLacxfX0+U9pyRT6L+sDSP9n2KXNSOH4zLSj4qDNYQtQ4Kcsh5VurQ5Z9BpoqT46XOkSb/Q5fnK77y11npqhaWxLaKuEJJftrXE4fFQgVHPDTrJo1XSyUP09SRvWA11j3rqNgQWGetr9x4FCr+FTmPFKI+FkRUd5fWMf612vRz7oQY5B1npIaotKDuarOiQ0iSwZcvydSuvJEj10lPWYpas0i1ZQUXYHpdi+txH75UWuJwIIB3NnZVWqjEZM3G9LPtHHf036eQs5wRwUNUi7Q95J2CfU3q8rqAvPKaJxxAKvvbiKyUPr22ypowQHTbAalqADWEwrV49VKz4ji13g==~-1~-1~-1'
+                'Content-Type: application/x-www-form-urlencoded'
             ),
         ));
 
@@ -436,8 +439,11 @@ class OrderController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
+        
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
-        $order = Order::where(['id' => $request->id, 'user_id' => $request->user_id])->first();
+        $order = Order::where(['id' => $request->id, 'user_id' => $user->id])->first();
 
         if (!empty($order)) {
             $order->status = 'cancelled';
@@ -506,12 +512,45 @@ class OrderController extends Controller
         }
     }
 
+    public function qboCustomer()
+    {
+        // $users = DB::table('wp_users')->get();
+        // $customers = DB::table('wp_customer')->get();
+        // return $customers;
+        $file = file_get_contents('storage/qbo.json');
+        $content = json_decode($file, true);
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://sandbox-quickbooks.api.intuit.com/v3/company/4620816365226953830/query?query=select%20*%20from%20Customer&minorversion=65',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Accept: application/json',
+                'Authorization: Bearer ' . $content['access_token'],
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        return $response;
+
+        curl_close($curl);
+    }
+
     public function qboRefershToken()
     {
         $file = file_get_contents('storage/qbo.json');
         $content = json_decode($file, true);
 
-        $oauth2LoginHelper = new OAuth2LoginHelper(env('QBOClientId'), env('QBOClientSecret'));
+        $oauth2LoginHelper = new OAuth2LoginHelper(config('qboconfig.client_id'), config('qboconfig.client_secret'));
         $accessTokenObj = $oauth2LoginHelper->refreshAccessTokenWithRefreshToken($content['original']['refresh_token']);
         $accessTokenValue = $accessTokenObj->getAccessToken();
         $refreshTokenValue = $accessTokenObj->getRefreshToken();

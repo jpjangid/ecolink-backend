@@ -21,7 +21,10 @@ class UserAddressController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $addresses = DB::table('user_addresses')->where('user_id', $request->user_id)->get();
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $addresses = DB::table('user_addresses')->where('user_id', $user->id)->get();
 
         if($addresses->isNotEmpty()){
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $addresses], 200);
@@ -49,8 +52,11 @@ class UserAddressController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
         $address = UserAddress::create([
-            'user_id'       =>  $request->user_id,
+            'user_id'       =>  $user->id,
             'name'          =>  $request['name'],
             'email'         =>  $request['email'],
             'mobile'        =>  $request['mobile'],
@@ -88,8 +94,11 @@ class UserAddressController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
         $address = UserAddress::where('id', $request->address_id)->update([
-            'user_id'       =>  $request->user_id,
+            'user_id'       =>  $user->id,
             'name'          =>  $request['name'],
             'email'         =>  $request['email'],
             'mobile'        =>  $request['mobile'],
