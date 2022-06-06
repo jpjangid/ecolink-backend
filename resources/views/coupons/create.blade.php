@@ -136,7 +136,7 @@
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label class="form-label" for="days">Week Days</label>
+                            <label class="form-label" for="days"><span style="color: red;">* </span>Week Days</label>
                             <select name="days[]" id="days" class="form-control select2bs4" data-placeholder="Select Days" required multiple>
                                 <option value="Sunday" {{in_array('Sunday', old("days") ?: []) ? "selected" : ""}}>Sunday</option>
                                 <option value="Monday" {{in_array('Monday', old("days") ?: []) ? "selected" : ""}}>Monday</option>

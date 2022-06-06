@@ -15,7 +15,7 @@ class CouponController extends Controller
         if (checkpermission('CouponController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
                 $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->whereIn('show_in_front', $active)->get();
 
                 /* Converting Selected Data into desired format */
@@ -107,7 +107,6 @@ class CouponController extends Controller
             'show_in_front.required'    =>  'This Field is required',
             'offer_end.after'           =>  'Offer End should be greate than Offer Start'
         ]);
-        dd($request->all());
 
         $days = implode(",", $request->days);
 
@@ -161,7 +160,7 @@ class CouponController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'          =>  'required|unique:coupons,name',
+            'name'          =>  'required|unique:coupons,name,' . $id,
             'code'          =>  'required',
             'type'          =>  'required',
             'show_in_front' =>  'required',
@@ -224,7 +223,12 @@ class CouponController extends Controller
         $coupon = Coupon::find($request->coupon_id);
         $coupon->show_in_front   = $request->show_in_front == 1 ? 0 : 1;
         $coupon->update();
-
-        return response()->json(['message' => 'Coupon status updated successfully.']);
+        if ($coupon->show_in_front == 1) {
+            $data['msg'] = 'success';
+            return response()->json($data);
+        } else {
+            $data['msg'] = 'danger';
+            return response()->json($data);
+        }
     }
 }

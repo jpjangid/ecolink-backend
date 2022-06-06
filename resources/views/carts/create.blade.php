@@ -33,7 +33,7 @@
                             <select class="form-control form-control-solid @error('user_id') is-invalid @enderror select2bs4" name="user_id">
                                 <option value="">Select Customer</option>
                                 @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                <option value="{{ $user->id }}" {{ old("user_id") == $user->id ? "selected":"" }}>{{ $user->name }}</option>
                                 @endforeach
                             </select>
                             @error('user_id')
@@ -49,7 +49,7 @@
                             <select class="form-control form-control-solid @error('product_id') is-invalid @enderror select2bs4" name="product_id">
                                 <option value="">Select Product</option>
                                 @foreach($products as $product)
-                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                <option value="{{ $product->id }}" {{ old("product_id") == $product->id ? "selected":"" }}>{{ $product->name }}</option>
                                 @endforeach
                             </select>
                             @error('product_id')

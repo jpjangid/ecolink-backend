@@ -277,7 +277,7 @@
                                     <select name="product_id[]" class="form-control select2 product_id" required>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
-                                        <option value="{{ $product->id }}">{{ $product->name }} - {{$product->variant}}</option>
+                                        <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? "selected" : "" }}>{{ $product->name }} - {{$product->variant}}</option>
                                         @endforeach
                                     </select>
                                 </td>
