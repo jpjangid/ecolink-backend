@@ -138,7 +138,7 @@
                     @php $days = explode(',',$coupon->days); @endphp
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label class="form-label" for="days">Week Days</label>
+                            <label class="form-label" for="days"><span style="color: red;">* </span>Week Days</label>
                             <select name="days[]" id="days" class="form-control select2bs4" data-placeholder="Select Days" multiple>
                                 <option value="Sunday" {{ in_array('Sunday', $days) == true ? 'selected' : '' }}>Sunday</option>
                                 <option value="Monday" {{ in_array('Monday', $days) == true ? 'selected' : '' }}>Monday</option>
@@ -180,8 +180,8 @@
                         <label class="form-label" for="show_in_front"><span style="color: red;">* </span>Status</label>
                         <select class="form-control @error('show_in_front') is-invalid @enderror" name="show_in_front">
                             <option value="">Select Status</option>
-                            <option value="1" {{ $coupon->show_in_front == '1' ? 'selected' : '' }}>Yes</option>
-                            <option value="0" {{ $coupon->show_in_front == '0' ? 'selected' : '' }}>No</option>
+                            <option value="1" {{ $coupon->show_in_front == '1' ? 'selected' : '' }}>Active</option>
+                            <option value="0" {{ $coupon->show_in_front == '0' ? 'selected' : '' }}>Inactive</option>
                         </select>
                         @error('show_in_front')
                         <span class="error invalid-feedback">{{ $message }}</span>
