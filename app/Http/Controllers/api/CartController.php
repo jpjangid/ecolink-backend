@@ -50,10 +50,6 @@ class CartController extends Controller
     if ($product == null) {
       return response()->json(['message' => 'Product not found'], 404);
     }
-  
-    if ($product->minimum_qty > $request->quantity) {
-      return response()->json(['message' => 'Invalid quantity'], 400);
-    }
     
     $cart = Cart::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
     
@@ -63,6 +59,9 @@ class CartController extends Controller
           'quantity' => $cart->quantity + $request->quantity,
         ]);
       } else {
+        if (($cart->quantity - $request->quantity) < $product->minimum_qty) {
+          return response()->json(['message' => 'Invalid quantity'], 400);
+        }
         Cart::where('id', $cart->id)->update([
           'quantity' => $cart->quantity - $request->quantity,
         ]);
