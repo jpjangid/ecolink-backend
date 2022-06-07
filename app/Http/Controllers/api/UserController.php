@@ -173,7 +173,10 @@ class UserController extends Controller
     public function logout()
     {
         if (Auth::check()) {
-            Auth::user()->AauthAcessToken()->delete();
+            $usertoken = request()->bearerToken();
+            $user = User::select('id')->where('api_token', $usertoken)->first();
+            $user->api_token = '';
+            $user->update();
 
             return response()->json(['message' => 'User Logout Successfully', 'code' => 200], 200);
         }
