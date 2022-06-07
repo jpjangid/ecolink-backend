@@ -191,6 +191,7 @@ class OrderController extends Controller
             }
         }
 
+        /*
         if ($order->shippment_via == 'saia') {
             $response = $this->shipViaSaia($order->id);
         } else {
@@ -200,6 +201,7 @@ class OrderController extends Controller
         $qboresponse = $this->quickBookInvoice($order->user_id);
 
         $sosresponse = $this->sosItemUpdate();
+        */
 
         if (!empty($order)) {
             foreach ($cartItems as $item) {
