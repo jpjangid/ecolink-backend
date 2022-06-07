@@ -64,7 +64,7 @@ class UserController extends Controller
         $pass = Hash::make($request['password']);
 
         $role = Role::where('name', 'client')->first();
-        $randomString = Str::random(30);
+        $token = Str::random(80);
 
         $user = User::create([
             'name'                  =>  $request['name'],
@@ -79,7 +79,8 @@ class UserController extends Controller
             'role_id'               =>  $role->id,
             'profile_image'         =>  $image_name,
             'tax_exempt'            =>  $request->tax_exempt,
-            'remember_token'        =>  $randomString
+            'remember_token'        =>  $token,
+            'api_token'             =>  $token
         ]);
 
         UserAddress::create([
@@ -95,11 +96,8 @@ class UserController extends Controller
             'name'          =>  $request['name'],
         ]);
 
-        $token = $user->createToken('MyApp')->accessToken;
         $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
-
-        $user->url = 'https://brandtalks.in/ecolinkfrontend/' . $user->remember_token;
-
+        $user->url = 'https://brandtalks.in/ecolinkfrontend/' . $user->api_token;
         Mail::to($request->email)->send(new VerificationMail($user));
 
         $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
@@ -118,7 +116,7 @@ class UserController extends Controller
             'token'         => 'required'
         ]);
 
-        $user = User::where(['email' => $request->email, 'remember_token' => $request->token])->first();
+        $user = User::where(['email' => $request->email, 'api_token' => $request->token])->first();
 
         if (!empty($user)) {
             $user->email_verified = 1;
@@ -218,11 +216,12 @@ class UserController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!empty($user) && $user->flag == 0) {
-            $randomString = Str::random(30);
-            $user->remember_token = $randomString;
+            $randomString = Str::random(80);
+            $user->remember_token   = $randomString;
+            $user->api_token        = $randomString;
             $user->update();
 
-            $user->url = 'https://brandtalks.in/ecolinkfrontend/profile/reset-password/' . $user->remember_token;
+            $user->url = 'https://brandtalks.in/ecolinkfrontend/profile/reset-password/' . $user->api_token;
 
             Mail::to($request->email)->send(new ForgotPassword($user));
             return response()->json(['message' => 'Forgot password email sent successfully', 'code' => 200], 200);
@@ -243,7 +242,7 @@ class UserController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $user = User::where(['email' => $request->email, 'remember_token' => $request->token])->first();
+        $user = User::where(['email' => $request->email, 'api_token' => $request->token])->first();
 
         $updated_at = date('Y-m-d H:i:s', strtotime($user->updated_at . '+2 hours'));
 
