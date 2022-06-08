@@ -191,6 +191,7 @@ class OrderController extends Controller
             }
         }
 
+        /*
         if ($order->shippment_via == 'saia') {
             $response = $this->shipViaSaia($order->id);
         } else {
@@ -200,6 +201,7 @@ class OrderController extends Controller
         $qboresponse = $this->quickBookInvoice($order->user_id);
 
         $sosresponse = $this->sosItemUpdate();
+        */
 
         if (!empty($order)) {
             foreach ($cartItems as $item) {
@@ -268,9 +270,9 @@ class OrderController extends Controller
                 <soap:Body>
                     <Create xmlns="http://www.SaiaSecure.com/WebService/BOL">
                         <request>
-                            <UserID>ecolink</UserID>
-                            <Password>ecolink4</Password>
-                            <TestMode>Y</TestMode>
+                            <UserID>' . config('saia.user_id') . '</UserID>
+                            <Password>' . config('saia.password') . '</Password>
+                            <TestMode>' . config('saia.mode') . '</TestMode>
                             <ShipmentDate>' . date('Y-m-d', strtotime($order->created)) . '</ShipmentDate>
                             <BillingTerms>Prepaid</BillingTerms>
                             <BLNumber></BLNumber>
@@ -327,7 +329,7 @@ class OrderController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apis-sandbox.fedex.com/ship/v1/shipments',
+            CURLOPT_URL => config('fedex.url') . 'ship/v1/shipments',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -387,12 +389,12 @@ class OrderController extends Controller
                     "requestedPackageLineItems": ' . json_encode($items) . '
                 },
                 "accountNumber": {
-                    "value": "740561073"
+                    "value": "' . config('fedex.account_no') . '"
                 }
             }',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'x-customer-transaction-id: 624deea6-b709-470c-8c39-4b5511281492',
+                'x-customer-transaction-id: ' . config('fedex.customer_transaction_id') . '',
                 'x-locale: en_US',
                 'Authorization: Bearer ' . $token->access_token . ''
             ),
@@ -409,7 +411,7 @@ class OrderController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://apis-sandbox.fedex.com/oauth/token',
+            CURLOPT_URL => config('fedex.url') . 'oauth/token',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -417,7 +419,7 @@ class OrderController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'grant_type=client_credentials&client_id=l7df29a700b97d4d079e4b0d3ea2363d32&client_secret=4a80d56001e84d06ac4cdb5efae564d8',
+            CURLOPT_POSTFIELDS => 'grant_type=client_credentials&client_id=' . config('fedex.client_id') . '&client_secret=' . config('fedex.client_key') . '',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded'
             ),
@@ -439,7 +441,7 @@ class OrderController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
-        
+
         $usertoken = request()->bearerToken();
         $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
@@ -479,7 +481,7 @@ class OrderController extends Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://sandbox-quickbooks.api.intuit.com/v3/company/4620816365226953830/invoice?minorversion=63',
+            CURLOPT_URL => config('qboconfig.url') . 'v3/company/' . config('qboconfig.company_id') . '/invoice?minorversion=' . config('qboconfig.minorversion') . '',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
