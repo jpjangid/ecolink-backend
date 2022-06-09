@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\LinkCategory;
 use App\Models\Page;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
@@ -88,6 +89,15 @@ class HomeController extends Controller
 
     public function filterProduct(Request $request)
     {
+		$usertoken = request()->bearerToken();
+        $user_id = '';
+        if(!empty($usertoken)){
+            $user = User::select('id')->where('api_token', $usertoken)->first();
+            if(!empty($user)){
+                $user_id = $user->id;
+            }
+        }
+
         if (!empty($request->category)) {
             $categories = DB::table('categories')->select('id')->where('parent_id', $request->parent_id)->whereIn('id', $request->category)->get();
         } else {
@@ -116,11 +126,19 @@ class HomeController extends Controller
             $q->orderBy('sale_price','desc');
         })->when($name, function ($q) {
             $q->orderBy('name','asc');
+        })->with('wishlist', function ($query) use ($user_id) {
+            $query->where('user_id',$user_id);
         })->get();
 
         if ($products->isNotEmpty()) {
             foreach ($products as $product) {
                 $product->image = asset('storage/products/' . $product->image);
+                if($product->wishlist->isNotEmpty()) {
+                    $product->is_wishlist_item = true;
+                }else{
+                    $product->is_wishlist_item = false;
+                }
+                unset($product->wishlist);
             }
         }
         
