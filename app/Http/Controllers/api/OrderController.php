@@ -223,6 +223,32 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order Placed Successfully', 'code' => 200, 'data' => $order], 200);
     }
 
+    public function cancelOrder(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id'        =>  'required',
+            'user_id'   =>  'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+        }
+
+        $usertoken = request()->bearerToken();
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+
+        $order = Order::where(['id' => $request->id, 'user_id' => $user->id])->first();
+
+        if (!empty($order)) {
+            $order->order_status = 'cancelled';
+            $order->update();
+
+            return response()->json(['message' => 'Data fetched Successfully', 'data' => $order], 200);
+        } else {
+            return response()->json(['message' => 'No Order Found', 'code' => 400], 400);
+        }
+    }
+
     public function order_no()
     {
         $no = strtoupper(Str::random(8));
@@ -429,32 +455,6 @@ class OrderController extends Controller
 
         curl_close($curl);
         return $response;
-    }
-
-    public function cancelOrder(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id'        =>  'required',
-            'user_id'   =>  'required'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
-        }
-
-        $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-
-        $order = Order::where(['id' => $request->id, 'user_id' => $user->id])->first();
-
-        if (!empty($order)) {
-            $order->status = 'cancelled';
-            $order->update();
-
-            return response()->json(['message' => 'Data fetched Successfully', 'data' => $order], 200);
-        } else {
-            return response()->json(['message' => 'No Order Found', 'code' => 400], 400);
-        }
     }
 
     public function quickBookInvoice($user_id)
