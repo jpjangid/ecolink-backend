@@ -22,4 +22,9 @@ class Product extends Model
     {
         return $this->hasMany('App\Models\ProductReview', 'product_id', 'id');
     }
+
+    public function wishlist()
+    {
+        return $this->hasMany('App\Models\Wishlist', 'product_id', 'id');
+    }
 }
