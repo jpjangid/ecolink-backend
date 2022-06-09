@@ -285,7 +285,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="quantity[]" class="form-control quantity" placeholder="Enter Quantity" value="{{ $item->quantity }}" required>
+                                    <input type="number" name="quantity[]" class="form-control quantity" placeholder="Enter Quantity" min="1" value="{{ $item->quantity }}" required>
                                 </td>
                                 <td><input type="text" name="sale_price[]" class="form-control sale_price" placeholder="Enter Sale Price" readonly></td>
                                 <td><input type="text" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly></td>
@@ -312,7 +312,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="discount"> Discount Amount </label>
-                            <input type="number" step=".01" class="form-control form-control-solid @error('discount') is-invalid @enderror" name="discount" id="discount" placeholder="Please Enter Discount" value="{{ $order->discount_applied }}">
+                            <input type="number" step=".01" class="form-control form-control-solid @error('discount') is-invalid @enderror" name="discount" id="discount" min="1" placeholder="Please Enter Discount" value="{{ $order->discount_applied }}">
                         </div>
                     </div>
 
