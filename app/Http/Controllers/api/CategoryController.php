@@ -35,8 +35,20 @@ class CategoryController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
+        $usertoken = request()->bearerToken();
+        $user_id = '';
+        if (!empty($usertoken)) {
+            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+            if (!empty($user)) {
+                $user_id = $user->id;
+            }
+        }
 
-        $category = Category::where(['slug' => $request->slug, 'flag' => 0, 'parent_id' => null, 'status' => 1])->with('subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price', 'products.ratings:id,rating,product_id', 'subcategory.products')->first();
+        $category = Category::where(['slug' => $request->slug, 'flag' => 0, 'parent_id' => null, 'status' => 1])->with(['subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price', 'products.wishlist' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        }, 'subcategory.products:id,name,slug,parent_id,image,alt,sale_price,regular_price', 'subcategory.products.wishlist' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        }])->first();
 
         if (!empty($category)) {
             $category->image = asset('storage/category/' . $category->image);
@@ -51,9 +63,28 @@ class CategoryController extends Controller
             if ($category->products->isNotEmpty()) {
                 foreach ($category->products as $product) {
                     $product->image = asset('storage/products/' . $product->image);
-                    $rate = $product->ratings->avg('rating');
-                    $product->rating = number_format((float)$rate, 2, '.', '');
-                    unset($product->ratings);
+                    if($product->wishlist->isNotEmpty()) {
+                        $product->is_wishlist_item = true;
+                    }else{
+                        $product->is_wishlist_item = false;
+                    }
+                    unset($product->wishlist);
+                }
+            }
+
+            if($category->subcategory->isNotEmpty()){
+                foreach ($category->subcategory as $subcategory) {
+                    if ($subcategory->products->isNotEmpty()) {
+                        foreach ($subcategory->products as $product) {
+                            $product->image = asset('storage/products/' . $product->image);
+                            if($product->wishlist->isNotEmpty()) {
+                                $product->is_wishlist_item = true;
+                            }else{
+                                $product->is_wishlist_item = false;
+                            }
+                            unset($product->wishlist);
+                        }
+                    }
                 }
             }
 
