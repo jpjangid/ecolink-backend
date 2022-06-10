@@ -130,9 +130,13 @@ class CheckoutController extends Controller
         $totalNetCharge = 0;
         $response = curl_exec($curl);
         $decodedresponse = json_decode($response, true);
-        foreach ($decodedresponse['output']['rateReplyDetails'] as $rateReplyDetails) {
-            foreach ($rateReplyDetails['ratedShipmentDetails'] as $ratedShipmentDetails) {
-                $totalNetCharge = $ratedShipmentDetails['totalNetFedExCharge'];
+        if(isset($decodedresponse['errors']) && !empty($decodedresponse['errors'])){
+            return response()->json(['message' => $decodedresponse['errors'][0]['message'], 'code' => 400], 400);
+        }else{
+            foreach ($decodedresponse['output']['rateReplyDetails'] as $rateReplyDetails) {
+                foreach ($rateReplyDetails['ratedShipmentDetails'] as $ratedShipmentDetails) {
+                    $totalNetCharge = $ratedShipmentDetails['totalNetFedExCharge'];
+                }
             }
         }
 
