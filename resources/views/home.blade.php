@@ -312,7 +312,7 @@
                             <tbody>
                                 @foreach( $orders as $order)
                                 <tr>
-                                    <td>{{ $order->items[0]->product->name }}</td>
+                                    <td>{{ !empty($order->items[0]) ? $order->items[0]->product->name : '' }}</td>
                                     <td><a href="{{ url('admin/orders/order_detail',$order->id)}}">{{ $order->order_no}}</a></td>
                                     <td> <span><b>Name: </b></span>
                                         <small>{{ $order->user->name }}</small><br />
