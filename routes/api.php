@@ -45,7 +45,7 @@ Route::middleware('auth:api')->group(function () {
 
     //Route For Get Cart Items
     Route::post('getCartItems', [CartController::class, 'getCartItems']);
-    
+
     //Route For Add Cart Items
     Route::post('addCartItems', [CartController::class, 'addCartItems']);
     //Route For Delete Cart Items
@@ -53,10 +53,6 @@ Route::middleware('auth:api')->group(function () {
 
     //Route For Checkout
     Route::post('checkout', [CheckoutController::class, 'index']);
-    //Route For Get Fedex Shipping Rates
-    Route::post('get-fedex-rates', [CheckoutController::class, 'getFedexShippingRates']);
-    //Route For Get Saia Shipping Rates
-    Route::post('get-saia-rates', [CheckoutController::class, 'getSaiaShippingRates']);
 
     //Route For Get UserAddresses
     Route::post('getUserAddresses', [UserAddressController::class, 'index']);
@@ -78,7 +74,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('getReturnOrder', [ReturnController::class, 'index']);
     //Route For Storing for Return Order Data
     Route::post('storeReturnOrder', [ReturnController::class, 'store']);
-    
+
     //Route For User Exempt
     Route::post('taxExempt', [TaxRateController::class, 'taxExempt']);
 });
@@ -122,6 +118,11 @@ Route::post('getCategory', [CategoryController::class, 'category']);
 Route::post('globalSearch', [HomeController::class, 'globalSearch']);
 //Route for Filter Product
 Route::post('filterProduct', [HomeController::class, 'filterProduct']);
+
+//Route For Get Fedex Shipping Rates
+Route::post('get-fedex-rates', [CheckoutController::class, 'getFedexShippingRates']);
+//Route For Get Saia Shipping Rates
+Route::post('get-saia-rates', [CheckoutController::class, 'getSaiaShippingRates']);
 
 //Route For Getting Tax Using zip
 Route::post('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);

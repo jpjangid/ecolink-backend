@@ -55,15 +55,27 @@ class CheckoutController extends Controller
 
     public function getFedexShippingRates(Request $request)
     {
-        $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-        $carts = Cart::where('user_id', $user->id)->with('product:id,weight')->get();
-
         $lineitems = array();
-        foreach ($carts as $cart) {
-            $weight = collect(["units" => "LB", "value" => $cart->product->weight]);
-            $item = collect(['weight' => $weight]);
-            array_push($lineitems, $item);
+        $usertoken = request()->bearerToken();
+        if(!empty($usertoken)){
+            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+            if(!empty($user)){
+                $carts = Cart::where('user_id', $user->id)->with('product:id,weight')->get();
+                foreach ($carts as $cart) {
+                    $weight = collect(["units" => "LB", "value" => $cart->product->weight]);
+                    $item = collect(['weight' => $weight]);
+                    array_push($lineitems, $item);
+                }
+            }
+        }else{
+            foreach($request->product_id as $product_id){
+                $product = DB::table('products')->select('weight')->find($product_id);
+                if(!empty($product)){
+                    $weight = collect(["units" => "LB", "value" => $product->weight]);
+                    $item = collect(['weight' => $weight]);
+                    array_push($lineitems, $item);
+                }
+            }
         }
 
         $authtoken = getFedexAuthToken();
@@ -147,22 +159,43 @@ class CheckoutController extends Controller
 
     public function getSaiaShippingRates(Request $request)
     {
+        $lineitems = '';
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-        $carts = Cart::where('user_id', $user->id)->with('product:id,weight,width,length,height')->get();
-
-        $lineitems = '<Details>';
-        $item = '';
-        foreach ($carts as $cart) {
-            $item .= '<DetailItem>
-                <Width>' . $cart->product->width . '</Width>
-                <Length>' . $cart->product->length . '</Length>
-                <Height>' . $cart->product->height . '</Height>
-                <Weight>' . (int)$cart->product->weight . '</Weight>
-                <Class>50</Class>
-            </DetailItem>';
+        if(!empty($usertoken)){
+            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+            if(!empty($user)){
+                $carts = Cart::where('user_id', $user->id)->with('product:id,weight,width,length,height')->get();
+        
+                $lineitems = '<Details>';
+                $item = '';
+                foreach ($carts as $cart) {
+                    $item .= '<DetailItem>
+                        <Width>' . $cart->product->width . '</Width>
+                        <Length>' . $cart->product->length . '</Length>
+                        <Height>' . $cart->product->height . '</Height>
+                        <Weight>' . (int)$cart->product->weight . '</Weight>
+                        <Class>50</Class>
+                    </DetailItem>';
+                }
+                $lineitems .= $item . '</Details>';
+            }
+        }else{
+            $lineitems = '<Details>';
+            $item = '';
+            foreach($request->product_id as $product_id){
+                $product = DB::table('products')->select('weight','width','length','height')->find($product_id);
+                if(!empty($product)){
+                    $item .= '<DetailItem>
+                        <Width>' . $product->width . '</Width>
+                        <Length>' . $product->length . '</Length>
+                        <Height>' . $product->height . '</Height>
+                        <Weight>' . (int)$product->weight . '</Weight>
+                        <Class>50</Class>
+                    </DetailItem>';
+                }
+            }
+            $lineitems .= $item . '</Details>';
         }
-        $lineitems .= $item . '</Details>';
 
         $curl = curl_init();
 
@@ -199,7 +232,6 @@ class CheckoutController extends Controller
             </soap:Envelope>',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: text/xml; charset=utf-8',
-                'Cookie: TS01cfb1b0=01dd6f358ae465ecd43d9146ca0088707409e4db6a3f6310de09bc0afdc7f957947346a4240262af504afb92453b7eefbdf31f61e9',
                 'except:application/json'
             ),
         ));
