@@ -86,7 +86,7 @@
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
+                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('image')
@@ -189,7 +189,7 @@
                         <div class="form-group">
                             <label for="og_image">OG Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="og_image">
+                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="og_image" accept="image/x-png,image/gif,image/jpeg">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('og_image')

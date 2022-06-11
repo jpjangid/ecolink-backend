@@ -111,8 +111,11 @@
                     <div class="col-md-8 mt-2">
                         <label for="profile_image">Profile Image:</label>
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
                             <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                            @error('profile_image')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                     <div class="col-md-12 mt-2">

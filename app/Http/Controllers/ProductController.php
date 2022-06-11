@@ -18,7 +18,7 @@ class ProductController extends Controller
         if (checkpermission('ProductController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $active = $request->active == 'all' ? array('1','0') : array($request->active);
+                $active = $request->active == 'all' ? array('1', '0') : array($request->active);
                 $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status', 'variant')->where(['flag' => 0])->whereIn('status', $active)->get();
 
                 /* Converting Selected Data into desired format */
@@ -88,9 +88,11 @@ class ProductController extends Controller
         $request->validate([
             'name'                  =>  'required',
             'variant'               =>  'required',
-            'slug'                  =>  'required',
+            'slug'                  =>  'required|unique:products,slug',
             'description'           =>  'required',
             'sku'                   =>  'required',
+            'stock'                 =>  'required',
+            'low_stock'             =>  'required',
             'regular_price'         =>  'required',
             'sale_price'            =>  'required',
             'category_id'           =>  'required',
@@ -107,6 +109,8 @@ class ProductController extends Controller
             'slug.required'                 =>  'Please Enter Slug',
             'description.required'          =>  'Please Enter Description',
             'sku.required'                  =>  'Please Enter SKU',
+            'stock.required'                =>  'Please Enter Stock',
+            'low_stock.required'            =>  'Please Enter Low Stock',
             'regular_price.required'        =>  'Please Enter Regular Price',
             'sale_price.required'           =>  'Please Enter Sale Price',
             'category_id.required'          =>  'Please Select Category',
@@ -220,9 +224,11 @@ class ProductController extends Controller
         $request->validate([
             'name'                  =>  'required',
             'variant'               =>  'required',
-            'slug'                  =>  'required',
+            'slug'                  =>  'required|unique:products,slug,' . $id,
             'description'           =>  'required',
             'sku'                   =>  'required',
+            'stock'                 =>  'required',
+            'low_stock'             =>  'required',
             'regular_price'         =>  'required',
             'sale_price'            =>  'required',
             'category_id'           =>  'required',
@@ -238,6 +244,8 @@ class ProductController extends Controller
             'slug.required'                 =>  'Please Enter Slug',
             'description.required'          =>  'Please Enter Description',
             'sku.required'                  =>  'Please Enter SKU',
+            'stock.required'                =>  'Please Enter Stock',
+            'low_stock.required'            =>  'Please Enter Low Stock',
             'regular_price.required'        =>  'Please Enter Regular Price',
             'sale_price.required'           =>  'Please Enter Sale Price',
             'category_id.required'          =>  'Please Select Category',
