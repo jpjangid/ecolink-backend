@@ -93,7 +93,7 @@
                         <select class="form-control select2bs4" name="role_id" id="role_id">
                             <option value="">Select Role</option>
                             @foreach($roles as $role)
-                            <option value="{{$role->id}}" {{old('role_id') == $role->id ? 'selected' : ''}}>{{$role->title}}</option>
+                            <option value="{{$role->id}}" {{ old('role_id') == $role->id ? 'selected' : ''}}>{{$role->title}}</option>
                             @endforeach
                         </select>
                         @error('role_id')
@@ -110,8 +110,11 @@
                     <div class="col-md-8 mt-2">
                         <label for="profile_image"><span style="color: red;">* </span>Profile Image:</label>
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
                             <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                            @error('profile_image')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                     <input type="hidden" name="status" id="flag" value="{{ old('flag')}}">

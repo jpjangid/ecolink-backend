@@ -108,7 +108,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label" for="regular_price"><span style="color: red;">* </span>Product Regular Price</label>
-                            <input type="number" step=".01" class="form-control @error('regular_price') is-invalid @enderror" name="regular_price" id="regular_price" placeholder="Please Enter Product Regular Price" value="{{ old('regular_price') }}">
+                            <input type="number" step=".01" class="form-control @error('regular_price') is-invalid @enderror" name="regular_price" id="regular_price" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Product Regular Price" value="{{ old('regular_price') }}">
                             @error('regular_price')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -151,7 +151,7 @@
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);">
+                                <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('image')
@@ -208,8 +208,8 @@
                     <!-- Product Stock-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="stock">Product Stock</label>
-                            <input type="number" step=".01" class="form-control @error('stock') is-invalid @enderror" name="stock" id="stock" placeholder="Please Enter Product Stock" value="{{ old('stock') }}">
+                            <label class="required form-label" for="stock"><span style="color: red;">* </span>Product Stock</label>
+                            <input type="number" step=".01" class="form-control @error('stock') is-invalid @enderror" name="stock" id="stock" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Product Stock" value="{{ old('stock') }}">
                             @error('stock')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -219,8 +219,8 @@
                     <!-- Product Low Stock Amount-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="low_stock">Product Low Stock Amount</label>
-                            <input type="number" step=".01" class="form-control @error('low_stock') is-invalid @enderror" name="low_stock" id="low_stock" placeholder="Please Enter Product Low Stock Amount" value="{{ old('low_stock') }}">
+                            <label class="required form-label" for="low_stock"><span style="color: red;">* </span>Product Low Stock Amount</label>
+                            <input type="number" step=".01" class="form-control @error('low_stock') is-invalid @enderror" name="low_stock" id="low_stock" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Product Low Stock Amount" value="{{ old('low_stock') }}">
                             @error('low_stock')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -255,7 +255,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="weight"><span style="color: red;">* </span>Weight</label>
-                            <input type="number" step=".01" class="form-control @error('weight') is-invalid @enderror" name="weight" id="weight" placeholder="Please Enter Weight" value="{{ old('weight') }}">
+                            <input type="number" step=".01" class="form-control @error('weight') is-invalid @enderror" name="weight" id="weight" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Weight" value="{{ old('weight') }}">
                             @error('weight')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -266,7 +266,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="length"><span style="color: red;">* </span>Length</label>
-                            <input type="number" step=".01" class="form-control @error('length') is-invalid @enderror" name="length" id="length" placeholder="Please Enter Length" value="{{ old('length') }}">
+                            <input type="number" step=".01" class="form-control @error('length') is-invalid @enderror" name="length" id="length" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Length" value="{{ old('length') }}">
                             @error('length')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -277,7 +277,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="width"><span style="color: red;">* </span>Width</label>
-                            <input type="number" step=".01" class="form-control @error('width') is-invalid @enderror" name="width" id="width" placeholder="Please Enter Width" value="{{ old('width') }}">
+                            <input type="number" step=".01" class="form-control @error('width') is-invalid @enderror" name="width" id="width" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Width" value="{{ old('width') }}">
                             @error('width')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -288,7 +288,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="height"><span style="color: red;">* </span>Height</label>
-                            <input type="number" step=".01" class="form-control @error('height') is-invalid @enderror" name="height" id="height" placeholder="Please Enter Height" value="{{ old('height') }}">
+                            <input type="number" step=".01" class="form-control @error('height') is-invalid @enderror" name="height" id="height" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Height" value="{{ old('height') }}">
                             @error('height')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -329,7 +329,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="minimum_qty">Product Minimum Quantity</label>
-                            <input type="number" step=".01" class="form-control @error('minimum_qty') is-invalid @enderror" name="minimum_qty" id="minimum_qty" placeholder="Please Enter Product Minimum Quantity" value="{{ old('minimum_qty') }}">
+                            <input type="number" step=".01" class="form-control @error('minimum_qty') is-invalid @enderror" name="minimum_qty" id="minimum_qty" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Product Minimum Quantity" value="{{ old('minimum_qty') }}">
                         </div>
                     </div>
 
@@ -430,7 +430,7 @@
                         <div class="form-group">
                             <label for="og_image">OG Image:</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="og_image">
+                                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="og_image" accept="image/x-png,image/gif,image/jpeg">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                             </div>
                             @error('og_image')
