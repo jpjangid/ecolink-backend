@@ -123,6 +123,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'logout_url' => 'https://brandtalks.in/ecolinkfrontend/profile/auth',
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

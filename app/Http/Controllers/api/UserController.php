@@ -137,7 +137,7 @@ class UserController extends Controller
             'password' => $request->password,
         ];
 
-        $user = DB::table('users')->where(['email' => $request->email, 'flag' => 0, 'email_verified' => 1])->first();
+        $user = DB::table('users')->where(['email' => $request->email, 'flag' => 0])->first();
 
         if (empty($user)) {
             return response()->json(['message' => 'User not found or inactive', 'code' => 400], 400);
@@ -165,6 +165,9 @@ class UserController extends Controller
                     return response()->json(['error' => 'UnAuthorised Access'], 401);
                 }
             } else {
+                if ($user->email_verified = 0) {
+                    return response()->json(['message' => 'Email is not verified.', 'code' => 400], 400);
+                }
                 $token = Str::random(80);
                 $affected = DB::table('users')->where('id', $user->id)->update(['api_token' => $token]);
 
