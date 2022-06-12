@@ -80,7 +80,8 @@ class UserController extends Controller
             'profile_image'         =>  $image_name,
             'tax_exempt'            =>  $request->tax_exempt,
             'remember_token'        =>  $token,
-            'api_token'             =>  $token
+            'api_token'             =>  $token,
+            'flag'                  =>  1
         ]);
 
         UserAddress::create([
@@ -120,6 +121,7 @@ class UserController extends Controller
 
         if (!empty($user)) {
             $user->email_verified = 1;
+            $user->flag = 0;
             $user->update();
 
             return response()->json(['message' => 'User Account verified successfully', 'code' => 200, 'data' => $user], 200);
@@ -135,10 +137,16 @@ class UserController extends Controller
             'password' => $request->password,
         ];
 
-        $user = DB::table('users')->where('email', $request->email)->first();
+        $user = DB::table('users')->where(['email' => $request->email, 'flag' => 0, 'email_verified' => 1])->first();
 
         if (empty($user)) {
-            return response()->json(['message' => 'User not found', 'code' => 400], 400);
+            return response()->json(['message' => 'User not found or inactive', 'code' => 400], 400);
+        }
+
+        $check_password = Hash::check($request->password, $user->password);
+
+        if ($check_password == false) {
+            return response()->json(['message' => 'Please enter correct password', 'code' => 400], 400);
         }
 
         if ($user->flag == 1) {
