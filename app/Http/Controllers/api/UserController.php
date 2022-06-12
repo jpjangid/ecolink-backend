@@ -141,6 +141,12 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found', 'code' => 400], 400);
         }
 
+        $check_password = Hash::check($request->password, $user->password);
+
+        if ($check_password == false) {
+            return response()->json(['message' => 'Please enter correct password', 'code' => 400], 400);
+        }
+
         if ($user->flag == 1) {
             return response()->json(['message' => 'User is Deactivated', 'code' => 400], 400);
         } else {
