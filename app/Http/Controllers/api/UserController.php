@@ -98,7 +98,7 @@ class UserController extends Controller
         ]);
 
         $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
-        $user->url = 'https://brandtalks.in/ecolinkfrontend/home/' . $user->api_token;
+        $user->url = url('') . '/ecolinkfrontend/home/' . $user->api_token;
         Mail::to($request->email)->send(new VerificationMail($user));
 
         $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
@@ -235,7 +235,7 @@ class UserController extends Controller
             $user->api_token        = $randomString;
             $user->update();
 
-            $user->url = 'https://brandtalks.in/ecolinkfrontend/profile/reset-password/' . $user->api_token;
+            $user->url = url('') . 'ecolink/profile/reset-password/' . $user->api_token;
 
             Mail::to($request->email)->send(new ForgotPassword($user));
             return response()->json(['message' => 'Forgot password email sent successfully', 'code' => 200], 200);
