@@ -32,7 +32,7 @@ class OrderController extends Controller
         $usertoken = request()->bearerToken();
         $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
 
-        $orders = Order::where('user_id', $user->id)->with('items.product')->get();
+        $orders = Order::where('user_id', $user->id)->with('items:order_id,product_id,quantity,item_status','items.product:id,parent_id,name,variant,regular_price,sale_price,image,alt','items.product.category:id,name,parent_id','items.product.category.parent:id,name')->get();
 
         if ($orders->isNotEmpty()) {
             foreach ($orders as $order) {
