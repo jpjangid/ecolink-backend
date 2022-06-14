@@ -135,7 +135,7 @@
                         </div>
                     </div>
 
-                    @php $days = explode(',',$coupon->days); @endphp
+                    <!-- @php $days = explode(',',$coupon->days); @endphp
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="days"><span style="color: red;">* </span>Week Days</label>
@@ -149,7 +149,7 @@
                                 <option value="Saturday" {{ in_array('Saturday', $days) == true ? 'selected' : '' }}>Saturday</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-md-3">
                         <div class="form-group">

@@ -28,7 +28,7 @@ class CouponController extends Controller
                         'type'          =>  $coupon->type,
                         'offer_start'   =>  date('d-m-Y h:i A', strtotime($coupon->offer_start)),
                         'offer_end'     =>  date('d-m-Y h:i A', strtotime($coupon->offer_end)),
-                        'days'          =>  $coupon->days,
+                        // 'days'          =>  $coupon->days,
                         'created_at'    =>  date('d-m-Y h:i A', strtotime($coupon->created_at)),
                         'show_in_front' =>  $coupon->show_in_front
                     ]);
@@ -108,7 +108,7 @@ class CouponController extends Controller
             'offer_end.after'           =>  'Offer End should be greater than Offer Start'
         ]);
 
-        $days = implode(",", $request->days);
+        // $days = implode(",", $request->days);
 
         /* Storing Data in Table */
         Coupon::create([
@@ -127,7 +127,7 @@ class CouponController extends Controller
             'cat_id'                =>  $request->cat_id,
             'product_id'            =>  $request->product_id,
             'user_id'               =>  $request->user_id,
-            'days'                  =>  $days,
+            // 'days'                  =>  $days,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -177,10 +177,10 @@ class CouponController extends Controller
         /* Fetching Blog Data using Id */
         $coupon = Coupon::find($id);
 
-        $days = $coupon->days;
-        if (!empty($request->days)) {
-            $days = implode(",", $request->days);
-        }
+        // $days = $coupon->days;
+        // if (!empty($request->days)) {
+        //     $days = implode(",", $request->days);
+        // }
 
         /* Updating Data fetched by Id */
         $coupon->name                   =  $request->name;
@@ -198,7 +198,7 @@ class CouponController extends Controller
         $coupon->cat_id                 =  $request->cat_id;
         $coupon->product_id             =  $request->product_id;
         $coupon->user_id                =  $request->user_id;
-        $coupon->days                   =  $days;
+        // $coupon->days                   =  $days;
         $coupon->update();
 
         /* After successfull update of data redirecting to index page with message */
