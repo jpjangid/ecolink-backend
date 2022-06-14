@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('state')->nullable();
             $table->string('city')->nullable();
             $table->integer('pincode')->nullable();
+            $table->string('landmark')->nullable();
             $table->string('profile_image')->nullable();
             $table->tinyInteger('flag')->default(0);
             $table->tinyInteger('email_verified')->default(0);
