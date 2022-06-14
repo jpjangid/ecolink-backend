@@ -134,7 +134,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <!-- <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="days"><span style="color: red;">* </span>Week Days</label>
                             <select name="days[]" id="days" class="form-control select2bs4" data-placeholder="Select Days" required multiple>
@@ -147,7 +147,7 @@
                                 <option value="Saturday" {{ in_array('Saturday', old("days") ?: []) ? "selected" : ""}}>Saturday</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-md-3">
                         <div class="form-group">
