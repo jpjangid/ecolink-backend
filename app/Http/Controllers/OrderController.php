@@ -21,7 +21,7 @@ class OrderController extends Controller
     {
         if (checkpermission('OrderController@index')) {
             if (request()->ajax()) {
-                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
                 /* Getting all records */
                 $allorders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with([
                     'user:id,name,flag',
