@@ -97,6 +97,7 @@ class UserController extends Controller
                 'email'             =>  'required|email|max:255|unique:users,email',
                 'mobile'            =>  'required|digits:10|unique:users,mobile',
                 'address'           =>  'required',
+                'landmark'           =>  'required',
                 'state'             =>  'required|regex:/^[\pL\s\-]+$/u',
                 'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
                 'pincode'           =>  'required',
@@ -110,6 +111,7 @@ class UserController extends Controller
                 'email.required'            =>  'Please Enter Email',
                 'mobile.required'           =>  'Please Enter Mobile No.',
                 'address.required'          =>  'Please Enter Address',
+                'landmark.required'         =>  'Please Enter Landmark',
                 'state.required'            =>  'Please Enter State',
                 'name.regex'                =>  'Please Enter State in alphabets',
                 'city.required'             =>  'Please Enter City',
@@ -145,6 +147,7 @@ class UserController extends Controller
                 'email'                 =>  $request['email'],
                 'mobile'                =>  $request['mobile'],
                 'address'               =>  $request['address'],
+                'landmark'              =>  $request['landmark'],
                 'country'               =>  $request['country'],
                 'state'                 =>  $request['state'],
                 'city'                  =>  $request['city'],
@@ -160,6 +163,7 @@ class UserController extends Controller
                 'email'         =>  $request['email'],
                 'mobile'        =>  $request['mobile'],
                 'address'       =>  $request['address'],
+                'landmark'      =>  $request['landmark'],
                 'country'       =>  $request['country'],
                 'state'         =>  $request['state'],
                 'city'          =>  $request['city'],
@@ -205,6 +209,7 @@ class UserController extends Controller
             'email'             =>  'required|email|unique:users,email,' . $id,
             'mobile'            =>  'required|digits:10|unique:users,mobile,' . $id,
             'address'           =>  'required',
+            'landmark'          =>  'required',
             'state'             =>  'required|regex:/^[\pL\s\-]+$/u',
             'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
             'pincode'           =>  'required',
@@ -217,6 +222,7 @@ class UserController extends Controller
             'email.required'            =>  'Please Enter Email',
             'mobile.required'           =>  'Please Enter Mobile No.',
             'address.required'          =>  'Please Enter Address',
+            'landmark.required'          =>  'Please Enter Landmark',
             'state.required'            =>  'Please Enter State',
             'state.regex'               =>  'Please Enter State in alphabets',
             'city.required'             =>  'Please Enter City',
@@ -254,6 +260,7 @@ class UserController extends Controller
         $user->email            =   $request['email'];
         $user->mobile           =   $request['mobile'];
         $user->address          =   $request['address'];
+        $user->landmark         =   $request['landmark'];
         $user->country          =   $request['country'];
         $user->state            =   $request['state'];
         $user->city             =   $request['city'];

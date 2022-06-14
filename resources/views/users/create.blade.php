@@ -61,6 +61,13 @@
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
+                        <label for="landmark"><span style="color: red;">* </span>Landmark:</label>
+                        <input type="text" class="form-control" name="landmark" id="landmark" placeholder="Enter Landmark" value="{{ old('landmark') }}" />
+                        @error('landmark')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
                         <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country" value="{{ old('country') }}" />
                         @error('country')
@@ -145,6 +152,7 @@
                     document.getElementById("name").value = result.name;
                     document.getElementById("mobile").value = result.mobile;
                     document.getElementById("address").value = result.address;
+                    document.getElementById("landmark").value = result.landmark;
                     document.getElementById("country").value = result.country;
                     document.getElementById("state").value = result.state;
                     document.getElementById("city").value = result.city;
