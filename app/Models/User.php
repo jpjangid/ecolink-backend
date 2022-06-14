@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'address', 'country', 'state', 'city', 'pincode', 'mobile', 'profile_image', 'role_id', 'api_token', 'flag', 'tax_exempt', 'email_verified', 'remember_token', 'wp_id'
+        'name', 'email', 'password', 'address', 'landmark', 'country', 'state', 'city', 'pincode', 'mobile', 'profile_image', 'role_id', 'api_token', 'flag', 'tax_exempt', 'email_verified', 'remember_token', 'wp_id'
     ];
 
     public function location()
