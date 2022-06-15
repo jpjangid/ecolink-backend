@@ -18,40 +18,40 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $pagecategories = LinkCategory::select('id', 'name', 'slug')->with('sublink:id,category,title,slug')->get();
+        // $pagecategories = LinkCategory::select('id', 'name', 'slug')->with('sublink:id,category,title,slug')->get();
 
         // $pages = Page::select('id','title','slug')->with('links:page_id,link_id','links.relatedPage:id,title,slug')->get();
 
         $pages = Page::select('id', 'title', 'slug')->where('parent_id', NULL)->with('subpage:id,title,slug,parent_id', 'subpage.subpage:id,title,slug,parent_id')->where('status', 1)->where('tags', 'menu')->get();
 
-        $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null, 'status' => 1])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->where('status', 1)->get();
+        // $categories = Category::select('id', 'name', 'slug', 'short_desc', 'image', 'alt')->where(['flag' => 0, 'parent_id' => null, 'status' => 1])->with('subcategory:id,name,slug,parent_id', 'products:id,name,slug,parent_id')->where('status', 1)->get();
 
-        if ($categories->isNotEmpty()) {
-            foreach ($categories as $category) {
-                $category->image = asset('storage/category/' . $category->image);
-            }
-        }
+        // if ($categories->isNotEmpty()) {
+        //     foreach ($categories as $category) {
+        //         $category->image = asset('storage/category/' . $category->image);
+        //     }
+        // }
 
-        $blogs = DB::table('blogs')->select('id', 'title', 'slug', 'description', 'publish_date', 'status', 'image', 'alt')->where('status', 1)->orderby('id', 'desc')->get();
+        // $blogs = DB::table('blogs')->select('id', 'title', 'slug', 'description', 'publish_date', 'status', 'image', 'alt')->where('status', 1)->orderby('id', 'desc')->get();
 
-        if ($blogs->isNotEmpty()) {
-            foreach ($blogs as $blog) {
-                $blog->image = asset('storage/blogs/' . $blog->image);
-            }
-        }
+        // if ($blogs->isNotEmpty()) {
+        //     foreach ($blogs as $blog) {
+        //         $blog->image = asset('storage/blogs/' . $blog->image);
+        //     }
+        // }
 
-        $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->with('ratings:id,rating,product_id')->where(['status' => 1])->get();
+        // $products = Product::select('id', 'name', 'regular_price', 'sale_price', 'slug', 'image', 'alt')->with('ratings:id,rating,product_id')->where(['status' => 1])->get();
 
-        if ($products->isNotEmpty()) {
-            foreach ($products as $product) {
-                $product->image = asset('storage/products/' . $product->image);
-                $rate = $product->ratings->avg('rating');
-                $product->rating = number_format((float)$rate, 2, '.', '');
-                unset($product->ratings);
-            }
-        }
+        // if ($products->isNotEmpty()) {
+        //     foreach ($products as $product) {
+        //         $product->image = asset('storage/products/' . $product->image);
+        //         $rate = $product->ratings->avg('rating');
+        //         $product->rating = number_format((float)$rate, 2, '.', '');
+        //         unset($product->ratings);
+        //     }
+        // }
 
-        $data = collect(['pagecategories' => $pagecategories, 'categories' => $categories, 'blogs' => $blogs, 'products' => $products, 'pages' => $pages]);
+        $data = collect(['pages' => $pages]);
 
         if ($data->isNotEmpty()) {
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);

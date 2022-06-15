@@ -55,9 +55,9 @@ class CartController extends Controller
 
 		if (!empty($cart)) {
 			if ($request->action == 'add') {
-				if (($cart->quantity + $request->quantity) > $product->stock) {
-					return response()->json(['message' => 'Quantity is out of stock. Only ' . $product->stock . 'product remains in stock'], 400);
-				}
+				// if (($cart->quantity + $request->quantity) > $product->stock) {
+				// 	return response()->json(['message' => 'Quantity is out of stock. Only ' . $product->stock . 'product remains in stock'], 400);
+				// }
 				Cart::where('id', $cart->id)->update([
 					'quantity' => $cart->quantity + $request->quantity,
 				]);
