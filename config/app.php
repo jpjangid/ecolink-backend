@@ -123,7 +123,7 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'logout_url' =>  'https:://localhost/ecolinkfrontend/profile/auth',
+    'logout_url' => 'http://localhost/ecolinkfrontend/profile/auth',
 
     /*
     |--------------------------------------------------------------------------
