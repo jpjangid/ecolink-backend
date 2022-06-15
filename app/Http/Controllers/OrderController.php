@@ -21,7 +21,7 @@ class OrderController extends Controller
     {
         if (checkpermission('OrderController@index')) {
             if (request()->ajax()) {
-                $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
+                $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
                 /* Getting all records */
                 $allorders = Order::select('id', 'order_no', 'order_status', 'payment_status', 'total_amount', 'created_at', 'order_comments', 'user_id')->where('flag', '0')->with([
                     'user:id,name,flag',
@@ -39,7 +39,7 @@ class OrderController extends Controller
                             'client'            => $order->user->name,
                             'order_status'      => $order->order_status,
                             'payment_status'    => $order->payment_status,
-                            'total'             => number_format((float)$order->total_amount, 2, '.', ''),
+                            'total'             => '$' . number_format((float)$order->total_amount, 2, '.', ','),
                             'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
                             'order_comments'    => $order->order_comments,
                             'active'            => $order->user->flag == 0 ? 'Active' : 'Deactivated'

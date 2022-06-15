@@ -52,8 +52,8 @@
                                 <td><img src="{{ asset('storage/products/'.$item->product->image) }}" alt="{{ $item->product->image }}" style="height: 5rem;"></td>
                                 <td>{{ $item->product->name }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>{{ $item->product->sale_price }}</td>
-                                <td>{{ $item->product->sale_price * $item->quantity }}</td>
+                                <td>${{ number_format((float)$item->product->sale_price,2,'.',','),}}</td>
+                                <td>${{ number_format((float)$item->product->sale_price * $item->quantity,2,'.',','), }}</td>
                                 <td>{{ !empty($item->return) ? 'Return' : '' }}</td>
                             </tr>
                             @endif
@@ -123,14 +123,43 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                            $amount = number_format((float)$order->order_amount,2,'.',',');
+                            @endphp
                             <tr>
                                 <td>{{ strtoupper($order->payment_via) }}</td>
                                 <td>{{ strtoupper($order->payment_status) }}</td>
-                                <td>{{ !empty($order->order_amount) ? $order->order_amount : 0 }}</td>
-                                <td>{{ !empty($order->coupon_discount) ? $order->coupon_discount : 0 }}</td>
-                                <td>{{ !empty($order->service_charge_applied) ? $order->service_charge_applied : 0 }}</td>
-                                <td>{{ !empty($order->wallet_amount) ? $order->wallet_amount : 0 }}</td>
-                                <td>{{ !empty($order->total_amount) ? $order->total_amount : 0 }}</td>
+                                <td>
+                                    @if(!empty($order->order_amount))
+                                    ${{ number_format((float)$order->order_amount,2,'.',','), }}
+                                    @else
+                                    0
+                                    @endif
+                                </td>
+                                <td>@if(!empty($order->coupon_discount))
+                                    ${{ number_format((float)$order->coupon_discount,2,'.',','), }}
+                                    @else
+                                    0
+                                    @endif
+                                </td>
+                                <td>@if(!empty($order->service_charge_applied))
+                                    ${{ number_format((float)$order->service_charge_applied,2,'.',','), }}
+                                    @else
+                                    0
+                                    @endif
+                                </td>
+                                <td>@if(!empty($order->wallet_amount))
+                                    ${{ number_format((float)$order->wallet_amount,2,'.',','), }}
+                                    @else
+                                    0
+                                    @endif
+                                </td>
+                                <td>@if(!empty($order->total_amount))
+                                    ${{ number_format((float)$order->total_amount,2,'.',','), }}
+                                    @else
+                                    0
+                                    @endif
+                                </td>
                                 <!-- <td></td> -->
                             </tr>
                         </tbody>
