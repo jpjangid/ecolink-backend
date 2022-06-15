@@ -320,7 +320,7 @@
                                         <small>{{ $order->mobile }}</small><br />
                                     </td>
                                     <td>{{ $order->payment_status}}</td>
-                                    <td>{{ number_format((float)$order->total_amount, 2, '.', ''), }}</td>
+                                    <td>${{ number_format((float)$order->total_amount, 2, '.', ','), }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
