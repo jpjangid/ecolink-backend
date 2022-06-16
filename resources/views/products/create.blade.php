@@ -526,13 +526,17 @@
         var type = $('#dis_type').val();
         var discount = $('#discount').val();
 
-        if (type == 'percentage') {
-            discount = discount > 100 ? '' : discount;
-            if (discount == '') {
-                alert('Discount in percentage should be lower or equal to 100%');
+        if(type != ''){
+            if (type == 'percentage') {
+                discount = discount > 100 ? '' : discount;
+                if (discount == '') {
+                    swal("Danger!", 'Discount in percentage should be lower or equal to 100%', "error");
+                }
             }
+            $('#discount').val(discount);
+        }else{
+            swal("Danger!", 'Please select a discount type', "error");
         }
-        $('#discount').val(discount);
     });
 </script>
 
