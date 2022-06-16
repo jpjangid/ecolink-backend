@@ -39,13 +39,10 @@ class CategoryController extends Controller
         $usertoken = request()->bearerToken();
         $user_id = '';
         if (empty($usertoken)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-        if (empty($user)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        } else {
-            $user_id = $user->id;
+            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+            if (!empty($user)) {
+                $user_id = $user->id;
+            }
         }
 
         $category = Category::where(['slug' => $request->slug, 'flag' => 0, 'parent_id' => null, 'status' => 1])->with(['subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty', 'products.wishlist' => function ($query) use ($user_id) {
