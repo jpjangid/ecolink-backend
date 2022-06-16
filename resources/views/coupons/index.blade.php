@@ -53,10 +53,10 @@
                 <tr class="text-center">
                     <th>Coupon Name</th>
                     <th>Coupon Code</th>
-                    <th>Coupon Type</th>
+                    {{-- <th>Coupon Type</th> --}}
                     <th>Coupon Start Time</th>
                     <th>Coupon End Time</th>
-                    <th>Days</th>
+                    {{-- <th>Days</th> --}}
                     <th>Created On</th>
                     <th>Active</th>
                     <th class="no-sort">Action</th>
@@ -101,20 +101,12 @@
                     name: 'code'
                 },
                 {
-                    data: 'type',
-                    name: 'type'
-                },
-                {
                     data: 'offer_start',
                     name: 'offer_start'
                 },
                 {
                     data: 'offer_end',
                     name: 'offer_end'
-                },
-                {
-                    data: 'days',
-                    name: 'days'
                 },
                 {
                     data: 'created_at',
