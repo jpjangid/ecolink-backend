@@ -170,10 +170,12 @@ class OrderController extends Controller
         ]);
 
         foreach ($cartItems as $item) {
+            $product = DB::table('products')->find($item->product_id);
             OrderItems::create([
                 'order_id'              =>  $order->id,
                 'product_id'            =>  $item->product_id,
                 'quantity'              =>  $item->quantity,
+                'sale_price'            =>  $item->sale_price,
             ]);
         }
 

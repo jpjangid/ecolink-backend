@@ -52,8 +52,8 @@
                                 <td><img src="{{ asset('storage/products/'.$item->product->image) }}" alt="{{ $item->product->image }}" style="height: 5rem;"></td>
                                 <td>{{ $item->product->name }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>${{ number_format((float)$item->product->sale_price,2,'.',','),}}</td>
-                                <td>${{ number_format((float)$item->product->sale_price * $item->quantity,2,'.',','), }}</td>
+                                <td>${{ number_format((float)$item->sale_price,2,'.',','),}}</td>
+                                <td>${{ number_format((float)$item->sale_price * $item->quantity,2,'.',','), }}</td>
                                 <td>{{ !empty($item->return) ? 'Return' : '' }}</td>
                             </tr>
                             @endif
