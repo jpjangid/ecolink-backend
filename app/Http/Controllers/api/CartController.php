@@ -15,7 +15,13 @@ class CartController extends Controller
 	{
 		//Get Cart Items By User id with Product Detail
 		$usertoken = request()->bearerToken();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 		$carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
 
 		if ($carts->isNotEmpty()) {
@@ -44,7 +50,13 @@ class CartController extends Controller
 		}
 
 		$usertoken = request()->bearerToken();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
 		$product = Product::find($request->product_id);
 		if ($product == null) {
@@ -103,7 +115,13 @@ class CartController extends Controller
 		}
 
 		$usertoken = request()->bearerToken();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
 		$cart = Cart::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
 

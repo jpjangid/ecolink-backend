@@ -35,13 +35,17 @@ class CategoryController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
+
         $usertoken = request()->bearerToken();
         $user_id = '';
-        if (!empty($usertoken)) {
-            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-            if (!empty($user)) {
-                $user_id = $user->id;
-            }
+        if (empty($usertoken)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+        if (empty($user)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        } else {
+            $user_id = $user->id;
         }
 
         $category = Category::where(['slug' => $request->slug, 'flag' => 0, 'parent_id' => null, 'status' => 1])->with(['subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty', 'products.wishlist' => function ($query) use ($user_id) {
@@ -63,23 +67,23 @@ class CategoryController extends Controller
             if ($category->products->isNotEmpty()) {
                 foreach ($category->products as $product) {
                     $product->image = asset('storage/products/' . $product->image);
-                    if($product->wishlist->isNotEmpty()) {
+                    if ($product->wishlist->isNotEmpty()) {
                         $product->is_wishlist_item = true;
-                    }else{
+                    } else {
                         $product->is_wishlist_item = false;
                     }
                     unset($product->wishlist);
                 }
             }
 
-            if($category->subcategory->isNotEmpty()){
+            if ($category->subcategory->isNotEmpty()) {
                 foreach ($category->subcategory as $subcategory) {
                     if ($subcategory->products->isNotEmpty()) {
                         foreach ($subcategory->products as $product) {
                             $product->image = asset('storage/products/' . $product->image);
-                            if($product->wishlist->isNotEmpty()) {
+                            if ($product->wishlist->isNotEmpty()) {
                                 $product->is_wishlist_item = true;
-                            }else{
+                            } else {
                                 $product->is_wishlist_item = false;
                             }
                             unset($product->wishlist);

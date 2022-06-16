@@ -14,7 +14,13 @@ class WishlistController extends Controller
     {
         //Get wishlist Items By User id with Product Detail
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
         $wishlists = Wishlist::select('id','user_id','product_id')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt')->get();
 
         if($wishlists->isNotEmpty()){
@@ -41,7 +47,13 @@ class WishlistController extends Controller
         }
 
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $wishlist = Wishlist::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
 
@@ -70,7 +82,13 @@ class WishlistController extends Controller
         }
 
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $wishlist = Wishlist::where(['user_id' => $user->id, 'product_id' => $request->product_id])->first();
 
