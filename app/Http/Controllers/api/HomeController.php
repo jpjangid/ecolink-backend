@@ -89,13 +89,16 @@ class HomeController extends Controller
 
     public function filterProduct(Request $request)
     {
-		$usertoken = request()->bearerToken();
+        $usertoken = request()->bearerToken();
         $user_id = '';
-        if(!empty($usertoken)){
-            $user = User::select('id')->where('api_token', $usertoken)->first();
-            if(!empty($user)){
-                $user_id = $user->id;
-            }
+        if (empty($usertoken)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
+        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+        if (empty($user)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        } else {
+            $user_id = $user->id;
         }
 
         if (!empty($request->category)) {

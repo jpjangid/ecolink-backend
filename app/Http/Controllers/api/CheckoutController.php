@@ -12,9 +12,15 @@ use Illuminate\Support\Facades\DB;
 class CheckoutController extends Controller
 {
     public function index(Request $request)
-    {
-        $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+    {   
+		$usertoken = request()->bearerToken();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product')->get();
 

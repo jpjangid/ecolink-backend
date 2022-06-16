@@ -36,9 +36,9 @@ class UserController extends Controller
             'email.required'        =>  'Please Enter Email',
             'mobile.required'       =>  'Please Enter Mobile No.',
             'address.required'      =>  'Please Enter Address',
-            'state.required'        =>  'Please Select State',
-            'city.required'         =>  'Please Select City',
-            'pincode.required'      =>  'Please Select Pincode',
+            'state.required'        =>  'Please Enter State',
+            'city.required'         =>  'Please Enter City',
+            'pincode.required'      =>  'Please Enter Zip Code',
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
             'password.required'     =>  'Please Enter Password',
         ]);
@@ -185,7 +185,13 @@ class UserController extends Controller
     {
         if (Auth::check()) {
             $usertoken = request()->bearerToken();
+            if(empty($usertoken)){
+                return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+            }
             $user = User::select('id')->where('api_token', $usertoken)->first();
+            if(empty($user)){
+                return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+            }
             $user->api_token = '';
             $user->update();
 
@@ -205,7 +211,13 @@ class UserController extends Controller
         }
 
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $user = User::find($user->id);
         $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
@@ -279,7 +291,13 @@ class UserController extends Controller
     public function editUserInfo(Request $request)
     {
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $validator = Validator::make($request->all(), [
             'name'          =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
@@ -297,11 +315,11 @@ class UserController extends Controller
             'email.required'        =>  'Please Enter Email',
             'mobile.required'       =>  'Please Enter Mobile No.',
             'address.required'      =>  'Please Enter Address',
-            'state.required'        =>  'Please Select State',
+            'state.required'        =>  'Please Enter State',
             'state.regex'           =>  'Please Enter State in alphabets',
-            'city.required'         =>  'Please Select City',
+            'city.required'         =>  'Please Enter City',
             'city.regex'            =>  'Please Enter City in alphabets',
-            'pincode.required'      =>  'Please Select Pincode',
+            'pincode.required'      =>  'Please Enter Zip Code',
             'mobile.numeric'        =>  'The Mobile No. must be numeric',
         ]);
 
