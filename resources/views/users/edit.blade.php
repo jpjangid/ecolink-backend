@@ -90,8 +90,8 @@
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label for="pincode"><span style="color: red;">* </span>Postal:</label>
-                        <input type="text" class="form-control" name="pincode" placeholder="Enter Pincode" value="{{ $user->pincode }}" />
+                        <label for="pincode"><span style="color: red;">* </span>Zip Code:</label>
+                        <input type="text" class="form-control" name="pincode" placeholder="Enter Zip Code" value="{{ $user->pincode }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror

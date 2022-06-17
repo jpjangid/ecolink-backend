@@ -54,7 +54,7 @@
                     <th>Title</th>
                     <th>Slug</th>
                     <th>Blog Category</th>
-                    <th>Publish Date</th>
+                    <th>Date/Time</th>
                     <th>Active</th>
                     <th class="no-sort">Action</th>
                 </tr>

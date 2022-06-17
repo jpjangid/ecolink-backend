@@ -116,7 +116,7 @@ class UserController extends Controller
                 'name.regex'                =>  'Please Enter State in alphabets',
                 'city.required'             =>  'Please Enter City',
                 'name.regex'                =>  'Please Enter City in alphabets',
-                'pincode.required'          =>  'Please Enter Pincode',
+                'pincode.required'          =>  'Please Enter Zip Code',
                 'country.required'          =>  'Please Enter Country',
                 'country.regex'                =>  'Please Enter Country in alphabets',
                 'role_id.required'          =>  'Please Select Role',
@@ -227,7 +227,7 @@ class UserController extends Controller
             'state.regex'               =>  'Please Enter State in alphabets',
             'city.required'             =>  'Please Enter City',
             'city.regex'                =>  'Please Enter City in alphabets',
-            'pincode.required'          =>  'Please Enter Pincode',
+            'pincode.required'          =>  'Please Enter Zip Code',
             'country.required'          =>  'Please Enter Country',
             'country.regex'             =>  'Please Enter Country in alphabets',
             'role_id.required'          =>  'Please Select Role',
@@ -291,6 +291,10 @@ class UserController extends Controller
         /* Updating status of selected entry */
         $user = User::find($request->user_id);
         $user->flag   = $request->flag == 1 ? 0 : 1;
+        if($request->flag == 0){
+            $user->api_token = '';
+            $user->remember_token = '';
+        }
         $user->update();
 
         if ($user->flag == 1) {

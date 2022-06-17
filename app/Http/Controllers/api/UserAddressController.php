@@ -22,7 +22,13 @@ class UserAddressController extends Controller
         }
 
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $addresses = DB::table('user_addresses')->where('user_id', $user->id)->get();
 
@@ -53,7 +59,13 @@ class UserAddressController extends Controller
         }
 
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $address = UserAddress::create([
             'user_id'       =>  $user->id,
@@ -95,7 +107,13 @@ class UserAddressController extends Controller
         }
 
         $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $address = UserAddress::where('id', $request->address_id)->update([
             'user_id'       =>  $user->id,

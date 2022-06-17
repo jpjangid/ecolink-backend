@@ -16,7 +16,7 @@ class CouponController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
-                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'type', 'offer_start', 'offer_end', 'days', 'created_at', 'show_in_front')->where('flag', '0')->whereIn('show_in_front', $active)->get();
+                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'offer_start', 'offer_end', 'created_at', 'show_in_front')->where('flag', '0')->whereIn('show_in_front', $active)->get();
 
                 /* Converting Selected Data into desired format */
                 $coupons = new Collection;
@@ -25,7 +25,7 @@ class CouponController extends Controller
                         'id'            =>  $coupon->id,
                         'name'          =>  $coupon->name,
                         'code'          =>  $coupon->code,
-                        'type'          =>  $coupon->type,
+                        // 'type'          =>  $coupon->type,
                         'offer_start'   =>  date('d-m-Y h:i A', strtotime($coupon->offer_start)),
                         'offer_end'     =>  date('d-m-Y h:i A', strtotime($coupon->offer_end)),
                         // 'days'          =>  $coupon->days,
@@ -96,14 +96,12 @@ class CouponController extends Controller
         $request->validate([
             'name'          =>  'required|unique:coupons,name',
             'code'          =>  'required',
-            'type'          =>  'required',
             'show_in_front' =>  'required',
             'offer_start'   =>  'date',
             'offer_end'     =>  'date|after:offer_start',
         ], [
             'name.required'             =>  'Coupan Name is required',
             'code.required'             =>  'Coupon Code is required',
-            'type.required'             =>  'Coupon Type is required',
             'show_in_front.required'    =>  'This Field is required',
             'offer_end.after'           =>  'Offer End should be greater than Offer Start'
         ]);
@@ -114,7 +112,6 @@ class CouponController extends Controller
         Coupon::create([
             'name'                  =>  $request->name,
             'code'                  =>  $request->code,
-            'type'                  =>  $request->type,
             'min_order_amount'      =>  $request->min_order_amount,
             'max_order_amount'      =>  $request->max_order_amount,
             'offer_start'           =>  $request->offer_start,
@@ -128,6 +125,7 @@ class CouponController extends Controller
             'product_id'            =>  $request->product_id,
             'user_id'               =>  $request->user_id,
             // 'days'                  =>  $days,
+            // 'type'                  =>  $request->type,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -162,14 +160,12 @@ class CouponController extends Controller
         $request->validate([
             'name'          =>  'required|unique:coupons,name,' . $id,
             'code'          =>  'required',
-            'type'          =>  'required',
             'show_in_front' =>  'required',
             'offer_start'   =>  'date',
             'offer_end'     =>  'date|after:offer_start',
         ], [
             'name.required'             =>  'Name is required',
             'code.required'             =>  'Coupon Code is required',
-            'type.required'             =>  'Coupon Type is required',
             'show_in_front.required'    =>  'This Field is required',
             'offer_end.after'           =>  'Offer End should be greater than Offer Start'
         ]);
@@ -185,7 +181,7 @@ class CouponController extends Controller
         /* Updating Data fetched by Id */
         $coupon->name                   =  $request->name;
         $coupon->code                   =  $request->code;
-        $coupon->type                   =  $request->type;
+        /* $coupon->type                   =  $request->type;*/
         $coupon->min_order_amount       =  $request->min_order_amount;
         $coupon->max_order_amount       =  $request->max_order_amount;
         $coupon->offer_start            =  $request->offer_start;
@@ -198,7 +194,7 @@ class CouponController extends Controller
         $coupon->cat_id                 =  $request->cat_id;
         $coupon->product_id             =  $request->product_id;
         $coupon->user_id                =  $request->user_id;
-        // $coupon->days                   =  $days;
+        /*$coupon->days                   =  $days;*/
         $coupon->update();
 
         /* After successfull update of data redirecting to index page with message */

@@ -22,8 +22,14 @@ class CouponController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
         
-        $usertoken = request()->bearerToken();
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		$usertoken = request()->bearerToken();
+		if(empty($usertoken)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if(empty($user)){
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
 
         $coupon = Coupon::where('id', $request->coupon_id)->with('coupon_used')->get();
 

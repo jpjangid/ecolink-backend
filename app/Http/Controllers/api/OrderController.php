@@ -18,7 +18,6 @@ use QuickBooksOnline\API\DataService\DataService;
 
 class OrderController extends Controller
 {
-
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -30,9 +29,15 @@ class OrderController extends Controller
         }
 
         $usertoken = request()->bearerToken();
+        if (empty($usertoken)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
         $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+        if (empty($user)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
 
-        $orders = Order::where('user_id', $user->id)->with('items:order_id,product_id,quantity,item_status', 'items.product:id,parent_id,name,variant,regular_price,sale_price,image,alt', 'items.product.category:id,name,parent_id', 'items.product.category.parent:id,name')->get();
+        $orders = Order::where('user_id', $user->id)->with('items:order_id,product_id,quantity,item_status', 'items.product:id,parent_id,name,variant,regular_price,sale_price,image,alt,slug', 'items.product.category:id,name,parent_id', 'items.product.category.parent:id,name')->get();
 
         if ($orders->isNotEmpty()) {
             foreach ($orders as $order) {
@@ -80,7 +85,13 @@ class OrderController extends Controller
         }
 
         $usertoken = request()->bearerToken();
+        if (empty($usertoken)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
         $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+        if (empty($user)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
 
         $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
 
@@ -235,7 +246,13 @@ class OrderController extends Controller
         }
 
         $usertoken = request()->bearerToken();
+        if (empty($usertoken)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
         $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+        if (empty($user)) {
+            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+        }
 
         $order = Order::where(['id' => $request->id, 'user_id' => $user->id])->first();
 
