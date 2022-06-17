@@ -201,6 +201,15 @@
 @endsection
 @section('js')
 <script>
+    $(document).on('change', '#disc_type', function() {
+        var type = $('#disc_type').val();
+        var discount = $('#discount').val();
+        if (type == 'percent') {
+            $('#discount').val('');
+        }
+    });
+</script>
+<script>
     $(document).ready(function() {
         var type = $('#type').val();;
         input_show_hide(type);
