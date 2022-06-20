@@ -1,5 +1,10 @@
+<style>
+	aside.main-sidebar.sidebar-dark-primary.elevation-4 {
+		pointer-events: none;
+	}
+</style>
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#2f2f2f, #2f2f2f);">
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#2f2f2f, #2f2f2f); ">
 	<!-- Brand Logo -->
 	<div class="brand-link">
 		<img src="{{ asset('New_Ecolink_Logo-33.png') }}" alt="Ecolink logo" class="brand-image  elevation-3" style="opacity: .8">

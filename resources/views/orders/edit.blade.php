@@ -312,7 +312,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="discount"> Discount Amount </label>
-                            <input type="number" step=".01" class="form-control form-control-solid @error('discount') is-invalid @enderror" name="discount" id="discount" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Discount" value="{{ $order->discount_applied }}">
+                            <input type="number" step=".01" class="form-control form-control-solid @error('discount') is-invalid @enderror" name="discount" id="discount" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Discount" value="{{ $order->discount_applied }}">
                         </div>
                     </div>
 
