@@ -368,4 +368,13 @@ class UserController extends Controller
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }
+    
+    public function getCurrentUser(Request $request): \Illuminate\Http\JsonResponse
+    {
+      $user = $request->user();
+      if ($user->flag == 1) {
+        return response()->json($user->only(['id', 'email', 'name']), 200);
+      }
+      return response()->json(['message' => 'User is inactive'], 401);
+    }
 }
