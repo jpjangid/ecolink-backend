@@ -89,17 +89,9 @@ class HomeController extends Controller
 
     public function filterProduct(Request $request)
     {
-        $usertoken = request()->bearerToken();
-        $user_id = '';
-        if (empty($usertoken)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-        if (empty($user)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        } else {
-            $user_id = $user->id;
-        }
+        
+        $user_id = '0';
+       
 
         if (!empty($request->category)) {
             $categories = DB::table('categories')->select('id')->where('parent_id', $request->parent_id)->whereIn('id', $request->category)->get();
@@ -129,8 +121,6 @@ class HomeController extends Controller
             $q->orderBy('sale_price','desc');
         })->when($name, function ($q) {
             $q->orderBy('name','asc');
-        })->with('wishlist', function ($query) use ($user_id) {
-            $query->where('user_id',$user_id);
         })->get();
 
         if ($products->isNotEmpty()) {
