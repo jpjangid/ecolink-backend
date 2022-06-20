@@ -90,8 +90,6 @@ class HomeController extends Controller
     public function filterProduct(Request $request)
     {
         
-        $user_id = '0';
-       
 
         if (!empty($request->category)) {
             $categories = DB::table('categories')->select('id')->where('parent_id', $request->parent_id)->whereIn('id', $request->category)->get();

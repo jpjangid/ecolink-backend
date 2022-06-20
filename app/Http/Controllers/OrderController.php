@@ -171,6 +171,7 @@ class OrderController extends Controller
             'payment_status'            =>  $request->payment_status,
             'shippment_via'             =>  $request->shippment_via,
             'payment_amount'            =>  $request->total_amt,
+            'sale_price'                =>  $request->sale_price
         ]);
 
         foreach ($request->product_id as $key => $item) {
@@ -193,7 +194,7 @@ class OrderController extends Controller
         $products = DB::table('products')->where('status', 1)->orderBy('name', 'asc')->get();
         $users = DB::table('users')->where('role_id', '!=', 1)->where('flag', 0)->orderBy('name', 'asc')->get();
         $order = Order::where('id', $id)->with('items')->first();
-
+        
         return view('orders.edit', compact('products', 'users', 'order'));
     }
 
@@ -289,6 +290,7 @@ class OrderController extends Controller
             'payment_status'            =>  $request->payment_status,
             'shippment_via'             =>  $request->shippment_via,
             'payment_amount'            =>  $request->total_amt,
+            // 'sale_price'                =>  $request->sale_price
         ]);
 
         $items = OrderItems::where('order_id', $id)->get();
@@ -300,7 +302,7 @@ class OrderController extends Controller
             $product = DB::table('products')->find($item);
             if (!empty($item) && !empty($request->quantity[$key])) {
                 OrderItems::create([
-                    'order_id'              =>  $order->id,
+                    'order_id'              =>  $id,
                     'product_id'            =>  $item,
                     'quantity'              =>  $request->quantity[$key],
                     'sale_price'            =>  $product->sale_price

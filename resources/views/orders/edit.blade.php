@@ -3,7 +3,7 @@
 @section('title', 'Edit Order')
 
 @section('content')
-<div class="content">
+<div class="content" >
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -277,7 +277,7 @@
                             @foreach($order->items as $item)
                             <tr>
                                 <td>
-                                    <select name="product_id[]" class="form-control select2 product_id" required>
+                                    <select name="product_id[]" class="form-control select2 product_id" disabled>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
                                         <option value="{{ $product->id }}" {{ $item->product_id == $product->id ? 'selected' : '' }}>{{ $product->name }} - {{$product->variant}}</option>
@@ -287,7 +287,7 @@
                                 <td>
                                     <input type="number" name="quantity[]" class="form-control quantity" placeholder="Enter Quantity" min="1" oninput="validity.valid||(value='');" value="{{ $item->quantity }}" required>
                                 </td>
-                                <td><input type="text" name="sale_price[]" class="form-control sale_price" placeholder="Enter Sale Price" readonly></td>
+                                <td><input type="text" name="sale_price[]" value="{{$item->sale_price}}" class="form-control sale_price" placeholder="Enter Sale Price" readonly></td>
                                 <td><input type="text" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly></td>
                                 <td><button type="button" class="btn btn-danger btn-sm delete_row"><i class="fa fa-minus-circle"></i></button></td>
                             </tr>
@@ -475,7 +475,8 @@
             lastRow = table.find('tbody tr:last'),
             rowClone = lastRow.clone();
         rowClone.find("input").val("").end();
-        rowClone.find("select").val("").end();
+        rowClone.find("select").val("").removeAttr('disabled').end();
+
         var newrow = table.find('tbody').append(rowClone);
     });
 
