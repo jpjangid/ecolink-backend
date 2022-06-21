@@ -15,7 +15,7 @@ class TaxRateController extends Controller
         if (checkpermission('TaxRateController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $alltaxrates = DB::table('tax_rates')->select('id', 'country_code', 'state_code', 'city', 'zip', 'rate')->get();
+                $alltaxrates = DB::table('tax_rates')->select('id', 'country_code', 'state_code', 'city', 'zip', 'rate')->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $taxrates = new Collection;

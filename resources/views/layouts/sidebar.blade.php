@@ -1,8 +1,8 @@
-<style>
+<!-- <style>
 	aside.main-sidebar.sidebar-dark-primary.elevation-4 {
 		pointer-events: none;
 	}
-</style>
+</style> -->
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#2f2f2f, #2f2f2f); ">
 	<!-- Brand Logo -->

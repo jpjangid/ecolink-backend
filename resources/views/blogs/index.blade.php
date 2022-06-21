@@ -103,6 +103,7 @@
             scrollY: "55vh",
             processing: true,
             serverSide: true,
+            order: [],
             ajax: {
                 url: "{{ url('admin/blogs') }}",
                 type: "get",

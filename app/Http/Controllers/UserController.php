@@ -23,11 +23,11 @@ class UserController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
-                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->whereIn('flag', $active)->get();
+                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->whereIn('flag', $active)->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $users = new Collection;
-                foreach ($allusers as $user) {
+                foreach ($allusers as $key => $user) {
                     $users->push([
                         'id'            =>  $user->id,
                         'name'          =>  $user->name,
@@ -37,7 +37,7 @@ class UserController extends Controller
                         'city'          =>  $user->city,
                         'state'         =>  $user->state,
                         'pincode'       =>  $user->pincode,
-                        'flag'          =>  $user->flag
+                        'flag'          =>  $user->flag,
                     ]);
                 }
 

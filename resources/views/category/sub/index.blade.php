@@ -100,6 +100,7 @@
             destroy: true,
             processing: true,
             serverSide: true,
+            order: [],
             ajax: {
                 url: "{{ url('admin/sub/categories') }}",
                 type: "get",

@@ -24,7 +24,7 @@ class ReturnController extends Controller
         if (checkpermission('ReturnController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $all_return_orders = ReturnItems::with('item.order', 'user', 'product')->orderby('created_at', 'desc')->get();
+                $all_return_orders = ReturnItems::with('item.order', 'user', 'product')->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $return_orders = new Collection;

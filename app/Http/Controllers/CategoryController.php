@@ -20,7 +20,7 @@ class CategoryController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
-                $maincategories = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->whereIn('status', $active)->get();
+                $maincategories = DB::table('categories')->select('id', 'name', 'slug', 'status')->where('flag', 0)->where('parent_id', null)->whereIn('status', $active)->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $categories = new Collection;
@@ -291,7 +291,7 @@ class CategoryController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
-                $subcategories = Category::where('parent_id', '!=', null)->whereIn('status', $active)->with('parent')->get();
+                $subcategories = Category::where('parent_id', '!=', null)->whereIn('status', $active)->orderby('created_at','desc')->with('parent')->get();
 
                 /* Converting Selected Data into desired format */
                 $categories = new Collection;
