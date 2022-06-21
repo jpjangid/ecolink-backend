@@ -28,7 +28,7 @@ class OrderController extends Controller
                     'user' => function ($q) use ($active) {
                         return $q->whereIn('flag', $active);
                     }
-                ])->orderby('id','desc')->get();
+                ])->orderby('created_at','desc')->get();
 
                 $orders = new Collection;
                 foreach ($allorders as $order) {

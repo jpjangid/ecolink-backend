@@ -20,7 +20,7 @@ class BlogCategoryController extends Controller
         if (checkpermission('BlogCategoryController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allblogcategories = BlogCategory::where('flag', '0')->orderby('id','desc')->get();
+                $allblogcategories = BlogCategory::where('flag', '0')->orderby('created_at','desc')->get();
                 /* Converting Selected Data into desired format */
                 $blogCategories = new Collection;
                 foreach ($allblogcategories as $allblogcategory) {

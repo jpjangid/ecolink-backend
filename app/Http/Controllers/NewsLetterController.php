@@ -17,7 +17,7 @@ class NewsLetterController extends Controller
         if (checkpermission('NewsLetterController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allnewsletters = DB::table('news_letters')->select('id', 'email', 'created_at')->where('flag', '0')->orderby('id','desc')->get();
+                $allnewsletters = DB::table('news_letters')->select('id', 'email', 'created_at')->where('flag', '0')->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $newsletters = new Collection;

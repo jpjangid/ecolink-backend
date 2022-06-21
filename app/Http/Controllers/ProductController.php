@@ -19,7 +19,7 @@ class ProductController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1', '0') : array($request->active);
-                $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status', 'variant')->where(['flag' => 0])->whereIn('status', $active)->orderby('id','desc')->get();
+                $allproducts = DB::table('products')->select('id', 'name', 'slug', 'status', 'variant')->where(['flag' => 0])->whereIn('status', $active)->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $products = new Collection;

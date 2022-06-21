@@ -20,7 +20,7 @@ class PageController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1','2','0') : array($request->active);
-                $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0'])->whereIn('status', $active)->orderby('id','desc')->get();
+                $allpages = DB::table('pages')->select('id', 'title', 'slug', 'status')->where(['flag' => '0'])->whereIn('status', $active)->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $pages = new Collection;

@@ -15,7 +15,7 @@ class TechnicalSupportController extends Controller
         if (checkpermission('TechnicalSupportController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allcontact = DB::table('contact_us')->select('id', 'first_name', 'last_name', 'phone', 'email', 'created_at')->where(['flag' => '0', 'type' => 'technical'])->orderby('id','desc')->get();
+                $allcontact = DB::table('contact_us')->select('id', 'first_name', 'last_name', 'phone', 'email', 'created_at')->where(['flag' => '0', 'type' => 'technical'])->orderby('created_at','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $contacts = new Collection;
