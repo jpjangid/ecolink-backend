@@ -60,6 +60,7 @@
             scrollY: "55vh",
             processing: true,
             serverSide: true,
+            order: [],
             ajax: "{{ url('admin/userpermissions') }}",
             columns: [{
                     data: 'name',

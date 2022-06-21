@@ -17,7 +17,7 @@ class UserPermissionController extends Controller
     {
         if (checkpermission('UserPermissionController@index')) {
             if (request()->ajax()) {
-                $allusers  = User::where(['role_id' => 1, 'flag' => 0])->where('id','!=',auth()->user()->id)->with('role')->get();
+                $allusers  = User::where(['role_id' => 1, 'flag' => 0])->where('id','!=',auth()->user()->id)->with('role')->orderby('id','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $users = new Collection;

@@ -61,6 +61,7 @@
         scrollY: "55vh",
         processing: true,
         serverSide: true,
+            order: [],
         url: "{{ url('admin/returns') }}",
         columns: [{
                 data: 'returnno',

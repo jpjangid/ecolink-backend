@@ -15,7 +15,7 @@ class CartController extends Controller
         if (checkpermission('CartController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allcarts = Cart::select('id', 'user_id', 'product_id', 'quantity', 'created_at')->with('user:id,name', 'product:id,name')->get();
+                $allcarts = Cart::select('id', 'user_id', 'product_id', 'quantity', 'created_at')->with('user:id,name', 'product:id,name')->orderby('id','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $carts = new Collection;

@@ -20,13 +20,13 @@ class BlogCategoryController extends Controller
         if (checkpermission('BlogCategoryController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allblogcategories = BlogCategory::where('flag', '0')->get();
+                $allblogcategories = BlogCategory::where('flag', '0')->orderby('id','desc')->get();
                 /* Converting Selected Data into desired format */
                 $blogCategories = new Collection;
                 foreach ($allblogcategories as $allblogcategory) {
                     $blogCategories->push([
-                        'id'            => $allblogcategory->id,
-                        'blog_category'          => $allblogcategory->blog_category,
+                        'id'                => $allblogcategory->id,
+                        'blog_category'     => $allblogcategory->blog_category,
                     ]);
                 }
                 /* Sending data through yajra datatable for server side rendering */

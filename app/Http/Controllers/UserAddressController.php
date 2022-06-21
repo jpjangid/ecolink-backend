@@ -15,7 +15,7 @@ class UserAddressController extends Controller
         if (checkpermission('UserAddressController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $alladdresses = UserAddress::select('id', 'user_id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'zip')->get();
+                $alladdresses = UserAddress::select('id', 'user_id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'zip')->orderby('id','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $addresses = new Collection;

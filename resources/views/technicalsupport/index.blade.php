@@ -85,6 +85,7 @@
             scrollY: "55vh",
             processing: true,
             serverSide: true,
+            order: [],
             ajax: "{{ url('admin/technicalsupport') }}",
             columns: [{
                     data: 'first_name',

@@ -79,6 +79,7 @@
             scrollY: "55vh",
             processing: true,
             serverSide: true,
+            order: [],
             order: [
                 [0, "desc"]
             ],

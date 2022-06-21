@@ -15,7 +15,7 @@ class WishlistController extends Controller
         if (checkpermission('WishlistController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allwishlists = Wishlist::select('id', 'user_id', 'product_id', 'created_at')->with('user:id,name', 'product:id,name')->get();
+                $allwishlists = Wishlist::select('id', 'user_id', 'product_id', 'created_at')->with('user:id,name', 'product:id,name')->orderby('id','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $wishlists = new Collection;

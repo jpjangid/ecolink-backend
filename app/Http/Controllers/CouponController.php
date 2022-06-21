@@ -16,7 +16,7 @@ class CouponController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
-                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'offer_start', 'offer_end', 'created_at', 'show_in_front')->where('flag', '0')->whereIn('show_in_front', $active)->get();
+                $allcoupons = DB::table('coupons')->select('id', 'name', 'code', 'offer_start', 'offer_end', 'created_at', 'show_in_front')->where('flag', '0')->whereIn('show_in_front', $active)->orderby('id','desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $coupons = new Collection;

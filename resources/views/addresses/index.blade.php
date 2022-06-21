@@ -87,6 +87,7 @@
             scrollY: "55vh",
             processing: true,
             serverSide: true,
+            order: [],
             ajax: "{{ url('admin/addresses') }}",
             columns: [{
                     data: 'name',
