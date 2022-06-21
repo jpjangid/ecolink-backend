@@ -22,10 +22,12 @@ class ProductController extends Controller
         }
         $usertoken = request()->bearerToken();
         $user_id = '';
-		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-		if(!empty($user)){
-			$user_id = $user->id;
-		}
+        if (empty($usertoken)) {
+            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+            if (!empty($user)) {
+                $user_id = $user->id;
+            }
+        }
 
         $product = Product::where(['slug' => $request->slug, 'status' => 1])->with('wishlist', function ($query) use ($user_id) {
             $query->where('user_id',$user_id);
@@ -63,10 +65,12 @@ class ProductController extends Controller
 
         $usertoken = request()->bearerToken();
         $user_id = '';
-		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-		if(!empty($user)){
-			$user_id = $user->id;
-		}
+        if (empty($usertoken)) {
+            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+            if (!empty($user)) {
+                $user_id = $user->id;
+            }
+        }
 
         $product = Product::where(['id' => $request->product_id, 'status' => 1])->with('wishlist', function ($query) use ($user_id) {
             $query->where('user_id',$user_id);
@@ -101,14 +105,11 @@ class ProductController extends Controller
         $related_products = collect();
         $usertoken = request()->bearerToken();
         $user_id = '';
-		if(empty($usertoken)){
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-		if(empty($user)){
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}else{
-            $user_id = $user->id;
+        if (empty($usertoken)) {
+            $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+            if (!empty($user)) {
+                $user_id = $user->id;
+            }
         }
 
         $related = Product::select('id', 'name', 'slug', 'image', 'alt', 'sale_price', 'regular_price', 'variant')->where(['status' => 1, 'parent_id' => $product->parent_id])->where('id', '!=', $product->id)->with('wishlist', function ($query) use ($user_id) {
