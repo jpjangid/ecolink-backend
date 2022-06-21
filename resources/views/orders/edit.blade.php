@@ -277,7 +277,8 @@
                             @foreach($order->items as $item)
                             <tr>
                                 <td>
-                                    <select name="product_id[]" class="form-control select2 product_id" disabled>
+                                    <input type="hidden" value="{{ $item->product_id }}" class="store_product_id" name="product_id[]"/>
+                                    <select class="form-control select2 product_id" disabled>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
                                         <option value="{{ $product->id }}" {{ $item->product_id == $product->id ? 'selected' : '' }}>{{ $product->name }} - {{$product->variant}}</option>
@@ -475,7 +476,8 @@
             lastRow = table.find('tbody tr:last'),
             rowClone = lastRow.clone();
         rowClone.find("input").val("").end();
-        rowClone.find("select").val("").removeAttr('disabled').end();
+        rowClone.find("select").val("").end();
+        rowClone.find(".product_id").attr('disabled', false).end();
 
         var newrow = table.find('tbody').append(rowClone);
     });
@@ -497,6 +499,7 @@
 
     function getSalePrice(row) {
         var id = row.find(".product_id").val();
+        row.find(".store_product_id").val(id);
         $.ajax({
             url: "{{ url('admin/orders/getProductById') }}",
             type: "POST",

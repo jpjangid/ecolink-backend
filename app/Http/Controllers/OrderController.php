@@ -299,14 +299,16 @@ class OrderController extends Controller
         }
 
         foreach ($request->product_id as $key => $item) {
-            $product = DB::table('products')->find($item);
-            if (!empty($item) && !empty($request->quantity[$key])) {
-                OrderItems::create([
-                    'order_id'              =>  $id,
-                    'product_id'            =>  $item,
-                    'quantity'              =>  $request->quantity[$key],
-                    'sale_price'            =>  $product->sale_price
-                ]);
+            if(!empty($item)){
+                $product = DB::table('products')->find($item);
+                if (!empty($item) && !empty($request->quantity[$key])) {
+                    OrderItems::create([
+                        'order_id'              =>  $id,
+                        'product_id'            =>  $item,
+                        'quantity'              =>  $request->quantity[$key],
+                        'sale_price'            =>  $product->sale_price
+                    ]);
+                }
             }
         }
 
