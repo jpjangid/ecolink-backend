@@ -36,7 +36,7 @@ class LoginController extends Controller
     if ($request->filled('token')) {
       $user = User::where('api_token', $request->token)->first();
       Auth::login($user, $remember = true);
-      return redirect('/admin/login');
+      return redirect('/admin/home');
     }
     return view('auth.login');
   }

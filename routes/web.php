@@ -40,11 +40,11 @@ use App\Http\Controllers\api\UserController as APiUserController;
 |
 */
 
-
-Auth::routes();
 Route::get('/', function () {
     return redirect()->route('login');
 })->middleware('prevent-back-history');
+
+Auth::routes();
 
 // Route::get('/artisan/clear', function () {
 //     \Artisan::call('cache:clear');
