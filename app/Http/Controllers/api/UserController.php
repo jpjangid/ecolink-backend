@@ -142,7 +142,7 @@ class UserController extends Controller
     $token = Str::random(80);
     if ($user->role_id == 1) {
       DB::table('users')->where('id', $user->id)->update(['api_token' => $token]);
-      return response()->json(['user_type' => 'admin', 'redirect_url' => env('APP_URL') . '/login']);
+      return response()->json(['user_type' => 'admin', 'redirect_url' => env('APP_URL') . '/login?token=' . $token]);
     } else {
       if ($user->email_verified = 0) {
         return response()->json(['message' => 'Email is not verified.', 'code' => 400], 400);
