@@ -53,7 +53,6 @@ Route::get('/', function () {
 //     \Artisan::call('config:clear');
 //     \Artisan::call('optimize:clear');
 // });
-Route::post('api/login', [APiUserController::class, 'login']);
 
 Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');

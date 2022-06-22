@@ -23,7 +23,7 @@ use App\Http\Controllers\api\TaxRateController;
 Route::post('register', [UserController::class, 'register']);
 
 //Route for login user
-//Route::post('login', [UserController::class, 'login']);
+Route::post('login', [UserController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
     //Route for logout user
