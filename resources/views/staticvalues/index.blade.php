@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Tax Rates')
+@section('title', 'Static Value')
 
 @section('content')
 <div class="content">
