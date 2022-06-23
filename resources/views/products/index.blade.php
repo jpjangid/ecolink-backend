@@ -94,8 +94,10 @@
         datatable();
     });
 
+    
+    let productTable = null;
     function datatable() {
-        var productTable = $('#productTable').DataTable({
+        productTable = $('#productTable').DataTable({
             destroy: true,
             scrollY: "55vh",
             processing: true,
@@ -133,6 +135,7 @@
     }
 
     $(document).on('change', '.js-switch', function() {
+        console.log(productTable);
         var row = $(this).closest('tr');
         let status = row.find('.js-switch').val();
         let productId = row.find('.product_id').val();
@@ -144,6 +147,9 @@
                 status: status,
                 product_id: productId,
                 _token: '{{csrf_token()}}'
+            },
+            beforeSend: function() {
+                
             },
             success: function(data) {
                 if (data['msg'] == 'success') {
@@ -158,7 +164,7 @@
                         timer: 3000
                     }).then((result) => {
                         if (result) {
-                            location.reload();
+                            productTable.ajax.reload();
                         }
                     })
                 } else {
@@ -173,7 +179,7 @@
                         timer: 3000
                     }).then((result) => {
                         if (result) {
-                            location.reload();
+                            productTable.ajax.reload();
                         }
                     })
                 }

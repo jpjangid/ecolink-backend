@@ -276,6 +276,7 @@
                         <tbody>
                             @foreach($order->items as $item)
                             <tr>
+                                
                                 <td>
                                     <input type="hidden" value="{{ $item->product_id }}" class="store_product_id" name="product_id[]"/>
                                     <select class="form-control select2 product_id" disabled>
@@ -289,7 +290,7 @@
                                     <input type="number" name="quantity[]" class="form-control quantity" placeholder="Enter Quantity" min="1" oninput="validity.valid||(value='');" value="{{ $item->quantity }}" required>
                                 </td>
                                 <td><input type="text" name="sale_price[]" value="{{$item->sale_price}}" class="form-control sale_price" placeholder="Enter Sale Price" readonly></td>
-                                <td><input type="text" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly></td>
+                                <td><input type="text" value="{{ $item->sale_price * $item->quantity }}" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly></td>
                                 <td><button type="button" class="btn btn-danger btn-sm delete_row"><i class="fa fa-minus-circle"></i></button></td>
                             </tr>
                             @endforeach
@@ -377,10 +378,6 @@
     $(document).ready(function() {
         calculateTotal();
         getAddresses();
-        $('.main_table tr').each(function() {
-            var row = $(this);
-            getSalePrice(row);
-        });
     });
 
     $(document).on('change', '#same', function() {
@@ -512,8 +509,12 @@
                 row.find(".sale_price").val(data.sale_price);
                 calculateProductTotal(row);
             }
+        
         });
+        
     }
+
+    
 
     $(document).on('keyup', '.quantity', function() {
         var row = $(this).closest('tr');
