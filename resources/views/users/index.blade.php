@@ -78,8 +78,9 @@
         datatable();
     });
 
+    let userTable = null;
     function datatable() {
-        var table = $('#userTable').DataTable({
+       userTable = $('#userTable').DataTable({
             destroy: true,
             scrollY: "55vh",
             processing: true,
@@ -135,6 +136,7 @@
     }
 
     $(document).on('click', '.js-switch', function() {
+        console.log(userTable);
         var row = $(this).closest('tr');
         let flag = row.find('.js-switch').val();
         let userId = row.find('.user_id').val();
@@ -146,6 +148,9 @@
                 flag: flag,
                 user_id: userId,
                 _token: '{{csrf_token()}}'
+            },
+            beforeSend: function() {
+                
             },
             success: function(data) {
                 if (data['msg'] == 'success') {
@@ -159,7 +164,7 @@
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result) {
-                            location.reload();
+                            userTable.ajax.reload();
                         }
                     })
                 } else {
@@ -173,7 +178,7 @@
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result) {
-                            location.reload();
+                            userTable.ajax.reload();
                         }
                     })
                 }
