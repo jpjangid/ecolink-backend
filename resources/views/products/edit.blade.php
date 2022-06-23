@@ -266,8 +266,8 @@
                     <!-- length-->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="length">length</label>
-                            <input type="number" step=".01" class="form-control @error('length') is-invalid @enderror" name="length" id="length" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter length" value="{{ $product->length }}">
+                            <label class="required form-label" for="length">Length</label>
+                            <input type="number" step=".01" class="form-control @error('length') is-invalid @enderror" name="length" id="length" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Length" value="{{ $product->length }}">
                             @error('length')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
