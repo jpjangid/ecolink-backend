@@ -23,8 +23,8 @@ class StaticValueController extends Controller
                     $staticvalues->push([
                         'id'            => $staticvalue->id,
                         'name'          => $staticvalue->name,
-                        'value'         => $staticvalue->value,
                         'type'          => $staticvalue->type,
+                        'value'         => '$'.$staticvalue->value,
                     ]);
                 }
 
@@ -38,11 +38,6 @@ class StaticValueController extends Controller
                         $btn = '
                             <div style="display:flex;">
                             <a class="btn btn-primary btn-xs" href="' . $edit_url . '" style="margin-right: 2px;"><i class="fas fa-edit"></i></a>
-                                            <form action="' . $delete_url . '" method="post">
-                                                <input type="hidden" name="_token" value="' . csrf_token() . '">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <button class="delete btn btn-danger btn-xs tax_confirm"><i class="fas fa-trash"></i></button>
-                                            </form>
                                         </div>';
                         return $btn;
                     })
@@ -57,27 +52,50 @@ class StaticValueController extends Controller
 
     public function create()
     {
-        //
+        return view('staticvalues.create');
     }
 
     public function store(Request $request)
     {
-        //
-    }
+        /* Validating Input fields */
+        $request->validate([
+            'name'      =>  'required',
+            'type'      =>  'required',
+            'value'     =>  'required',
+        ]);
 
-    public function show($id)
-    {
-        //
+        /* Storing Data in Table */
+        StaticValue::create($request->all());
+
+        /* After Successfull insertion of data redirecting to listing page with message */
+        return redirect('admin/staticvalues')->with('success', 'Static Value Added successfully');
     }
 
     public function edit($id)
     {
-        //
+        $value = DB::table('static_values')->where('id',$id)->first();
+
+        return view('staticvalues.edit', compact('value','id'));
     }
 
     public function update(Request $request, $id)
     {
-        //
+        /* Validating Input fields */
+        $request->validate([
+            'name'      =>  'required',
+            'type'      =>  'required',
+            'value'     =>  'required',
+        ]);
+
+        /* Storing Data in Table */
+        StaticValue::where('id',$id)->update([
+            'name'      => $request->name,
+            'value'     => $request->value,
+            'type'      => $request->type
+        ]);
+
+        /* After Successfull insertion of data redirecting to listing page with message */
+        return redirect('admin/staticvalues')->with('success', 'Static Value Updated successfully');
     }
 
     public function destroy($id)

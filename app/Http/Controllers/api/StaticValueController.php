@@ -19,7 +19,7 @@ class StaticValueController extends Controller
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $value = DB::table('static_values')->select('value')->where('name', $request->name)->first();
+        $value = DB::table('static_values')->select('value','type')->where('name', $request->name)->first();
 
         if(!empty($value)){
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $value], 200);
