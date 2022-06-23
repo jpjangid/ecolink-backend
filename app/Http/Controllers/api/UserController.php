@@ -94,6 +94,7 @@ class UserController extends Controller
       'zip'           =>  $request['pincode'],
       'landmark'      =>  $request['landmark'],
       'name'          =>  $request['name'],
+      'address_type'  => 'billing'
     ]);
     
     $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
@@ -346,7 +347,7 @@ class UserController extends Controller
   public function getCurrentUser(Request $request): \Illuminate\Http\JsonResponse
   {
     $user = $request->user();
-    if ($user->flag == 1) {
+    if ($user->flag == 0) {
       return response()->json($user->only(['id', 'email', 'name']), 200);
     }
     return response()->json(['message' => 'User is inactive'], 401);
