@@ -40,11 +40,11 @@ use App\Http\Controllers\api\UserController as APiUserController;
 |
 */
 
-
-Auth::routes();
 Route::get('/', function () {
     return redirect()->route('login');
 })->middleware('prevent-back-history');
+
+Auth::routes();
 
 // Route::get('/artisan/clear', function () {
 //     \Artisan::call('cache:clear');
@@ -53,7 +53,6 @@ Route::get('/', function () {
 //     \Artisan::call('config:clear');
 //     \Artisan::call('optimize:clear');
 // });
-Route::post('api/login', [APiUserController::class, 'login']);
 
 Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
