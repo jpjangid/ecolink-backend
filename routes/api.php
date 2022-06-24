@@ -117,6 +117,8 @@ Route::get('getCategories', [CategoryController::class, 'index']);
 //Route For Getting Category Using slug
 Route::post('getCategory', [CategoryController::class, 'category']);
 
+Route::get('categories/{slug}', [CategoryController::class, 'getCategoryDetails']);
+
 //Route for Global Search
 Route::post('globalSearch', [HomeController::class, 'globalSearch']);
 //Route for Filter Product
