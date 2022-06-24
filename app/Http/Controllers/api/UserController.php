@@ -338,6 +338,7 @@ class UserController extends Controller
       $user->pincode          =   $request['pincode'];
       $user->password         =   $pass;
       $user->profile_image    =   $image_name;
+      $user->landmark         =   $request['landmark'];
       $user->save();
       
       $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
