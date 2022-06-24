@@ -115,6 +115,17 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
+                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
+                            <option value="">Select</option>
+                            <option value="1" {{$user->tax_exempt == 1 ? 'selected' : ''}}>Yes</option>
+                            <option value="0" {{$user->tax_exempt == 0 ? 'selected' : ''}}>No</option>
+                        </select>
+                        @error('tax_exempt')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                     <div class="col-md-8 mt-2">
                         <label for="profile_image">Profile Image:</label>
                         <div class="custom-file">

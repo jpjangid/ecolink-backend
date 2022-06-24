@@ -88,7 +88,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="pincode"><span style="color: red;">* </span>Zip Code:</label>
                         <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Zip Code" value="{{ old('pincode') }}" />
                         @error('pincode')
@@ -111,6 +111,17 @@
                         <label for="password"><span style="color: red;">* </span>Password:</label>
                         <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
                         @error('password')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
+                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
+                            <option value="">Select</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        @error('tax_exempt')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

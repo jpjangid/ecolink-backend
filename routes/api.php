@@ -80,6 +80,7 @@ Route::middleware('auth:api')->group(function () {
     //Route For User Exempt
     Route::post('taxExempt', [TaxRateController::class, 'taxExempt']);
     Route::get('/current-user', [UserController::class, 'getCurrentUser']);
+    Route::post('uploadDocuments', [UserController::class, 'uploadDocuments']);
 });
 
 //Route for Forgot password
