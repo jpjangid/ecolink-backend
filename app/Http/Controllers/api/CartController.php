@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
-	public function getCartItems(Request $request)
-	{
+	public function getCartItems(Request $request): \Illuminate\Http\JsonResponse
+  {
 		//Get Cart Items By User id with Product Detail
     $user = $request->user();
     
@@ -85,7 +85,7 @@ class CartController extends Controller
 			]);
 		}
 
-		$carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
+		$carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty,slug')->get();
 
 		if ($carts->isNotEmpty()) {
 			foreach ($carts as $cart) {
@@ -121,7 +121,7 @@ class CartController extends Controller
 		if (!empty($cart)) {
 			$cart->delete();
 
-			$remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
+			$remainCartItems = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty,slug')->get();
 			if ($remainCartItems->isNotEmpty()) {
 				foreach ($remainCartItems as $remainCartItem) {
 					$remainCartItem->product->image = asset('storage/products/' . $remainCartItem->product->image);
