@@ -126,7 +126,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-8 mt-2">
+                    <div class="col-md-12 mt-2">
                         <label for="profile_image">Profile Image:</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
@@ -136,6 +136,29 @@
                             @enderror
                         </div>
                     </div>
+                    @if($documents->isNotEmpty())
+                    <div class="col-md-12 mt-2">
+                        <label>Upload Documents:</label>
+                        <div class="row">
+                            @foreach($documents as $document)
+                            @php $str = substr($document->file_name, 0, 15) . '...'; @endphp
+                            @if($document->file_type != 'pdf')
+                            <div class="col-md-2">
+                                <img src="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" class="img-rounded" alt="{{ $document->file_name }}" width="150" height="150">
+                                <br>
+                                <a href="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" target="_blank">{{$str}}</a>
+                            </div>
+                            @else
+                            <div class="col-md-2">
+                                <object data="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" type="application/pdf" width="150" height="150"></object>
+                                <br>
+                                <a href="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" target="_blank">{{$str}}</a>
+                            </div>
+                            @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
                     <div class="col-md-12 mt-2">
                         <button type="submit" class="btn btn-info">Update</button>
                     </div>
