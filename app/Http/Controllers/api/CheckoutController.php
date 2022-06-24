@@ -34,6 +34,8 @@ class CheckoutController extends Controller
         $coupon_discount = 0;
         $total_discount = 0;
         $product_count = 0;
+        $hazardous = 0;
+        $hazardous_amt = 0;
         if ($carts->isNotEmpty()) {
             foreach ($carts as $cart) {
                 if (!isset($cart->product->coupon_discount)) {
@@ -46,15 +48,25 @@ class CheckoutController extends Controller
                 $coupon_discount += $cart->product->coupon_discount * $cart->quantity;
                 $total_discount += $product_discount + $coupon_discount;
                 $product_count +=  $cart->quantity;
+                if($cart->product->hazardous == 1){
+                    $hazardous += 1;
+                }
             }
             $payable = $order_total - $coupon_discount;
+            if($hazardous > 0){
+                $staticvalue = DB::table('static_values')->where('name','Hazardous')->first();
+                if(!empty($staticvalue)){
+                    $hazardous_amt = $staticvalue->value;
+                    $payable = $payable + $staticvalue->value;
+                }
+            }
         }
 
         $current = date('Y-m-d H:i:s');
 
         $coupons = Coupon::select('id', 'name', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current]])->orWhere('user_id', $user->id)->get();
 
-        $data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses]);
+        $data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses,'hazardous_amt' => $hazardous_amt]);
 
         return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
     }

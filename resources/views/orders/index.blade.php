@@ -58,7 +58,7 @@
                     <th>Total Amount</th>
                     <th>Order Date</th>
                     <th>Special Requirement</th>
-                    <th>Active</th>
+                    <th>Customer Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
