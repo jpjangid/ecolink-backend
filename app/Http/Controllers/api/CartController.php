@@ -14,26 +14,19 @@ class CartController extends Controller
 	public function getCartItems(Request $request)
 	{
 		//Get Cart Items By User id with Product Detail
-		$usertoken = request()->bearerToken();
-		if(empty($usertoken)){
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-		if(empty($user)){
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-		$carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty')->get();
-
-		if ($carts->isNotEmpty()) {
-			foreach ($carts as $cart) {
-				$cart->product->image = asset('storage/products/' . $cart->product->image);
-			}
-
-			return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $carts], 200);
-		} else {
-			return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);
-		}
-	}
+    $user = $request->user();
+    
+    $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product:id,name,sale_price,image,alt,minimum_qty,slug')->get();
+    
+    if ($carts->isNotEmpty()) {
+      foreach ($carts as $cart) {
+        $cart->product->image = asset('storage/products/' . $cart->product->image);
+      }
+      return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $carts], 200);
+    } else {
+      return response()->json(['message' => 'No Product Found in Cart', 'code' => 400], 400);
+    }
+  }
 
 	public function addCartItems(Request $request)
 	{

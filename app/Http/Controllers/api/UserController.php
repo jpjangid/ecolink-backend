@@ -99,7 +99,11 @@ class UserController extends Controller
     
     $user->profile_image = asset('storage/profile_image/' . $user->profile_image);
     $user->url = url('') . '/ecolinkfrontend/home/' . $user->api_token;
-    Mail::to($request->email)->send(new VerificationMail($user));
+    try {
+      Mail::to($request->email)->send(new VerificationMail($user));
+    } catch (\Exception $e) {
+      # TODO Send to NR
+    }
     
     $data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
     
