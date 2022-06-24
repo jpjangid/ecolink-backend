@@ -291,7 +291,7 @@
                                 </div><!-- /.col -->
                                 <div class="col-sm-6">
                                     <ol class="breadcrumb float-sm-right">
-                                        <li class="breadcrumb-item"><a href="{{ url('admin/products') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
+                                        <li class="breadcrumb-item"><a href="{{ url('admin/orders') }}" class="btn btn-info btn-sm" style="float: right;">View All</a></li>
                                     </ol>
                                 </div>
                                 <!-- /.col -->
