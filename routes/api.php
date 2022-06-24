@@ -18,6 +18,8 @@ use App\Http\Controllers\api\UserAddressController;
 use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\ReturnController;
 use App\Http\Controllers\api\TaxRateController;
+use App\Http\Controllers\api\StaticValueController;
+use App\Http\Controllers\api\NoticeController;
 
 //Route for register new user
 Route::post('register', [UserController::class, 'register']);
@@ -131,3 +133,5 @@ Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
 Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
 Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
+Route::post('getStaticValue', [StaticValueController::class, 'getStaticValue']);
+Route::get('getNotice', [NoticeController::class, 'getNotice']);
