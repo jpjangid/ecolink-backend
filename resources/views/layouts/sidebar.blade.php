@@ -484,7 +484,7 @@
 				@endif
 				@endif
 				
-				@if(checkpermission('StaticValueController@index'))
+
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/staticvalues') }}" class="nav-link">
 						<i class="fas fa-solid fa-pen nav-icon"></i>
@@ -493,7 +493,7 @@
 						</p>
 					</a>
 				</li>
-				@endif
+
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

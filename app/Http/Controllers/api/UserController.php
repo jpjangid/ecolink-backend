@@ -95,11 +95,16 @@ class UserController extends Controller
 			'zip'           =>  $request['pincode'],
 			'landmark'      =>  $request['landmark'],
 			'name'          =>  $request['name'],
+			'address_type'  => 'billing'
 		]);
 
 		$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 		$user->url = url('') . '/ecolinkfrontend/home/' . $user->api_token;
-		Mail::to($request->email)->send(new VerificationMail($user));
+		try {
+			Mail::to($request->email)->send(new VerificationMail($user));
+		} catch (\Exception $e) {
+			# TODO Send to NR
+		}
 
 		$data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
 
@@ -334,6 +339,7 @@ class UserController extends Controller
 			$user->pincode          =   $request['pincode'];
 			$user->password         =   $pass;
 			$user->profile_image    =   $image_name;
+			$user->landmark         =   $request['landmark'];
 			$user->save();
 
 			$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
@@ -347,7 +353,7 @@ class UserController extends Controller
 	public function getCurrentUser(Request $request): \Illuminate\Http\JsonResponse
 	{
 		$user = $request->user();
-		if ($user->flag == 1) {
+		if ($user->flag == 0) {
 			return response()->json($user->only(['id', 'email', 'name']), 200);
 		}
 		return response()->json(['message' => 'User is inactive'], 401);
@@ -376,11 +382,11 @@ class UserController extends Controller
 			$extension = $file->getClientOriginalExtension();
 
 			$check = in_array($extension, $allowedfileExtension);
-			
+
 			if ($check) {
 				$name 	= $file->getClientOriginalName();
 				$ext 	= $file->getClientOriginalExtension();
-				Storage::putFileAs('public/documents/'.$user->id, $file, $name);
+				Storage::putFileAs('public/documents/' . $user->id, $file, $name);
 
 				//store image file into directory and db
 				UserDocument::create([
@@ -389,11 +395,11 @@ class UserController extends Controller
 					'file_name'	=> $name
 				]);
 			} else {
-				$no = $key+1;
-				return response()->json(['message' => $no.' no. file format is not valid. Acceptable file format are pdf,jpg, jpeg and png', 'code' => 422], 422);
+				$no = $key + 1;
+				return response()->json(['message' => $no . ' no. file format is not valid. Acceptable file format are pdf,jpg, jpeg and png', 'code' => 422], 422);
 			}
 		}
 
-		return response()->json(['message' => 'Documents uploaded successfully','code' => 200], 200);
+		return response()->json(['message' => 'Documents uploaded successfully', 'code' => 200], 200);
 	}
 }

@@ -42,7 +42,7 @@ class OrderController extends Controller
         if ($orders->isNotEmpty()) {
             foreach ($orders as $order) {
                 foreach ($order->items as $item) {
-                    $item->product->image = url('storage/products', $item->product->image);
+                    $item->product->image = asset('storage/products/'. $item->product->image);
                 }
             }
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $orders], 200);

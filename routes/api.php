@@ -118,6 +118,8 @@ Route::get('getCategories', [CategoryController::class, 'index']);
 //Route For Getting Category Using slug
 Route::post('getCategory', [CategoryController::class, 'category']);
 
+Route::get('categories/{slug}', [CategoryController::class, 'getCategoryDetails']);
+
 //Route for Global Search
 Route::post('globalSearch', [HomeController::class, 'globalSearch']);
 //Route for Filter Product
@@ -134,5 +136,5 @@ Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
 Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
 Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
-Route::post('getStaticValue', [StaticValueController::class, 'getStaticValue']);
+Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);
