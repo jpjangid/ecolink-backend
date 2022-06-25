@@ -9,6 +9,7 @@ use App\Models\OrderItems;
 use App\Models\UserAddress;
 use App\Models\CouponUsedBy;
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -20,29 +21,14 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id'               =>  'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
-        }
-
-        $usertoken = request()->bearerToken();
-        if (empty($usertoken)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-        if (empty($user)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
+        $user = $request->user();
 
         $orders = Order::where('user_id', $user->id)->with('items:order_id,product_id,quantity,item_status', 'items.product:id,parent_id,name,variant,regular_price,sale_price,image,alt,slug', 'items.product.category:id,name,parent_id', 'items.product.category.parent:id,name')->get();
 
         if ($orders->isNotEmpty()) {
             foreach ($orders as $order) {
                 foreach ($order->items as $item) {
-                    $item->product->image = asset('storage/products/'. $item->product->image);
+                    $item->product->image = asset('storage/products/' . $item->product->image);
                 }
             }
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $orders], 200);
@@ -54,12 +40,6 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id'               =>  'required',
-            'order_amount'          =>  'required',
-            'total_amount'          =>  'required',
-            'product_discount'      =>  'required',
-            'coupon_discount'       =>  'required',
-            'no_items'              =>  'required',
             'billing_name'          =>  'required',
             'billing_mobile'        =>  'required|digits:10',
             'billing_email'         =>  'required|email',
@@ -77,184 +57,220 @@ class OrderController extends Controller
             'shipping_country'      =>  'required',
             'shipping_zip'          =>  'required',
             'payment_via'           =>  'required',
-            'shippment_via'         =>  'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $usertoken = request()->bearerToken();
-        if (empty($usertoken)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-        if (empty($user)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
+        $user = $request->user();
 
-        $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
+        DB::beginTransaction();
+        try {
+            $cartItems = Cart::select('id','user_id','product_id','quantity','lift_gate')->where('user_id', $user->id)->with('product:id,wp_id,discount_type,discount,regular_price,sale_price,weight,hazardous')->get();
+            if($cartItems->isEmpty()){
+                return response()->json(['message' => 'Cart is empty. Please add one or more products for purchase.', 'code' => 400], 400);
+            }
+            
+            $orderNumber = $this->order_no();
 
-        $orderNumber = $this->order_no();
-
-        if (isset($request->addressSelect) && $request->addressSelect == 1) {
-            $UserAddress = new UserAddress;
-            $UserAddress->user_id   = $user->id;
-            $UserAddress->name      = $request->billing_name;
-            $UserAddress->mobile    = $request->billing_mobile;
-            $UserAddress->address   = $request->billing_address;
-            $UserAddress->zip       = $request->billing_zip;
-            $UserAddress->landmark  = $request->billing_landmark;
-            $UserAddress->state     = $request->billing_state;
-            $UserAddress->city      = $request->billing_city;
-            $UserAddress->save();
-
-            if ($request->sameAsShip == 0) {
+            if ($request->filled($request->addressSelect) && $request->addressSelect == 1) {
                 $UserAddress = new UserAddress;
                 $UserAddress->user_id   = $user->id;
-                $UserAddress->name      = $request->shipping_name;
-                $UserAddress->mobile    = $request->shipping_mobile;
-                $UserAddress->address   = $request->shipping_address;
-                $UserAddress->zip       = $request->shipping_zip;
-                $UserAddress->landmark  = $request->shipping_landmark;
-                $UserAddress->state     = $request->shipping_state;
-                $UserAddress->city      = $request->shipping_city;
+                $UserAddress->name      = $request->billing_name;
+                $UserAddress->mobile    = $request->billing_mobile;
+                $UserAddress->address   = $request->billing_address;
+                $UserAddress->zip       = $request->billing_zip;
+                $UserAddress->landmark  = $request->billing_landmark;
+                $UserAddress->state     = $request->billing_state;
+                $UserAddress->city      = $request->billing_city;
                 $UserAddress->save();
-            }
-        }
 
-        $coupon = '';
-        if (isset($request->coupon_code) && $request->coupon_discount != 0) {
-            $discount = $request->coupon_discount + (isset($request->product_discount) ? $request->product_discount : 0);
-            $coupon = DB::table('coupons')->where('code', $request->coupon_code)->first();
-            $coupon_id = $coupon->id;
-        } else {
-            $discount = isset($request->product_discount) ? $request->product_discount : 0;
-        }
-
-        $order = Order::create([
-            'order_no'                  =>  $orderNumber,
-            'user_id'                   =>  $user->id,
-            'order_amount'              =>  $request->order_amount,
-            'discount_applied'          =>  $discount,
-            'total_amount'              =>  $request->total_amount,
-            'no_items'                  =>  $request->no_items,
-            'billing_name'              =>  $request->billing_name,
-            'billing_mobile'            =>  $request->billing_mobile,
-            'billing_email'             =>  $request->billing_email,
-            'billing_address'           =>  $request->billing_address,
-            'billing_country'           =>  $request->billing_country,
-            'billing_state'             =>  $request->billing_state,
-            'billing_city'              =>  $request->billing_city,
-            'billing_zip'               =>  $request->billing_zip,
-            'billing_landmark'          =>  $request->billing_landmark,
-            'shipping_name'             =>  $request->shipping_name,
-            'shipping_mobile'           =>  $request->shipping_mobile,
-            'shipping_email'            =>  $request->shipping_email,
-            'shipping_address'          =>  $request->shipping_address,
-            'shipping_country'          =>  $request->shipping_country,
-            'shipping_state'            =>  $request->shipping_state,
-            'shipping_city'             =>  $request->shipping_city,
-            'shipping_zip'              =>  $request->shipping_zip,
-            'shipping_landmark'         =>  $request->shipping_landmark,
-            'order_status'              =>  'pending',
-            'payment_via'               =>  $request->payment_via,
-            'payment_currency'          =>  'dollar',
-            'payment_status'            =>  'pending',
-            'shippment_via'             =>  $request->shippment_via,
-            'shippment_status'          =>  'pending',
-            'coupon_id'                 =>  isset($coupon_id) ? $coupon_id : '',
-            'coupon_discount'           =>  $request->coupon_discount,
-            'order_comments'            =>  $request->order_comments,
-            'payment_amount'            =>  $request->total_amount,
-        ]);
-
-        foreach ($cartItems as $item) {
-            $product = DB::table('products')->find($item->product_id);
-            OrderItems::create([
-                'order_id'              =>  $order->id,
-                'product_id'            =>  $item->product_id,
-                'quantity'              =>  $item->quantity,
-                'sale_price'            =>  $item->sale_price,
-            ]);
-        }
-
-        if (!empty($coupon) && $request->coupon_discount != 0) {
-            if ($coupon->type == 'merchandise' || $coupon->type == 'global' || $coupon->type == 'personal_code' || $coupon->type == 'cart_value_discount') {
-                CouponUsedBy::create([
-                    'coupon_id'         =>  $coupon->id,
-                    'user_id'           =>  $user->id,
-                    'order_id'          =>  $order->id,
-                    'amount'            =>  $request->coupon_discount,
-                    'applied_times'     =>  1,
-                ]);
-
-                $couponUsed = CouponUsedBy::where('coupon_id', $coupon->id)->get();
-
-                if ($coupon->coupon_limit == count($couponUsed)) {
-                    $coupon->status = 1;
-                    $coupon->update();
+                if ($request->sameAsShip == 0) {
+                    $UserAddress = new UserAddress;
+                    $UserAddress->user_id   = $user->id;
+                    $UserAddress->name      = $request->shipping_name;
+                    $UserAddress->mobile    = $request->shipping_mobile;
+                    $UserAddress->address   = $request->shipping_address;
+                    $UserAddress->zip       = $request->shipping_zip;
+                    $UserAddress->landmark  = $request->shipping_landmark;
+                    $UserAddress->state     = $request->shipping_state;
+                    $UserAddress->city      = $request->shipping_city;
+                    $UserAddress->save();
                 }
+            }
+
+            $coupon = '';
+            $coupon_id = '';
+            $current = date('Y-m-d H:i:s');
+            if ($request->filled($request->coupon_code)) {
+                $coupon = Coupon::where([['code', $request->coupon_code], ['offer_start', '<=', $current], ['offer_end', '>=', $current], ['flag', 0], ['status', 0]])->first();
+                if ($coupon != null) {
+                    $coupon_id = $coupon->id;
+                } else {
+                    return response()->json(['message' => 'Coupon code is not valid', 'code' => 400], 400);
+                }
+            }
+
+            $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+            $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
+
+            $lift_gate_amount = $lift_gate->value ?? 0;
+            $hazardous_amount = $hazardous->value ?? 0;
+
+            $order_total_amt = 0;
+            $payable_total_amt = 0;
+            $product_discount = 0;
+            $coupon_discount = 0;
+            $discount = 0;
+            $lift_gate_amt = 0;
+            $item_lift_gate_amt = 0;
+            $total_weight = 0;
+            $no_items = 0;
+            $hazardous_qty = 1;
+            $hazardous_amt = 0;
+            $item_hazardous_amt = 0;
+
+            $order_items = array();
+
+            foreach ($cartItems as $cartItem) {
+                $order_total_amt += $cartItem->product->regular_price * $cartItem->quantity;
+
+                $payable_total_amt += $cartItem->product->sale_price * $cartItem->quantity;
+
+                $product_discount += ($cartItem->product->regular_price - $cartItem->product->sale_price) * $cartItem->quantity;
+
+                $total_weight += $cartItem->product->weight;
+
+                $no_items += $cartItem->quantity;
+
+                if ($cartItem->lift_gate == 1) {
+                    $lift_gate_amt += $lift_gate_amount * $cartItem->quantity;
+                    $item_lift_gate_amt = $lift_gate_amount * $cartItem->quantity;
+                }
+
+                if ($coupon != null) {
+                    if ($coupon->disc_type == 'percent') {
+                        $dis_amt = ($cartItem->product->sale_price * $coupon->discount) / 100;
+                        $coupon_discount += $dis_amt * $cartItem->quantity;
+                    }
+                }
+
+                if($cartItem->product->hazardous == 1){
+                    $hazardous_amt += $hazardous_qty * $hazardous_amount;
+                    $item_hazardous_amt += $hazardous_qty * $hazardous_amount;
+                }
+
+                $item = ['product_id' => $cartItem->product->id, 'quantity' => $cartItem->quantity, 'sale_price' => $cartItem->product->sale_price, 'lift_gate_amt' => $item_lift_gate_amt, 'hazardous_amt' => $item_hazardous_amt];
+
+                array_push($order_items, $item);
+            }
+
+            $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt;
+            $discount = $product_discount + $coupon_discount;
+
+            $shippment_via = '';
+            if ($total_weight > 71) {
+                $shippment_via = 'saia';
             } else {
+                $shippment_via = 'fedex';
+            }
+
+            $order = Order::create([
+                'order_no'                  =>  $orderNumber,
+                'user_id'                   =>  $user->id,
+                'order_amount'              =>  $order_total_amt,
+                'discount_applied'          =>  $discount,
+                'total_amount'              =>  $payable_total_amt,
+                'lift_gate_amt'             =>  $lift_gate_amt,
+                'no_items'                  =>  $no_items,
+                'billing_name'              =>  $request->billing_name,
+                'billing_mobile'            =>  $request->billing_mobile,
+                'billing_email'             =>  $request->billing_email,
+                'billing_address'           =>  $request->billing_address,
+                'billing_country'           =>  $request->billing_country,
+                'billing_state'             =>  $request->billing_state,
+                'billing_city'              =>  $request->billing_city,
+                'billing_zip'               =>  $request->billing_zip,
+                'billing_landmark'          =>  $request->billing_landmark,
+                'shipping_name'             =>  $request->shipping_name,
+                'shipping_mobile'           =>  $request->shipping_mobile,
+                'shipping_email'            =>  $request->shipping_email,
+                'shipping_address'          =>  $request->shipping_address,
+                'shipping_country'          =>  $request->shipping_country,
+                'shipping_state'            =>  $request->shipping_state,
+                'shipping_city'             =>  $request->shipping_city,
+                'shipping_zip'              =>  $request->shipping_zip,
+                'shipping_landmark'         =>  $request->shipping_landmark,
+                'order_status'              =>  'pending',
+                'payment_via'               =>  $request->payment_via,
+                'payment_currency'          =>  'dollar',
+                'payment_status'            =>  'pending',
+                'shippment_via'             =>  $shippment_via,
+                'shippment_status'          =>  'pending',
+                'coupon_id'                 =>  $coupon_id ?? '',
+                'coupon_discount'           =>  $coupon_discount,
+                'order_comments'            =>  $request->order_comments,
+                'payment_amount'            =>  $payable_total_amt,
+            ]);
+
+            foreach ($order_items as $item) {
+                OrderItems::create([
+                    'order_id'              =>  $order->id,
+                    'product_id'            =>  $item['product_id'],
+                    'quantity'              =>  $item['quantity'],
+                    'sale_price'            =>  $item['sale_price'],
+                    'lift_gate_amt'         =>  $item['lift_gate_amt'],
+                    'hazardous_amt'         =>  $item['hazardous_amt'],
+                ]);
+            }
+
+            if (!empty($coupon)) {
                 $coupon->times_applied  = $coupon->times_applied + 1;
                 if ($coupon->coupon_limit == $coupon->times_applied + 1) {
                     $coupon->status = 1;
+                    $coupon->flag = 1;
                 }
                 $coupon->update();
             }
-        }
 
-        /*
-        if ($order->shippment_via == 'saia') {
-            $response = $this->shipViaSaia($order->id);
-        } else {
-            $response = $this->shipViaFedex($order->id);
-        }
-
-        $qboresponse = $this->quickBookInvoice($order->user_id);
-
-        $sosresponse = $this->sosItemUpdate();
-        */
-
-        if (!empty($order)) {
-            foreach ($cartItems as $item) {
-                $item->delete();
+            if (!empty($order)) {
+                foreach ($cartItems as $item) {
+                    $item->delete();
+                }
             }
 
-            // $recent_order = Order::where('id', $order->id)->with('items.product.medias', 'user')->first();
-            // $user = DB::table('users')->find($recent_order->user_id);
-            // $image = array();
-            // foreach ($recent_order->items as $item) {
-            //     $media = DB::table('product_media')->where(['product_id' => $item->product->id, 'media_type' => 'image'])->orderby('sequence', 'asc')->first();
-            //     if (!empty($media)) {
-            //         array_push($image, $media->media);
-            //     }
+            // if ($order->shippment_via == 'saia') {
+            //     $response = $this->shipViaSaia($order->id);
+            // } else {
+            //     $response = $this->shipViaFedex($order->id);
             // }
-            // $status = 'ORDER PLACED!!';
+
+            // $qboresponse = $this->quickBookInvoice($order->user_id);
+
+            // $sosresponse = $this->sosItemUpdate();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Order Placed Successfully', 'code' => 200, 'data' => $order], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
-        // Notification::create(['title' => "New Order",'message' => 'New Order has beeen placed by '.auth()->user()->email.' with order no: '.$order->order_no]);
-        return response()->json(['message' => 'Order Placed Successfully', 'code' => 200, 'data' => $order], 200);
     }
 
     public function cancelOrder(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id'        =>  'required',
-            'user_id'   =>  'required'
+            'id'        =>  'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
         }
 
-        $usertoken = request()->bearerToken();
-        if (empty($usertoken)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
-        $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-        if (empty($user)) {
-            return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-        }
+        $user = $request->user();
 
         $order = Order::where(['id' => $request->id, 'user_id' => $user->id])->first();
 
