@@ -23,7 +23,7 @@ class CategoryController extends Controller
     }
   }
   
-  public function category(Request $request)
+  public function category(Request $request): \Illuminate\Http\JsonResponse
   {
     /* Getting Category by Slug */
     $validator = Validator::make($request->all(), [
@@ -43,7 +43,7 @@ class CategoryController extends Controller
       }
     }
     
-    $category = Category::where(['slug' => $request->slug, 'flag' => 0, 'parent_id' => null, 'status' => 1])->with(['subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty', 'products.wishlist' => function ($query) use ($user_id) {
+    $category = Category::where(['slug' => $request->slug, 'flag' => 0, 'parent_id' => null, 'status' => 1])->with(['subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty,hazardous', 'products.wishlist' => function ($query) use ($user_id) {
       $query->where('user_id', $user_id);
     }, 'subcategory.products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty', 'subcategory.products.wishlist' => function ($query) use ($user_id) {
       $query->where('user_id', $user_id);
@@ -93,7 +93,7 @@ class CategoryController extends Controller
     }
   }
   
-  public function getCategoryDetails(Request $request, $slug)
+  public function getCategoryDetails(Request $request, $slug): \Illuminate\Http\JsonResponse
   {
     $category = Category::where('slug', $request->slug)->with(['subcategory', 'products'])->get();
     return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $category]);
