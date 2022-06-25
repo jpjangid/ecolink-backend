@@ -123,6 +123,7 @@ class OrderController extends Controller
             $product_discount = 0;
             $coupon_discount = 0;
             $discount = 0;
+            $lift_gate_qty = 1;
             $lift_gate_amt = 0;
             $item_lift_gate_amt = 0;
             $total_weight = 0;
@@ -145,8 +146,8 @@ class OrderController extends Controller
                 $no_items += $cartItem->quantity;
 
                 if ($cartItem->lift_gate == 1) {
-                    $lift_gate_amt += $lift_gate_amount * $cartItem->quantity;
-                    $item_lift_gate_amt = $lift_gate_amount * $cartItem->quantity;
+                    $lift_gate_amt += $lift_gate_amount * $lift_gate_qty;
+                    $item_lift_gate_amt = $lift_gate_amount * $lift_gate_qty;
                 }
 
                 if ($coupon != null) {
