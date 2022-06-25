@@ -29,7 +29,7 @@ class CartController extends Controller
     }
   }
   
-  public function addCartItems(Request $request)
+  public function addCartItems(Request $request): \Illuminate\Http\JsonResponse
   {
     /* Storing Cart Items */
     $validator = Validator::make($request->all(), [
@@ -43,14 +43,7 @@ class CartController extends Controller
       return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
     }
     
-    $usertoken = request()->bearerToken();
-    if (empty($usertoken)) {
-      return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-    }
-    $user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-    if (empty($user)) {
-      return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-    }
+    $user = $request->user();
     
     $product = Product::find($request->product_id);
     if ($product == null) {
@@ -61,12 +54,7 @@ class CartController extends Controller
     
     if (!empty($cart)) {
       if ($request->action == 'add') {
-        // if (($cart->quantity + $request->quantity) > $product->stock) {
-        // 	return response()->json(['message' => 'Quantity is out of stock. Only ' . $product->stock . 'product remains in stock'], 400);
-        // }
-        Cart::where('id', $cart->id)->update([
-          'quantity' => $cart->quantity + $request->quantity,
-        ]);
+        Cart::where('id', $cart->id)->update(['quantity' => $cart->quantity + $request->quantity, 'lift_gate' => $request->lift_gate]);
       } else {
         if (($cart->quantity - $request->quantity) < $product->minimum_qty) {
           return response()->json(['message' => 'Invalid quantity'], 400);
@@ -79,11 +67,7 @@ class CartController extends Controller
       if ($request->quantity > $product->stock) {
         return response()->json(['message' => 'Quantity is out of stock. Only ' . $product->stock . 'product remains in stock'], 400);
       }
-      Cart::create([
-        'user_id' => $user->id,
-        'product_id' => $request->product_id,
-        'quantity' => $request->quantity,
-      ]);
+      Cart::create(['user_id' => $user->id, 'product_id' => $request->product_id, 'quantity' => $request->quantity]);
     }
     
     $carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with(['product:id,name,sale_price,image,alt,minimum_qty,slug,parent_id', 'product.category:id,slug'])->get();
