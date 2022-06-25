@@ -14,11 +14,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
 use QuickBooksOnline\API\DataService\DataService;
+use App\Traits\ShippingRate;
 
 class OrderController extends Controller
 {
+    use ShippingRate;
     public function index(Request $request)
     {
         $user = $request->user();
@@ -103,7 +106,7 @@ class OrderController extends Controller
             $coupon = '';
             $coupon_id = '';
             $current = date('Y-m-d H:i:s');
-            if ($request->filled($request->coupon_code)) {
+            if (isset($request->coupon_code) && !empty($request->coupon_code)) {
                 $coupon = Coupon::where([['code', $request->coupon_code], ['offer_start', '<=', $current], ['offer_end', '>=', $current], ['flag', 0], ['status', 0]])->first();
                 if ($coupon != null) {
                     $coupon_id = $coupon->id;
@@ -131,6 +134,7 @@ class OrderController extends Controller
             $hazardous_qty = 1;
             $hazardous_amt = 0;
             $item_hazardous_amt = 0;
+            $product_id = array();
 
             $order_items = array();
 
@@ -162,20 +166,27 @@ class OrderController extends Controller
                     $item_hazardous_amt += $hazardous_qty * $hazardous_amount;
                 }
 
+                array_push($product_id, $cartItem->product->id);
+
                 $item = ['product_id' => $cartItem->product->id, 'quantity' => $cartItem->quantity, 'sale_price' => $cartItem->product->sale_price, 'lift_gate_amt' => $item_lift_gate_amt, 'hazardous_amt' => $item_hazardous_amt];
 
                 array_push($order_items, $item);
             }
 
-            $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt;
-            $discount = $product_discount + $coupon_discount;
+            $newRequest = new Request(['city' => $request->shipping_city,'state' => $request->shipping_state,'zip' => $request->shipping_zip,'country' => $request->shipping_country, 'product_id' => $product_id]);
 
             $shippment_via = '';
+            $shipping_charge = 0;
             if ($total_weight > 71) {
                 $shippment_via = 'saia';
+                $shipping_charge = $this->getSaiaShipRate($newRequest);
             } else {
                 $shippment_via = 'fedex';
+                $shipping_charge = $this->getFedexShipRate($newRequest);
             }
+
+            $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt + $shipping_charge;
+            $discount = $product_discount + $coupon_discount;
 
             $order = Order::create([
                 'order_no'                  =>  $orderNumber,
@@ -213,6 +224,7 @@ class OrderController extends Controller
                 'coupon_discount'           =>  $coupon_discount,
                 'order_comments'            =>  $request->order_comments,
                 'payment_amount'            =>  $payable_total_amt,
+                'shippment_rate'            =>  $shipping_charge
             ]);
 
             foreach ($order_items as $item) {
