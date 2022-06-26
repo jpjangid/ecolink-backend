@@ -103,14 +103,20 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="min_order_amount">Min Order Amount</label>
-                            <input type="number" step=".01" class="form-control form-control-solid" name="min_order_amount" id="min_order_amount" placeholder="Please Enter Min Order Amount" value="{{ old('min_order_amount') }}">
+                            <input type="number" step=".01" class="form-control form-control-solid @error('min_order_amount') is-invalid @enderror" name="min_order_amount" id="min_order_amount" placeholder="Please Enter Min Order Amount" value="{{ old('min_order_amount') }}">
+                            @error('min_order_amount')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="form-label" for="max_order_amount">Max Order Amount</label>
-                            <input type="number" step=".01" class="form-control form-control-solid" name="max_order_amount" id="max_order_amount" placeholder="Please Enter Max Order Amount" value="{{ old('max_order_amount') }}">
+                            <input type="number" step=".01" class="form-control form-control-solid @error('max_order_amount') is-invalid @enderror" name="max_order_amount" id="max_order_amount" placeholder="Please Enter Max Order Amount" value="{{ old('max_order_amount') }}">
+                            @error('max_order_amount')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 

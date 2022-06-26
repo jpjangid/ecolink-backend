@@ -94,16 +94,23 @@ class CouponController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'          =>  'required|unique:coupons,name',
-            'code'          =>  'required',
-            'show_in_front' =>  'required',
-            'offer_start'   =>  'date',
-            'offer_end'     =>  'date|after:offer_start',
+            'name'              =>  'required|unique:coupons,name',
+            'code'              =>  'required',
+            'show_in_front'     =>  'required',
+            'offer_start'       =>  'date',
+            'offer_end'         =>  'date|after:offer_start',
+            'min_order_amount'  =>  'nullable|numeric|min:1|max:100000',
+            'max_order_amount'  =>  'nullable|numeric|min:1|max:100000|gt:min_order_amount'
         ], [
             'name.required'             =>  'Coupan Name is required',
             'code.required'             =>  'Coupon Code is required',
             'show_in_front.required'    =>  'This Field is required',
-            'offer_end.after'           =>  'Offer End should be greater than Offer Start'
+            'offer_end.after'           =>  'Offer End should be greater than Offer Start',
+            'max_order_amount.gt'       =>  'Max Order Amount should be greater than Min Order Amount',
+            'min_order_amount.min'      =>  'Min Order Amount should be greater than 0',
+            'max_order_amount.min'      =>  'Max Order Amount should be greater than 0',
+            'min_order_amount.max'      =>  'Min Order Amount should be less than or equal to 100,000',
+            'max_order_amount.max'      =>  'Max Order Amount should be less than or equal to 100,000',
         ]);
 
         // $days = implode(",", $request->days);
@@ -158,16 +165,23 @@ class CouponController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'          =>  'required|unique:coupons,name,' . $id,
-            'code'          =>  'required',
-            'show_in_front' =>  'required',
-            'offer_start'   =>  'date',
-            'offer_end'     =>  'date|after:offer_start',
+            'name'              =>  'required|unique:coupons,name,' . $id,
+            'code'              =>  'required',
+            'show_in_front'     =>  'required',
+            'offer_start'       =>  'date',
+            'offer_end'         =>  'date|after:offer_start',
+            'min_order_amount'  =>  'nullable|numeric|min:1|max:100000',
+            'max_order_amount'  =>  'nullable|numeric|min:1|max:100000|gt:min_order_amount'
         ], [
-            'name.required'             =>  'Name is required',
+            'name.required'             =>  'Coupan Name is required',
             'code.required'             =>  'Coupon Code is required',
             'show_in_front.required'    =>  'This Field is required',
-            'offer_end.after'           =>  'Offer End should be greater than Offer Start'
+            'offer_end.after'           =>  'Offer End should be greater than Offer Start',
+            'max_order_amount.gt'       =>  'Max Order Amount should be greater than Min Order Amount',
+            'min_order_amount.min'      =>  'Min Order Amount should be greater than 0',
+            'max_order_amount.min'      =>  'Max Order Amount should be greater than 0',
+            'min_order_amount.max'      =>  'Min Order Amount should be less than or equal to 100,000',
+            'max_order_amount.max'      =>  'Max Order Amount should be less than or equal to 100,000',
         ]);
 
         /* Fetching Blog Data using Id */
