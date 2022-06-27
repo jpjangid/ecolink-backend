@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="email"><span style="color: red;">* </span>Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ $user->email }}" />
+                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ $user->email }}" readonly/>
                         @error('email')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
