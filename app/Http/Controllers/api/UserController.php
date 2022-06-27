@@ -126,7 +126,7 @@ class UserController extends Controller
 
 		if (!empty($user)) {
 			$user->email_verified = 1;
-			$user->flag = 0;
+      $user->flag = $user->tax_exempt == 1 ? 1 : 0;
 			$user->update();
 
 			return response()->json(['message' => 'User Account verified successfully', 'code' => 200, 'data' => $user], 200);
