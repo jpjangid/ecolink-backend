@@ -136,5 +136,5 @@ Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
 Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
 Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
-Route::post('getStaticValue', [StaticValueController::class, 'getStaticValue']);
+Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);

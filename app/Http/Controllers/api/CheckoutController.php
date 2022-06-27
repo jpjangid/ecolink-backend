@@ -13,18 +13,12 @@ use App\Traits\ShippingRate;
 class CheckoutController extends Controller
 {
 	use ShippingRate;
+ 
 	public function index(Request $request)
 	{
-		$usertoken = request()->bearerToken();
-		if (empty($usertoken)) {
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-		if (empty($user)) {
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
+		$user = $request->user();
 
-		$carts = Cart::select('id', 'user_id', 'product_id', 'quantity')->where('user_id', $user->id)->with('product')->get();
+		$carts = Cart::select('id', 'user_id', 'product_id', 'quantity', 'lift_gate')->where('user_id', $user->id)->with('product')->get();
 
 		$user = DB::table('users')->select('id', 'name', 'email', 'address', 'city', 'state', 'country', 'pincode', 'mobile')->find($user->id);
 
@@ -59,7 +53,7 @@ class CheckoutController extends Controller
 				$staticvalue = DB::table('static_values')->where('name', 'Hazardous')->first();
 				if (!empty($staticvalue)) {
 					$hazardous_amt = $staticvalue->value;
-					$payable = $payable + $staticvalue->value;
+					#$payable = $payable + $staticvalue->value;
 				}
 			}
 		}
@@ -73,14 +67,14 @@ class CheckoutController extends Controller
 		return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
 	}
 
-	public function getFedexShippingRates(Request $request)
-	{
+	public function getFedexShippingRates(Request $request): \Illuminate\Http\JsonResponse
+  {
 		$rate = $this->getFedexShipRate($request);
 		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 
-	public function getSaiaShippingRates(Request $request)
-	{
+	public function getSaiaShippingRates(Request $request): \Illuminate\Http\JsonResponse
+  {
 		$rate = $this->getSaiaShipRate($request);
 		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
