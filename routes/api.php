@@ -80,6 +80,7 @@ Route::middleware('auth:api')->group(function () {
     //Route For User Exempt
     Route::post('taxExempt', [TaxRateController::class, 'taxExempt']);
     Route::get('/current-user', [UserController::class, 'getCurrentUser']);
+    Route::post('uploadDocuments', [UserController::class, 'uploadDocuments']);
 });
 
 //Route for Forgot password
@@ -135,5 +136,5 @@ Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
 Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
 Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
-Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
+Route::post('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);

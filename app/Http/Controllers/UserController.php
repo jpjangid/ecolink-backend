@@ -23,7 +23,7 @@ class UserController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
-                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->whereIn('flag', $active)->orderby('created_at','desc')->get();
+                $allusers = DB::table('users')->select('id', 'name', 'email', 'address', 'mobile', 'city', 'state', 'pincode', 'flag')->whereIn('flag', $active)->orderby('created_at', 'desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $users = new Collection;
@@ -195,7 +195,8 @@ class UserController extends Controller
             $user = User::find($id);
             $roles = Role::all();
             $locations = Location::select('state')->distinct()->orderby('state')->get();
-            return view('users.edit', compact('user', 'locations', 'id', 'roles'));
+            $documents = DB::table('user_documents')->where(['user_id' => $id, 'is_deleted' => 0])->get();
+            return view('users.edit', compact('user', 'locations', 'id', 'roles', 'documents'));
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }
@@ -291,7 +292,7 @@ class UserController extends Controller
         /* Updating status of selected entry */
         $user = User::find($request->user_id);
         $user->flag   = $request->flag == 1 ? 0 : 1;
-        if($request->flag == 0){
+        if ($request->flag == 0) {
             $user->api_token = '';
             $user->remember_token = '';
         }
