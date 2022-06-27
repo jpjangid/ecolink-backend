@@ -132,7 +132,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label" for="discount">Product Discount</label>
-                            <input type="number" step=".01" class="form-control" name="discount" id="discount" min="1" oninput="validity.valid||(value='');" placeholder="Please Enter Product Discount" value="{{ $product->discount }}">
+                            <input type="number" step=".01" class="form-control" name="discount" id="discount" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Product Discount" value="{{ $product->discount }}">
                         </div>
                     </div>
 
