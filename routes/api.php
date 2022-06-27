@@ -131,7 +131,7 @@ Route::post('get-fedex-rates', [CheckoutController::class, 'getFedexShippingRate
 Route::post('get-saia-rates', [CheckoutController::class, 'getSaiaShippingRates']);
 
 //Route For Getting Tax Using zip
-Route::post('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);
+Route::get('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);
 Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
 Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
