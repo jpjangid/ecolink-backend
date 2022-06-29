@@ -166,14 +166,20 @@ class OrderController extends Controller
             
             $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $product_id]);
             
-            $shippment_via = '';
+            $shipment_via = 0;
             $shipping_charge = 0;
             if ($total_weight >= 71) {
-                $shippment_via = 'saia';
+                $shipment_via = 'saia';
                 $shipping_charge = $this->getSaiaShipRate($newRequest);
             } else {
-                $shippment_via = 'fedex';
+                $shipment_via = 'fedex';
                 $shipping_charge = $this->getFedexShipRate($newRequest);
+            }
+    
+            $taxAmount = 0;
+            $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
+            if ($tax != null) {
+                $taxAmount = $tax->rate;
             }
             
             $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt + $shipping_charge;
@@ -186,6 +192,8 @@ class OrderController extends Controller
                 'discount_applied' => $discount,
                 'total_amount' => $payable_total_amt,
                 'lift_gate_amt' => $lift_gate_amt,
+                'tax_amount' => $taxAmount,
+                'hazardous_amt' => $hazardous_amt,
                 'no_items' => $no_items,
                 'billing_name' => $request->billing_name,
                 'billing_mobile' => $request->billing_mobile,
@@ -209,7 +217,7 @@ class OrderController extends Controller
                 'payment_via' => $request->payment_via,
                 'payment_currency' => 'dollar',
                 'payment_status' => 'pending',
-                'shippment_via' => $shippment_via,
+                'shippment_via' => $shipment_via,
                 'shippment_status' => 'pending',
                 'coupon_id' => $coupon_id ?? '',
                 'coupon_discount' => $coupon_discount,
