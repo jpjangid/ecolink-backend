@@ -361,33 +361,21 @@ class UserController extends Controller
 
 	public function uploadDocuments(Request $request)
 	{
-		$usertoken = request()->bearerToken();
-		if (empty($usertoken)) {
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-		if (empty($user)) {
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-
+		$user = $request->user();
 		if (!$request->hasFile('files')) {
 			return response()->json(['message' => 'No document found.', 'code' => 400], 400);
 		}
 
-		$allowedfileExtension = ['pdf', 'jpg', 'png', 'jpeg'];
+		$allowedFileExtensions = ['pdf', 'jpg', 'png', 'jpeg'];
 		$files = $request->file('files');
 
 		foreach ($files as $key => $file) {
-
 			$extension = $file->getClientOriginalExtension();
-
-			$check = in_array($extension, $allowedfileExtension);
-
+			$check = in_array($extension, $allowedFileExtensions);
 			if ($check) {
 				$name 	= $file->getClientOriginalName();
 				$ext 	= $file->getClientOriginalExtension();
 				Storage::putFileAs('public/documents/' . $user->id, $file, $name);
-
 				//store image file into directory and db
 				UserDocument::create([
 					'user_id' 	=> $user->id,
@@ -399,7 +387,6 @@ class UserController extends Controller
 				return response()->json(['message' => $no . ' no. file format is not valid. Acceptable file format are pdf,jpg, jpeg and png', 'code' => 422], 422);
 			}
 		}
-
 		return response()->json(['message' => 'Documents uploaded successfully', 'code' => 200], 200);
 	}
 }
