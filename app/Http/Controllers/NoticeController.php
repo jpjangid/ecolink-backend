@@ -46,7 +46,11 @@ class NoticeController extends Controller
     {
         $request->validate([
             'title'         =>  'required',
+            'start_date'    =>  'date',
+            'end_date'      =>  'date|after:start_date',
             'status'        =>  'required'
+        ],[
+            'end_date.after' => 'Notice End Date Should be after Notice Start date'
         ]);
 
         $notice = Notice::find($id);
@@ -62,12 +66,14 @@ class NoticeController extends Controller
         }
 
         $notice->update([
-            'title'     =>  $request->title,
-            'message'   =>  $request->message,
-            'image'     =>  $image,
-            'alt'       =>  $request->alt,
-            'url'       =>  $request->url,
-            'status'    =>  $request->status,
+            'title'      =>  $request->title,
+            'message'    =>  $request->message,
+            'image'      =>  $image,
+            'alt'        =>  $request->alt,
+            'url'        =>  $request->url,
+            'start_date' =>  $request->start_date,
+            'end_date'   =>  $request->end_date,
+            'status'     =>  $request->status,
         ]);
 
         /* After successfull update of data redirecting to index page with message */
