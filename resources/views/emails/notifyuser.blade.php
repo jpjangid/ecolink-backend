@@ -13,13 +13,9 @@
         </div>
         <div style="padding:0 15px;">
             <div style="padding:35px 20px;text-align:center">
-                <p style="font-size:24px;font-weight:normal;margin:0;text-align:left;">Dear <?php echo $user->name ?> </p>
-                <p style="font-size:18px;font-weight:normal;margin:0;text-align:left; padding-left:0px;">Your are receiving this email because we received a tax exempt request for your account. </p>
-            </div>
-            <div style="text-align:center;margin-top:10px;">
-                @component('mail::button', ['url' => $user->url])
-                Login
-                @endcomponent
+                <p style="font-size:24px;font-weight:normal;margin:0;text-align:left;">Hello <?php echo $user->name ?> </p>
+                <p style="font-size:18px;font-weight:normal;margin:0;text-align:left; padding-left:0px;">Your request for tax exemption is approved. You can now shop on Ecolink. </p>
+                <p style="font-size:18px;font-weight:normal;margin:0;text-align:left; padding-left:0px;">Thanks, </p>
             </div>
         </div>
         <div style="padding:0 15px;">
