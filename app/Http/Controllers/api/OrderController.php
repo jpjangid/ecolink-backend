@@ -30,11 +30,6 @@ class OrderController extends Controller
         $orders = Order::where('user_id', $user->id)->with('items:order_id,product_id,quantity,item_status', 'items.product:id,parent_id,name,variant,regular_price,sale_price,image,alt,slug', 'items.product.category:id,name,parent_id', 'items.product.category.parent:id,name')->get();
         
         if ($orders->isNotEmpty()) {
-            foreach ($orders as $order) {
-                foreach ($order->items as $item) {
-                    $item->product->image = asset('storage/products/' . $item->product->image);
-                }
-            }
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $orders], 200);
         } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);

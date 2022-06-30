@@ -31,6 +31,8 @@ class UserController extends Controller
 			'state'         =>  'required',
 			'city'          =>  'required',
 			'pincode'       =>  'required',
+			'files' 		=>  'required_if:tax_exempt,==,1',
+			'files.*'		=> 	'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
 		], [
 			'name.required'         =>  'Please Enter Name',
 			'email.required'        =>  'Please Enter Email',
@@ -41,77 +43,104 @@ class UserController extends Controller
 			'pincode.required'      =>  'Please Enter Zip Code',
 			'mobile.numeric'        =>  'The Mobile No. must be numeric',
 			'password.required'     =>  'Please Enter Password',
+			'files.required_if'     =>  'Please Select Files',
+			'files.*.mimes' 		=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+			'files.*.max' 			=> 	'Sorry! Maximum allowed size for an file is 10MB',
 		]);
 
 		if ($validator->fails()) {
 			return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
 		}
 
-		/* Storing Featured Image on local disk */
-		$image_name = "";
-		if ($request->hasFile('profile_image')) {
-			$request->validate([
-				'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-			]);
-			if ($request->hasFile('profile_image')) {
-				$file = $request->file('profile_image');
-				$image_name = $file->getClientOriginalName();
-				Storage::putFileAs('public/profile_image/', $file, $image_name);
-			}
-		}
-
-		/* Hashing password */
-		$pass = Hash::make($request['password']);
-
-		$role = Role::where('name', 'client')->first();
-		$token = Str::random(80);
-
-		$user = User::create([
-			'name'                  =>  $request['name'],
-			'email'                 =>  $request['email'],
-			'mobile'                =>  $request['mobile'],
-			'address'               =>  $request['address'],
-			'country'               =>  $request['country'],
-			'state'                 =>  $request['state'],
-			'city'                  =>  $request['city'],
-			'pincode'               =>  $request['pincode'],
-			'password'              =>  $pass,
-			'role_id'               =>  $role->id,
-			'profile_image'         =>  $image_name,
-			'tax_exempt'            =>  $request->tax_exempt,
-			'remember_token'        =>  $token,
-			'api_token'             =>  $token,
-			'flag'                  =>  1
-		]);
-
-		UserAddress::create([
-			'user_id'       =>  $user->id,
-			'email'         =>  $request['email'],
-			'mobile'        =>  $request['mobile'],
-			'address'       =>  $request['address'],
-			'country'       =>  $request['country'],
-			'state'         =>  $request['state'],
-			'city'          =>  $request['city'],
-			'zip'           =>  $request['pincode'],
-			'landmark'      =>  $request['landmark'],
-			'name'          =>  $request['name'],
-			'address_type'  => 'billing'
-		]);
-
-		$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
-		$user->url = url('') . '/ecolinkfrontend/home/' . $user->api_token;
+		DB::beginTransaction();
 		try {
-			Mail::to($request->email)->send(new VerificationMail($user));
+			/* Storing Featured Image on local disk */
+			$image_name = "";
+			if ($request->hasFile('profile_image')) {
+				$request->validate([
+					'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+				]);
+				if ($request->hasFile('profile_image')) {
+					$file = $request->file('profile_image');
+					$image_name = $file->getClientOriginalName();
+					Storage::putFileAs('public/profile_image/', $file, $image_name);
+				}
+			}
+
+			/* Hashing password */
+			$pass = Hash::make($request['password']);
+
+			$role = Role::where('name', 'client')->first();
+			$token = Str::random(80);
+
+			$user = User::create([
+				'name'                  =>  $request['name'],
+				'email'                 =>  $request['email'],
+				'mobile'                =>  $request['mobile'],
+				'address'               =>  $request['address'],
+				'country'               =>  $request['country'],
+				'state'                 =>  $request['state'],
+				'city'                  =>  $request['city'],
+				'pincode'               =>  $request['pincode'],
+				'password'              =>  $pass,
+				'role_id'               =>  $role->id,
+				'profile_image'         =>  $image_name,
+				'tax_exempt'            =>  $request->tax_exempt,
+				'remember_token'        =>  $token,
+				'api_token'             =>  $token,
+				'flag'                  =>  1
+			]);
+
+			UserAddress::create([
+				'user_id'       =>  $user->id,
+				'email'         =>  $request['email'],
+				'mobile'        =>  $request['mobile'],
+				'address'       =>  $request['address'],
+				'country'       =>  $request['country'],
+				'state'         =>  $request['state'],
+				'city'          =>  $request['city'],
+				'zip'           =>  $request['pincode'],
+				'landmark'      =>  $request['landmark'],
+				'name'          =>  $request['name'],
+				'address_type'  => 'billing'
+			]);
+
+			if ($request->tax_exempt == 1) {
+				$files = $request->file('files');
+
+				foreach ($files as $file) {
+					$name 	= $file->getClientOriginalName();
+					$ext 	= $file->getClientOriginalExtension();
+					Storage::putFileAs('public/documents/' . $user->id, $file, $name);
+					//store image file into directory and db
+					UserDocument::create([
+						'user_id' 	=> $user->id,
+						'file_type'	=> $ext,
+						'file_name'	=> $name
+					]);
+				}
+			}
+
+			$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
+			$user->url = url('') . '/home/' . $user->api_token;
+
+			try {
+				Mail::to($request->email)->send(new VerificationMail($user));
+			} catch (\Exception $e) {
+				return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+			}
+
+			DB::commit();
+
+			$data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
+			if (!empty($user)) {
+				return response()->json(['message' => 'Hi ' . $user->name . ', welcome to home', 'code' => 200, 'data' => $data], 200);
+			} else {
+				return response()->json(['message' => 'Credentials Invalid', 'code' => 400], 400);
+			}
 		} catch (\Exception $e) {
-			# TODO Send to NR
-		}
-
-		$data = collect(['access_token' => $token, 'token_type' => 'Bearer', 'user_id' => $user->id, 'user' => $user]);
-
-		if (!empty($user)) {
-			return response()->json(['message' => 'Hi ' . $user->name . ', welcome to home', 'code' => 200, 'data' => $data], 200);
-		} else {
-			return response()->json(['message' => 'Credentials Invalid', 'code' => 400], 400);
+			DB::rollBack();
+			return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
 		}
 	}
 
@@ -126,7 +155,7 @@ class UserController extends Controller
 
 		if (!empty($user)) {
 			$user->email_verified = 1;
-      $user->flag = $user->tax_exempt == 1 ? 1 : 0;
+			$user->flag = $user->tax_exempt == 1 ? 1 : 0;
 			$user->update();
 
 			return response()->json(['message' => 'User Account verified successfully', 'code' => 200, 'data' => $user], 200);
