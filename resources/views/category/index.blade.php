@@ -47,6 +47,35 @@
         </div><!-- /.container-fluid -->
     </div>
 
+
+    <div class="row"> 
+        <table class="table table-striped table-bordered" style="width:100%">
+          <thead>
+            <tr style="text-align:center">
+              <th>Title</th>
+              <th>Description</th>
+              <th class="no-sort">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($settings as $setting) 
+            <tr  style="text-align:center">
+            
+              <td>
+                <input type="text" class="form-control" name="title" value="{{ $setting->title }}"/>
+               
+              </td>
+              <td>
+                <input type="text" class="form-control" name="description" value="{{ $setting->description }}"/>
+                
+              </td>
+              <td><a class="btn btn-info btn-sm" href="{{ url('admin/settings/edit',$setting->id) }}"><i class="fa fa-edit"></i></a></td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+    </div>
+
     <div class="container-fluid" style="overflow-x:auto;">
         <table id="categoryTable" class="table table-striped table-bordered" style="width:100%">
             <thead>

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Category;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 class CategoryController extends Controller
 {
@@ -64,7 +66,8 @@ class CategoryController extends Controller
                     ->rawColumns(['action', 'active'])
                     ->make(true);
             }
-            return view('category.index');
+            $settings = Setting::all();
+            return view('category.index',compact('settings'));
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }

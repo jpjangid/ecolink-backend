@@ -28,6 +28,7 @@ use App\Http\Controllers\BulkPricingController;
 use App\Http\Controllers\TechnicalSupportController;
 use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\api\UserController as APiUserController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StaticValueController;
 
 /*
@@ -270,6 +271,11 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::get('/edit/{id}', [StaticValueController::class, 'edit']);
         Route::put('/update/{id}', [StaticValueController::class, 'update']);
         Route::delete('/delete/{id}', [StaticValueController::class, 'destroy']);
+    });
+
+    Route::prefix('settings')->group(function(){
+        Route::get('/edit/{id}', [SettingController::class, 'edit']);
+        Route::put('/update/{id}', [SettingController::class, 'update']);
     });
 });
 
