@@ -58,20 +58,21 @@
             </tr>
           </thead>
           <tbody>
-            @foreach($settings as $setting) 
-            <tr  style="text-align:center">
             
+            <tr  style="text-align:center">
+                
               <td>
-                <input type="text" class="form-control" name="name" value="{{ $setting->name }}" readonly/>
+                <input type="text" class="form-control" value="{{ $settings[0]->value }}" readonly/>
                
               </td>
+           
               <td>
-                <input type="text" class="form-control" name="value" value="{{ $setting->value }}" readonly/>
+                <input type="text" class="form-control"  value="{{ $settings[1]->value }}" readonly/>
                 
               </td>
-              <td><a class="btn btn-info btn-sm" href="{{ url('admin/settings/edit',$setting->id) }}"><i class="fa fa-edit"></i></a></td>
+              <td><a class="btn btn-info btn-sm" href="{{ url('admin/settings/edit',['category_title'=> $settings[0]->id, 'category_des'=>$settings[1]->id]) }}"><i class="fa fa-edit"></i></a></td>
             </tr>
-            @endforeach
+            
           </tbody>
         </table>
     </div>

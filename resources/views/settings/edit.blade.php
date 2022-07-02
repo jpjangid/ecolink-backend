@@ -22,14 +22,14 @@
     <div class="card">
         <div class="card-body">
             
-            <form action="{{ url('admin/settings/update', $settings->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/settings/update',['category_title' => $category_title->id, 'category_des' => $category_des->id]) }}" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <!-- Category Name -->
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="required form-label" for="name"><span style="color: red;">* </span>Name/Slug</label>
-                        <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="name" id="name" placeholder="Please Enter Category Name" value="{{ $settings->name }}">
+                        <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="value1"  placeholder="Please Enter Category Name" value="{{ $category_title->value }}">
                         @error('name')
                         <span class="error invalid-feedback">{{ $message }}</span>
                         @enderror
@@ -40,7 +40,7 @@
               <div class="col-md-6">
                     <div class="form-group">
                         <label class="required form-label" for="value">Category Value</label>
-                        <textarea class="form-control form-control-solid @error('value') is-invalid @enderror" name="value" placeholder="Please Enter Category Value"><?php echo $settings->value ?></textarea>
+                        <textarea class="form-control form-control-solid @error('value') is-invalid @enderror" name="value2" placeholder="Please Enter Category Value"><?php echo $category_des->value ?></textarea>
                     </div>
                 </div>
     

@@ -274,8 +274,8 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     });
 
     Route::prefix('settings')->group(function(){
-        Route::get('/edit/{id}', [SettingController::class, 'edit']);
-        Route::put('/update/{id}', [SettingController::class, 'update']);
+        Route::get('/edit/{category_title}/{category_des}', [SettingController::class, 'edit']);
+        Route::put('/update/{category_title}/{category_des}', [SettingController::class, 'update']);
     });
 });
 

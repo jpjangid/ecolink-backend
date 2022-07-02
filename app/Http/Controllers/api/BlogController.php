@@ -15,12 +15,13 @@ class BlogController extends Controller
     {
         /* Getting all records */
         $blogs = DB::table('blogs')->select('id','slug','title','image','alt', 'short_desc')->where(['flag' => 0, 'status' => 1])->paginate(20);
+        $categories = DB::table('blog_categories')->select('id', 'blog_category')->get();
 
         if($blogs->isNotEmpty()){
             foreach($blogs as $blog){
                 $blog->image = url('storage/blogs',$blog->image);
             }
-            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs], 200);
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs, $categories], 200);
         }else{
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
