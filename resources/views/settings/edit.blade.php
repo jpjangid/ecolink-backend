@@ -28,9 +28,9 @@
                 <!-- Category Name -->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="required form-label" for="name"><span style="color: red;">* </span>Name/Slug</label>
-                        <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="value1"  placeholder="Please Enter Category Name" value="{{ $category_title->value }}">
-                        @error('name')
+                        <label class="required form-label" for="value1"><span style="color: red;">* </span>Name/Slug</label>
+                        <input type="text" class="form-control form-control-solid @error('value1') is-invalid @enderror" name="value1"  placeholder="Please Enter Category Name" value="{{ $category_title->value }}">
+                        @error('value1')
                         <span class="error invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
@@ -39,8 +39,8 @@
               <!-- Category Value -->
               <div class="col-md-6">
                     <div class="form-group">
-                        <label class="required form-label" for="value">Category Value</label>
-                        <textarea class="form-control form-control-solid @error('value') is-invalid @enderror" name="value2" placeholder="Please Enter Category Value"><?php echo $category_des->value ?></textarea>
+                        <label class="required form-label" for="value2">Category Value</label>
+                        <textarea class="form-control form-control-solid @error('value2') is-invalid @enderror" name="value2" placeholder="Please Enter Category Value"><?php echo $category_des->value ?></textarea>
                     </div>
                 </div>
     
