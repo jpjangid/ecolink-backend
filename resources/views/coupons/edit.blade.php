@@ -53,11 +53,11 @@
                             <select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
                                 <option value="">Select Type</option>
                                 <option value="cart_value_discount" {{ $coupon->type == 'cart_value_discount' ? 'selected' : '' }}>Cart Value Discount</option>
-                                <option value="referral_discount" {{ $coupon->type == 'referral_discount' ? 'selected' : '' }}>Referral Discount</option>
-                                <option value="personal_code" {{ $coupon->type == 'personal_code' ? 'selected' : '' }}>Personal Code Discount</option>
+                                <!-- <option value="referral_discount" {{ $coupon->type == 'referral_discount' ? 'selected' : '' }}>Referral Discount</option> -->
+                                <!-- <option value="personal_code" {{ $coupon->type == 'personal_code' ? 'selected' : '' }}>Personal Code Discount</option> -->
                                 <option value="customer_based" {{ $coupon->type == 'customer_based' ? 'selected' : '' }}>Customer Based Discount</option>
                                 <option value="global" {{ $coupon->type == 'global' ? 'selected' : '' }}>Global Discount</option>
-                                <option value="merchandise" {{ $coupon->type == 'merchandise' ? 'selected' : '' }}>Merchandise Discount</option>
+                                <!-- <option value="merchandise" {{ $coupon->type == 'merchandise' ? 'selected' : '' }}>Merchandise Discount</option> -->
                             </select>
                             @error('type')
                             <span class="error invalid-feedback">{{ $message }}</span>
@@ -220,6 +220,10 @@
         input_show_hide(type);
     });
 
+    $(document).on('change', '#disc_type', function() {
+        $('#discount').val('');
+    });
+
     $(document).on('keyup', '#discount', function() {
         var type = $('#disc_type').val();
         var discount = $('#discount').val();
@@ -227,7 +231,7 @@
         if (type == 'percent') {
             discount = discount > 100 ? '' : discount;
             if (discount == '') {
-                alert('Discount in percent should be lower or equal to 100%');
+                swal("Danger!", "Discount in percent should be lower or equal to 100%", "error");
             }
         }
         $('#discount').val(discount);
