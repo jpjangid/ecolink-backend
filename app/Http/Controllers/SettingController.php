@@ -74,14 +74,14 @@ class SettingController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'title'         =>  'required',
-            'description'        =>  'required'
+            'name'         =>  'required',
+            'value'        =>  'required'
         ]);
 
         $settings = Setting::find($id);
         $settings->update([
-            'title'     =>  $request->title,
-            'description'   =>  $request->description,
+            'name'     =>  $request->name,
+            'value'   =>  $request->value,
 
         ]);
 

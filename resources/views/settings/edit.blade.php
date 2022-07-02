@@ -25,28 +25,28 @@
             <form action="{{ url('admin/settings/update', $settings->id) }}" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
-                <!-- Category Title -->
+                <!-- Category Name -->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="required form-label" for="title"><span style="color: red;">* </span>Title</label>
-                        <input type="text" class="form-control form-control-solid @error('title') is-invalid @enderror" name="title" id="title" placeholder="Please Enter Category Title" value="{{ $settings->title }}">
+                        <label class="required form-label" for="name"><span style="color: red;">* </span>Name/Slug</label>
+                        <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="name" id="name" placeholder="Please Enter Category Name" value="{{ $settings->name }}">
                         @error('name')
                         <span class="error invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
     
-              <!-- Category Description -->
+              <!-- Category Value -->
               <div class="col-md-6">
                     <div class="form-group">
-                        <label class="required form-label" for="description">Category Description</label>
-                        <textarea class="form-control form-control-solid @error('description') is-invalid @enderror" name="description" placeholder="Please Enter Category Description"><?php echo $settings->description ?></textarea>
+                        <label class="required form-label" for="value">Category Value</label>
+                        <textarea class="form-control form-control-solid @error('value') is-invalid @enderror" name="value" placeholder="Please Enter Category Value"><?php echo $settings->value ?></textarea>
                     </div>
                 </div>
     
                 <div class="row">
                     <div class="col-md-12 mt-2">
-                        <button type="submit" class="btn btn-info">Add</button>
+                        <button type="submit" class="btn btn-info">Update</button>
                     </div>
                 </div>
          </form>
