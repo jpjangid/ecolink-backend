@@ -74,30 +74,24 @@ class SettingController extends Controller
      */
     public function update(Request $request, $category_title, $category_des)
     {
-        // dd($request->category_title);
+        
         $request->validate([
-            'value1'         =>  'required',
-            'value2'        =>  'required'
+            'title'         =>  'required',
+            'description'        =>  'required'
         ]);
         if(!empty($request->category_title)){
             $settings = Setting::find($category_title);
-            $settings->value = $request->value1;
+            $settings->value = $request->title;
             $settings->update();
         }
       
-        // $settings->update([
-        //     'value'   =>  $request->value,
-
-        // ]);
+    
         if(!empty($request->category_des)){
             $settings = Setting::find($category_des);
-            $settings->value = $request->value2;
+            $settings->value = $request->description;
             $settings->update();
         }
-        // $settings->update([
-        //     'value'   =>  $request->value,
-
-        // ]);
+       
 
         /* After successfull update of data redirecting to index page with message */
         return redirect('admin/categories')->with('success', 'Updated Successfully');

@@ -28,9 +28,9 @@
                 <!-- Category Name -->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="required form-label" for="value1"><span style="color: red;">* </span>Name/Slug</label>
-                        <input type="text" class="form-control form-control-solid @error('value1') is-invalid @enderror" name="value1"  placeholder="Please Enter Category Name" value="{{ $category_title->value }}">
-                        @error('value1')
+                        <label class="required form-label" for="title"><span style="color: red;">* </span>Title</label>
+                        <input type="text" class="form-control form-control-solid @error('title') is-invalid @enderror" name="title"  placeholder="Please Enter Title" value="{{ $category_title->value }}">
+                        @error('title')
                         <span class="error invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
@@ -39,8 +39,11 @@
               <!-- Category Value -->
               <div class="col-md-6">
                     <div class="form-group">
-                        <label class="required form-label" for="value2">Category Value</label>
-                        <textarea class="form-control form-control-solid @error('value2') is-invalid @enderror" name="value2" placeholder="Please Enter Category Value"><?php echo $category_des->value ?></textarea>
+                        <label class="required form-label" for="description"><span style="color: red;">* </span>Description</label>
+                        <textarea class="form-control form-control-solid @error('description') is-invalid @enderror" name="description" placeholder="Please Enter Description"><?php echo $category_des->value ?></textarea>
+                        @error('description')
+                        <span class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
     

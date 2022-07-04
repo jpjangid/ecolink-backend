@@ -18,7 +18,7 @@ class CategoryController extends Controller
       foreach ($categories as $category) {
         $category->image = asset('storage/category/' . $category->image);
       }
-      return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $categories, $settings], 200);
+      return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $categories,'content' => $settings], 200);
     } else {
       return response()->json(['message' => 'No Data found', 'code' => 400], 400);
     }
