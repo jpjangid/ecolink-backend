@@ -182,7 +182,7 @@ class OrderController extends Controller
                 $taxAmount = $tax->rate;
             }
             
-            $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt + $shipping_charge;
+            $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt + $shipping_charge + $taxAmount;
             $discount = $product_discount + $coupon_discount;
             
             $order = Order::create([

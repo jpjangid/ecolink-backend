@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 
 class BlogController extends Controller
 {
-    public function blogs()
+    public function blogs(Request $request): JsonResponse
     {
         /* Getting all records */
         $blogs = DB::table('blogs')->select('id','slug','title','image','alt', 'short_desc')->where(['flag' => 0, 'status' => 1])->paginate(20);
