@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifyUser;
 use App\Models\User;
 use App\Models\Location;
 use App\Models\Permission;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 use Spatie\Permission\Models\Role;
@@ -268,8 +270,16 @@ class UserController extends Controller
         $user->pincode          =   $request['pincode'];
         $user->password         =   $pass;
         $user->role_id          =   $request['role_id'];
+        $user->tax_exempt       =   $request['tax_exempt'];
+        $user->flag             =   $request['flag'];
         $user->profile_image    =   $image_name;
         $user->save();
+
+        $user->url = url('') . '/profile/auth';
+
+        if($request['tax_exempt'] == 1 && $request['flag'] == 0){
+            Mail::to($request->email)->send(new NotifyUser($user));
+        }
 
         /* After successfull update of data redirecting to index page with message */
         return redirect('admin/users')->with('success', 'User updated successfully');
