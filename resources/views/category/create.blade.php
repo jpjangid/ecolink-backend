@@ -33,7 +33,7 @@
                         </div>
                     </div>
 
-                    <!-- Category Title -->
+                    <!-- Category Name -->
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="name"><span style="color: red;">* </span>Name</label>
