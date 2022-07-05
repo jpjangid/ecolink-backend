@@ -19,6 +19,7 @@ class CreateOrdersTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->float('order_amount');
             $table->float('discount_applied')->nullable();
+            $table->float('service_charge_applied')->nullable();
             $table->float('total_amount');
             $table->integer('no_items')->default(0);
             $table->string('billing_name');
