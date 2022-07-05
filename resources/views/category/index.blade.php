@@ -122,7 +122,7 @@
     function datatable() {
         var materialTable = $('#categoryTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],

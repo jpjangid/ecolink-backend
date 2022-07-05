@@ -76,7 +76,7 @@
 </script>
 <script type="text/javascript">
     var newsletterTable = $('#newsletterTable').DataTable({
-        scrollY: "55vh",
+        scrollY: "70vh",
         processing: true,
         serverSide: true,
             order: [],
