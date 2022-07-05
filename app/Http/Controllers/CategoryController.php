@@ -176,8 +176,11 @@ class CategoryController extends Controller
             'status.required'               =>  'Category Status is required',
         ]);
 
+        /* Fetching Category Data using Id*/
+        $category = Category::find($id);
+
         /* Storing Featured Image on local disk */
-        $image = "";
+        $image = $category->image;
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->extension();
             $file = $request->file('image');
@@ -187,7 +190,7 @@ class CategoryController extends Controller
         }
 
         /* Storing OG Image on local disk */
-        $og_image = "";
+        $og_image = $category->og_image;
         if ($request->hasFile('og_image')) {
             $extension = $request->file('og_image')->extension();
             $file = $request->file('og_image');
@@ -197,23 +200,24 @@ class CategoryController extends Controller
         }
 
         /* Updating Data fetched by Id */
-        DB::table('categories')->where('id', $id)->update([
-            'slug'                      =>  $request->slug,
-            'name'                      =>  $request->name,
-            'description'               =>  $request->description,
-            'short_desc'                =>  $request->short_desc,
-            'image'                     =>  $image != '' ? $image : $request->image,
-            'meta_title'                =>  $request->meta_title,
-            'meta_description'          =>  $request->meta_description,
-            'keywords'                  =>  $request->keywords,
-            'alt'                       =>  $request->alt,
-            'status'                    =>  $request->status,
-            'og_title'                  =>  $request->og_title,
-            'og_description'            =>  $request->og_description,
-            'og_image'                  =>  $og_image != '' ? $og_image : $request->og_image,
-            'head_schema'               =>  $request->head_schema,
-            'body_schema'               =>  $request->body_schema,
-        ]);
+        
+            $category->slug                      =  $request->slug;
+            $category->name                      =  $request->name;
+            $category->description               =  $request->description;
+            $category->short_desc                =  $request->short_desc;
+            $category->image                     =  $image;
+            $category->meta_title                =  $request->meta_title;
+            $category->meta_description          =  $request->meta_description;
+            $category->keywords                  =  $request->keywords;
+            $category->alt                       =  $request->alt;
+            $category->status                    =  $request->status;
+            $category->og_title                  =  $request->og_title;
+            $category->og_description            =  $request->og_description;
+            $category->og_image                  =  $og_image;
+            $category->head_schema               =  $request->head_schema;
+            $category->body_schema               =  $request->body_schema;
+            $category->update();
+        
 
         /* After successfull update of data redirecting to index page with message */
         return redirect('admin/categories')->with('success', 'Category updated successfully');
