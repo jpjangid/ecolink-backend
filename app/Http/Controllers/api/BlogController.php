@@ -33,7 +33,7 @@ class BlogController extends Controller
             foreach ($blogs as $blog) {
                 $blog->image = url('storage/blogs', $blog->image);
             }
-            $categories = DB::table('blog_categories')->select('id', 'blog_category')->get();
+            $categories = DB::table('blog_categories')->orderBy('blog_category')->get();
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs, $categories], 200);
         } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
