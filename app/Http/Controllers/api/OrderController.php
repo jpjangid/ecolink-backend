@@ -148,6 +148,9 @@ class OrderController extends Controller
                     if ($coupon->disc_type == 'percent') {
                         $dis_amt = ($cartItem->product->sale_price * $coupon->discount) / 100;
                         $coupon_discount += $dis_amt * $cartItem->quantity;
+                    }else{
+                        $dis_amt = $coupon->discount;
+                        $coupon_discount += $dis_amt * $cartItem->quantity;
                     }
                 }
                 if ($cartItem->product->hazardous == 1) {
@@ -174,7 +177,11 @@ class OrderController extends Controller
             $taxAmount = 0;
             $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
             if ($tax != null) {
-                $taxAmount = $tax->rate;
+                if($coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100'){
+                    $taxAmount = 0;
+                }else{
+                    $taxAmount = $tax->rate;
+                }
             }
             
             $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt + $shipping_charge + $taxAmount;
