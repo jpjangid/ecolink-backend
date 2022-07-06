@@ -18,7 +18,7 @@ class BlogController extends Controller
             ->where(['flag' => 0, 'status' => 1]);
         if ($request->filled('squery'))
         {
-            $query = $query->where('title', '%' . $request->squery . '%');
+            $query = $query->where('title', 'like','%' . $request->squery . '%');
         }
         if ($request->filled('category'))
         {
@@ -31,7 +31,7 @@ class BlogController extends Controller
         $blogs = $query->paginate(20);
         if ($blogs->isNotEmpty()) {
             foreach ($blogs as $blog) {
-                $blog->image = asset('storage/blogs', $blog->image);
+                $blog->image = url('storage/blogs', $blog->image);
             }
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs], 200);
         } else {
