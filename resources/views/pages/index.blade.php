@@ -76,7 +76,7 @@
     function datatable() {
         var pageTable = $('#pageTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],

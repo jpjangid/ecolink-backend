@@ -82,7 +82,7 @@
 <script type="text/javascript">
     $(function() {
         var contactTable = $('#contactTable').DataTable({
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],

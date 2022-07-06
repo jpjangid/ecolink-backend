@@ -81,7 +81,7 @@
     function datatable() {
         var couponTable = $('#couponTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             scrollX: true,
             processing: true,
             serverSide: true,

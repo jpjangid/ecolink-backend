@@ -46,23 +46,23 @@
                         </div>
                     </div>
 
-                    {{-- <div class="col-md-3">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label class="required form-label" for="type"><span style="color: red;">* </span>Coupon Type</label>
                             <select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
                                 <option value="">Select Type</option>
                                 <option value="cart_value_discount" {{ old('type') == 'cart_value_discount' ? 'selected' : '' }}>Cart Value Discount</option>
-                                <option value="referral_discount" {{ old('type') == 'referral_discount' ? 'selected' : '' }}>Referral Discount</option>
-                                <option value="personal_code" {{ old('type') == 'personal_code' ? 'selected' : '' }}>Personal Code Discount</option>
+                                <!-- <option value="referral_discount" {{ old('type') == 'referral_discount' ? 'selected' : '' }}>Referral Discount</option>
+                                <option value="personal_code" {{ old('type') == 'personal_code' ? 'selected' : '' }}>Personal Code Discount</option> -->
                                 <option value="customer_based" {{ old('type') == 'customer_based' ? 'selected' : '' }}>Customer Based Discount</option>
                                 <option value="global" {{ old('type') == 'global' ? 'selected' : '' }}>Global Discount</option>
-                                <option value="merchandise" {{ old('type') == 'merchandise' ? 'selected' : '' }}>Merchandise Discount</option>
+                                <!-- <option value="merchandise" {{ old('type') == 'merchandise' ? 'selected' : '' }}>Merchandise Discount</option> -->
                             </select>
                             @error('type')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div> --}}
+                    </div>
 
                     <div class="col-md-3" id="cat_id">
                         <div class="form-group">
@@ -224,6 +224,10 @@
         input_show_hide(type);
     });
 
+    $(document).on('change', '#disc_type', function() {
+        $('#discount').val('');
+    });
+
     $(document).on('keyup', '#discount', function() {
         var type = $('#disc_type').val();
         var discount = $('#discount').val();
@@ -231,7 +235,7 @@
         if (type == 'percent') {
             discount = discount > 100 ? '' : discount;
             if (discount == '') {
-                alert('Discount in percent should be lower or equal to 100%');
+                swal("Danger!", "Discount in percent should be lower or equal to 100%", "error");
             }
         }
         $('#discount').val(discount);

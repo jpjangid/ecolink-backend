@@ -28,12 +28,13 @@ class BlogController extends Controller
         {
             $query = $query->whereMonth('publish_date', $request->month)->whereYear('publish_date', $request->year);
         }
+        $categories = DB::table('blog_categories')->select('id', 'blog_category')->get();
         $blogs = $query->paginate(20);
         if ($blogs->isNotEmpty()) {
             foreach ($blogs as $blog) {
                 $blog->image = url('storage/blogs', $blog->image);
             }
-            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs], 200);
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs, $categories], 200);
         } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }

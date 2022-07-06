@@ -82,7 +82,7 @@
 <script type="text/javascript">
     $(function() {
         var askchemistTable = $('#askchemistTable').DataTable({
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],
