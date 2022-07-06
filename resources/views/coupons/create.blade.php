@@ -46,7 +46,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-3"> 
                         <div class="form-group">
                             <label class="required form-label" for="type"><span style="color: red;">* </span>Coupon Type</label>
                             <select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
