@@ -100,7 +100,7 @@
     function datatable() {
         var blogTable = $('#blogTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],

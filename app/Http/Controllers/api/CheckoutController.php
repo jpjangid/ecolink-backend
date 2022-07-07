@@ -13,7 +13,7 @@ use App\Traits\ShippingRate;
 class CheckoutController extends Controller
 {
 	use ShippingRate;
- 
+
 	public function index(Request $request)
 	{
 		$user = $request->user();
@@ -23,58 +23,56 @@ class CheckoutController extends Controller
 		$user = DB::table('users')->select('id', 'name', 'email', 'address', 'city', 'state', 'country', 'pincode', 'mobile')->find($user->id);
 
 		$addresses = DB::table('user_addresses')->where('user_id', $user->id)->get();
+		$lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+		$hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
+
+		$lift_gate_amount = $lift_gate->value ?? 0;
+		$hazardous_amount = $hazardous->value ?? 0;
 
 		$order_total = 0;
 		$payable = 0;
 		$product_discount = 0;
-		$coupon_discount = 0;
 		$total_discount = 0;
 		$product_count = 0;
 		$hazardous = 0;
 		$hazardous_amt = 0;
+		$lift_gate_qty = 1;
+		$lift_gate_amt = 0;
 		if ($carts->isNotEmpty()) {
 			foreach ($carts as $cart) {
-				if (!isset($cart->product->coupon_discount)) {
-					$cart->product->coupon_discount = 0;
-				}
 				$cart->product->image = asset('storage/products/' . $cart->product->image);
 				$product_discount = $cart->product->regular_price - $cart->product->sale_price;
 				$product_discount = $product_discount * $cart->quantity;
 				$order_total += $cart->product->sale_price * $cart->quantity;
-				$coupon_discount += $cart->product->coupon_discount * $cart->quantity;
-				$total_discount += $product_discount + $coupon_discount;
+				$total_discount += $product_discount;
 				$product_count +=  $cart->quantity;
 				if ($cart->product->hazardous == 1) {
-					$hazardous += 1;
+                    $hazardous_amt += $cart->quantity * $hazardous_amount;
 				}
+				if ($cart->lift_gate == 1) {
+                    $lift_gate_amt += $lift_gate_amount * $lift_gate_qty;
+                }
 			}
-			$payable = $order_total - $coupon_discount;
-			if ($hazardous > 0) {
-				$staticvalue = DB::table('static_values')->where('name', 'Hazardous')->first();
-				if (!empty($staticvalue)) {
-					$hazardous_amt = $staticvalue->value;
-					#$payable = $payable + $staticvalue->value;
-				}
-			}
+			$payable = $order_total + $hazardous_amt + $lift_gate_amt;
 		}
 
 		$current = date('Y-m-d H:i:s');
 
-		$coupons = Coupon::select('id', 'name', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current]])->orWhere('user_id', $user->id)->get();
+		$coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current]])->orWhere('user_id', $user->id)->get();
 
-		$data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses, 'hazardous_amt' => $hazardous_amt]);
+		$data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses, 'hazardous_amt' => $hazardous_amt, 'lift_gate_amt' => $lift_gate_amt]);
 
 		return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $data], 200);
 	}
 
 	public function getFedexShippingRates(Request $request): \Illuminate\Http\JsonResponse
-  {
+	{
 		$rate = $this->getFedexShipRate($request);
 		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 
 	public function getSaiaShippingRates(Request $request): \Illuminate\Http\JsonResponse
-  {
+	{
 		$rate = $this->getSaiaShipRate($request);
 		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}

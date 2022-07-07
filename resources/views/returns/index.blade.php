@@ -58,7 +58,7 @@
 @section('js')
 <script type="text/javascript">
     var returnTable = $('#returnTable').DataTable({
-        scrollY: "55vh",
+        scrollY: "70vh",
         processing: true,
         serverSide: true,
             order: [],

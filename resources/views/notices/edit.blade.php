@@ -60,8 +60,16 @@
                         </div>
                     </div>
 
+                     <!-- Redirect To Url-->
+                     <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="required form-label" for="url">Redirect To Url</label>
+                            <input type="text" class="form-control form-control-solid @error('url') is-invalid @enderror" name="url" id="url" placeholder="Please Enter Redirect To Url" value="{{ $notice->url }}">
+                        </div>
+                    </div>
+
                     <!-- Display Status -->
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Display Status</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">
@@ -75,13 +83,27 @@
                         </div>
                     </div>
 
-                    <!-- Redirect To Url-->
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="url">Redirect To Url</label>
-                            <input type="text" class="form-control form-control-solid @error('url') is-invalid @enderror" name="url" id="url" placeholder="Please Enter Redirect To Url" value="{{ $notice->url }}">
+                            <label class="form-label" for="start_date">Notice Start's</label>
+                            <input type="datetime-local" class="form-control form-control-solid @error('start_date') is-invalid @enderror" name="start_date" id="start_date" placeholder="Please Enter Notice Start" value="{{ date('Y-m-d\TH:i:s', strtotime($notice->start_date)) }}">
+                            @error('start_date')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="end_date">Notice End's</label>
+                            <input type="datetime-local" class="form-control form-control-solid @error('end_date') is-invalid @enderror" name="end_date" id="end_date" placeholder="Please Enter Notice End" value="{{ date('Y-m-d\TH:i:s', strtotime($notice->end_date)) }}">
+                            @error('end_date')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                   
 
                     <!-- Notice Message -->
                     <div class="col-md-12">

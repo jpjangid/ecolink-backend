@@ -3,25 +3,40 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 
 class BlogController extends Controller
 {
-    public function blogs()
+    public function blogs(Request $request): JsonResponse
     {
         /* Getting all records */
-        $blogs = DB::table('blogs')->select('id','slug','title','image','alt', 'short_desc')->where(['flag' => 0, 'status' => 1])->paginate(20);
-
-        if($blogs->isNotEmpty()){
-            foreach($blogs as $blog){
-                $blog->image = url('storage/blogs',$blog->image);
+        $query = DB::table('blogs')
+            ->select('id', 'slug', 'title', 'image', 'alt', 'short_desc', 'publish_date')
+            ->where(['flag' => 0, 'status' => 1])
+            ->orderByDesc('publish_date');
+        if ($request->filled('squery'))
+        {
+            $query = $query->where('title', 'like','%' . $request->squery . '%');
+        }
+        if ($request->filled('category'))
+        {
+            $query = $query->where('category', '%' . $request->category . '%');
+        }
+        if ($request->filled('month'))
+        {
+            $query = $query->whereMonth('publish_date', $request->month)->whereYear('publish_date', $request->year);
+        }
+        $blogs = $query->paginate(20);
+        if ($blogs->isNotEmpty()) {
+            foreach ($blogs as $blog) {
+                $blog->image = url('storage/blogs', $blog->image);
             }
-            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs], 200);
-        }else{
+            $categories = DB::table('blog_categories')->orderBy('blog_category')->get();
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs, $categories], 200);
+        } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }
     }
