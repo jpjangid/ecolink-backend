@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 trait ShippingRate
 {
@@ -34,68 +35,42 @@ trait ShippingRate
 		}
 
 		$authtoken = getFedexAuthToken();
-		$decodedtoken = json_decode($authtoken);
+		$content = json_decode($authtoken);
 
-		$curl = curl_init();
+		$data['accountNumber']['value'] = config('fedex.account_no');
 
-		curl_setopt_array($curl, array(
-			CURLOPT_URL => config('fedex.url') . 'rate/v1/rates/quotes',
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => '',
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 0,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_POSTFIELDS => '{
-                    "accountNumber": {
-                        "value": "' . config('fedex.account_no') . '"
-                    },
-                    "requestedShipment": {
-                        "shipper": {
-                            "address": {
-                                "city": "Memphis",
-                                "stateOrProvinceCode": "TN",
-                                "postalCode": 38104,
-                                "countryCode": "US"
-                            }
-                        },
-                        "recipient": {
-                            "address": {
-                                "city": "' . $request->city . '",
-                                "stateOrProvinceCode": "' . $request->state . '",
-                                "postalCode": ' . $request->zip . ',
-                                "countryCode": "' . $request->country . '",
-                                "residential": true
-                            }
-                        },
-                        "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
-                        "serviceType": "GROUND_HOME_DELIVERY",
-                        "shipmentSpecialServices": {
-                            "specialServiceTypes": [
-                                "HOME_DELIVERY_PREMIUM"
-                            ],
-                            "homeDeliveryPremiumDetail": {
-                                "homedeliveryPremiumType": "APPOINTMENT"
-                            }
-                        },
-                        "rateRequestType": [
-                            "LIST",
-                            "ACCOUNT"
-                        ],
-                        "requestedPackageLineItems": ' . json_encode($lineitems) . '
-                    }
-                }',
-			CURLOPT_HTTPHEADER => array(
-				'x-customer-transaction-id: ' . config('fedex.customer_transaction_id') . '',
-				'x-locale: en_US',
-				'Authorization: Bearer ' . $decodedtoken->access_token,
-				'Content-Type: application/json'
-			),
-		));
+		$data['requestedShipment']['shipper']['address']['city'] = "Memphis";
+		$data['requestedShipment']['shipper']['address']['stateOrProvinceCode'] = "TN";
+		$data['requestedShipment']['shipper']['address']['postalCode'] = 38104;
+		$data['requestedShipment']['shipper']['address']['countryCode'] = "US";
 
-		$rate = 0;
-		$response = curl_exec($curl);
+		$data['requestedShipment']['recipient']['address']['city'] = $request->city;
+		$data['requestedShipment']['recipient']['address']['stateOrProvinceCode'] = $request->state;
+		$data['requestedShipment']['recipient']['address']['postalCode'] = $request->zip;
+		$data['requestedShipment']['recipient']['address']['countryCode'] = $request->country;
+		$data['requestedShipment']['recipient']['address']['residential'] = true;
+
+		$data['requestedShipment']['pickupType'] = "DROPOFF_AT_FEDEX_LOCATION";
+		$data['requestedShipment']['serviceType'] = "GROUND_HOME_DELIVERY";
+		$data['requestedShipment']['shipmentSpecialServices']['specialServiceTypes'] = ["HOME_DELIVERY_PREMIUM"];
+		$data['requestedShipment']['shipmentSpecialServices']['homeDeliveryPremiumDetail']['homedeliveryPremiumType'] = "APPOINTMENT";
+		$data['requestedShipment']['rateRequestType'] = [
+			"LIST",
+			"ACCOUNT"
+		];
+		$data['requestedShipment']['requestedPackageLineItems'] = $lineitems;
+
+		try {
+            $response = Http::accept('application/json')->withHeaders([
+                'Authorization' => 'Bearer ' . $content->access_token,
+                'Content-Type' => 'application/json',
+                'x-customer-transaction-id' => config('fedex.customer_transaction_id'),
+                'x-locale' => 'en_US'
+            ])->post(config('fedex.url') . 'rate/v1/rates/quotes', $data);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+        }
+
 		$decodedresponse = json_decode($response, true);
 		if (isset($decodedresponse['errors']) && !empty($decodedresponse['errors'])) {
 			return response()->json(['message' => $decodedresponse['errors'][0]['message'], 'code' => 400], 400);
@@ -106,8 +81,6 @@ trait ShippingRate
 				}
 			}
 		}
-
-		curl_close($curl);
 
 		return $rate;
 	}
