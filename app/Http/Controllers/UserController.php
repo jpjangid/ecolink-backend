@@ -212,7 +212,7 @@ class UserController extends Controller
             'email'             =>  'required|email|unique:users,email,' . $id,
             'mobile'            =>  'required|digits:10|unique:users,mobile,' . $id,
             'address'           =>  'required',
-            'landmark'          =>  'required',
+            // 'landmark'          =>  'required',
             'state'             =>  'required|regex:/^[\pL\s\-]+$/u',
             'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
             'pincode'           =>  'required',
@@ -225,7 +225,7 @@ class UserController extends Controller
             'email.required'            =>  'Please Enter Email',
             'mobile.required'           =>  'Please Enter Mobile No.',
             'address.required'          =>  'Please Enter Address',
-            'landmark.required'          =>  'Please Enter Landmark',
+            // 'landmark.required'          =>  'Please Enter Landmark',
             'state.required'            =>  'Please Enter State',
             'state.regex'               =>  'Please Enter State in alphabets',
             'city.required'             =>  'Please Enter City',
@@ -263,7 +263,6 @@ class UserController extends Controller
         $user->email            =   $request['email'];
         $user->mobile           =   $request['mobile'];
         $user->address          =   $request['address'];
-        $user->landmark         =   $request['landmark'];
         $user->country          =   $request['country'];
         $user->state            =   $request['state'];
         $user->city             =   $request['city'];
@@ -277,7 +276,7 @@ class UserController extends Controller
 
         $user->url = url('') . '/profile/auth';
 
-        if($request['tax_exempt'] == 1 && $request['flag'] == 0){
+        if($request['tax_exempt'] == "1" && $request['flag'] == "0"){
             Mail::to($request->email)->send(new NotifyUser($user));
         }
 

@@ -10,16 +10,16 @@ use Illuminate\Queue\SerializesModels;
 class NotifyUser extends Mailable
 {
     use Queueable, SerializesModels;
-    public $email;
+    public $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($email)
+    public function __construct($user)
     {
-        $this->email = $email;
+        $this->user = $user;
     }
 
     /**
@@ -31,9 +31,6 @@ class NotifyUser extends Mailable
     {
         return $this->markdown('emails.notifyuser')
             ->from('developerecolink@gmail.com', 'ecolink')
-            ->subject('Tax Exempted')
-            ->with([
-                'email' => $this->email
-            ]);
+            ->subject('Tax Exempted');
     }
 }
