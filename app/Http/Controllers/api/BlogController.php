@@ -14,11 +14,12 @@ class BlogController extends Controller
     {
         /* Getting all records */
         $query = DB::table('blogs')
-            ->select('id', 'slug', 'title', 'image', 'alt', 'short_desc')
-            ->where(['flag' => 0, 'status' => 1]);
+            ->select('id', 'slug', 'title', 'image', 'alt', 'short_desc', 'publish_date')
+            ->where(['flag' => 0, 'status' => 1])
+            ->orderByDesc('publish_date');
         if ($request->filled('squery'))
         {
-            $query = $query->where('title', '%' . $request->squery . '%');
+            $query = $query->where('title', 'like','%' . $request->squery . '%');
         }
         if ($request->filled('category'))
         {
@@ -31,9 +32,10 @@ class BlogController extends Controller
         $blogs = $query->paginate(20);
         if ($blogs->isNotEmpty()) {
             foreach ($blogs as $blog) {
-                $blog->image = asset('storage/blogs', $blog->image);
+                $blog->image = url('storage/blogs', $blog->image);
             }
-            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs], 200);
+            $categories = DB::table('blog_categories')->orderBy('blog_category')->get();
+            return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs, $categories], 200);
         } else {
             return response()->json(['message' => 'No Data Found', 'code' => 400], 400);
         }

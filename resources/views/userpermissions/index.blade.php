@@ -57,7 +57,7 @@
 <script>
     $(function() {
         var table = $('#permissiontable').DataTable({
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],

@@ -47,7 +47,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
                         <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" placeholder="Enter Mobile No." value="{{ $user->mobile }}" />
                         @error('mobile')
@@ -115,14 +115,25 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
+                    <div class="col-md-2 mt-2">
+                        <label for="tax_exempt">Tax Exempt:</label>
                         <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
                             <option value="">Select</option>
                             <option value="1" {{$user->tax_exempt == 1 ? 'selected' : ''}}>Yes</option>
                             <option value="0" {{$user->tax_exempt == 0 ? 'selected' : ''}}>No</option>
                         </select>
                         @error('tax_exempt')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="flag">Active:</label>
+                        <select class="form-control select2bs4" name="flag" id="flag">
+                            <option value="">Select</option>
+                            <option value="0" {{$user->flag == 0 ? 'selected' : ''}}>Yes</option>
+                            <option value="1" {{$user->flag == 1 ? 'selected' : ''}}>No</option>
+                        </select>
+                        @error('flag')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

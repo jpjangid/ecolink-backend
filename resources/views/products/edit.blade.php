@@ -173,7 +173,7 @@
                     </div>
 
                     <!-- Status -->
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="status"><span style="color: red;">* </span>Status</label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status">

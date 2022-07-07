@@ -99,7 +99,7 @@
     function datatable() {
         productTable = $('#productTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],
