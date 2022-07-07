@@ -14,8 +14,9 @@ class BlogController extends Controller
     {
         /* Getting all records */
         $query = DB::table('blogs')
-            ->select('id', 'slug', 'title', 'image', 'alt', 'short_desc')
-            ->where(['flag' => 0, 'status' => 1]);
+            ->select('id', 'slug', 'title', 'image', 'alt', 'short_desc', 'publish_date')
+            ->where(['flag' => 0, 'status' => 1])
+            ->orderByDesc('publish_date');
         if ($request->filled('squery'))
         {
             $query = $query->where('title', 'like','%' . $request->squery . '%');
