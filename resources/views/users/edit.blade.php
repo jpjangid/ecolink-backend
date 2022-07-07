@@ -61,13 +61,13 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
+                    {{-- <div class="col-md-4 mt-2">
                         <label for="landmark"><span style="color: red;">* </span>Landmark:</label>
                         <input type="text" class="form-control" name="landmark" id="landmark" placeholder="Enter Landmark" value="{{ $user->landmark }}" />
                         @error('landmark')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
                     <div class="col-md-4 mt-2">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
                         <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ $user->country }}" />
@@ -115,7 +115,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-2 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label for="tax_exempt">Tax Exempt:</label>
                         <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
                             <option value="">Select</option>
@@ -126,7 +126,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-2 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label for="flag">Active:</label>
                         <select class="form-control select2bs4" name="flag" id="flag">
                             <option value="">Select</option>
