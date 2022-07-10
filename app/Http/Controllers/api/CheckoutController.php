@@ -36,6 +36,7 @@ class CheckoutController extends Controller
 		$product_count = 0;
 		$hazardous = 0;
 		$hazardous_amt = 0;
+		$hazardous_qty = 0;
 		$lift_gate_qty = 1;
 		$lift_gate_amt = 0;
 		if ($carts->isNotEmpty()) {
@@ -46,13 +47,20 @@ class CheckoutController extends Controller
 				$order_total += $cart->product->sale_price * $cart->quantity;
 				$total_discount += $product_discount;
 				$product_count +=  $cart->quantity;
-				if ($cart->product->hazardous == 1) {
-                    $hazardous_amt += $cart->quantity * $hazardous_amount;
-				}
-				if ($cart->lift_gate == 1) {
-                    $lift_gate_amt += $lift_gate_amount * $lift_gate_qty;
+                if ($cart->lift_gate == 1) {
+                    $lift_gate_qty += 1;
+                }
+                if ($cart->product->hazardous == 1) {
+                    $hazardous_qty += 1;
                 }
 			}
+            if($hazardous_qty > 0){
+                $hazardous_amt = $hazardous_amount;
+            }
+
+            if($lift_gate_qty > 0){
+                $lift_gate_amt = $lift_gate_amount;
+            }
 			$payable = $order_total + $hazardous_amt + $lift_gate_amt;
 		}
 

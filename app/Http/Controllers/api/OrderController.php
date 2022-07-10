@@ -4,32 +4,35 @@ namespace App\Http\Controllers\api;
 
 use App\Models\Cart;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\OrderItems;
 use App\Models\UserAddress;
-use App\Models\CouponUsedBy;
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ShippingRate;
+use App\Traits\QboRefreshToken;
+use Illuminate\Support\Facades\Http;
+use App\Models\User;
+use App\Models\Product;
+use App\Models\CouponUsedBy;
 use Illuminate\Support\Facades\Log;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
 use QuickBooksOnline\API\DataService\DataService;
-use App\Traits\ShippingRate;
-use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
     use ShippingRate;
+    use QboRefreshToken;
 
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $orders = Order::where('user_id', $user->id)->with('items:order_id,product_id,quantity,item_status', 'items.product:id,parent_id,name,variant,regular_price,sale_price,image,alt,slug', 'items.product.category:id,name,parent_id', 'items.product.category.parent:id,name')->latest()->paginate(20);
-        
+
         if ($orders->isNotEmpty()) {
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $orders], 200);
         } else {
@@ -40,23 +43,23 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'billing_name' => 'required',
-            'billing_mobile' => 'required|digits:10',
-            'billing_email' => 'required|email',
-            'billing_address' => 'required',
-            'billing_city' => 'required',
-            'billing_state' => 'required',
-            'billing_country' => 'required',
-            'billing_zip' => 'required',
-            'shipping_name' => 'required',
-            'shipping_mobile' => 'required|digits:10',
-            'shipping_email' => 'required|email',
-            'shipping_address' => 'required',
-            'shipping_city' => 'required',
-            'shipping_state' => 'required',
-            'shipping_country' => 'required',
-            'shipping_zip' => 'required',
-            'payment_via' => 'required',
+            'billing_name'      => 'required',
+            'billing_mobile'    => 'required|digits:10',
+            'billing_email'     => 'required|email',
+            'billing_address'   => 'required',
+            'billing_city'      => 'required',
+            'billing_state'     => 'required',
+            'billing_country'   => 'required',
+            'billing_zip'       => 'required',
+            'shipping_name'     => 'required',
+            'shipping_mobile'   => 'required|digits:10',
+            'shipping_email'    => 'required|email',
+            'shipping_address'  => 'required',
+            'shipping_city'     => 'required',
+            'shipping_state'    => 'required',
+            'shipping_country'  => 'required',
+            'shipping_zip'      => 'required',
+            'payment_via'       => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -118,18 +121,18 @@ class OrderController extends Controller
             $lift_gate_amount = $lift_gate->value ?? 0;
             $hazardous_amount = $hazardous->value ?? 0;
 
-            $order_total_amt = 0;
-            $payable_total_amt = 0;
-            $product_discount = 0;
-            $coupon_discount = 0;
-            $discount = 0;
-            $lift_gate_qty = 1;
-            $lift_gate_amt = 0;
+            $order_total_amt    = 0;
+            $payable_total_amt  = 0;
+            $product_discount   = 0;
+            $coupon_discount    = 0;
+            $discount           = 0;
+            $lift_gate_qty      = 0;
+            $lift_gate_amt      = 0;
             $item_lift_gate_amt = 0;
-            $total_weight = 0;
-            $no_items = 0;
-            $hazardous_qty = 1;
-            $hazardous_amt = 0;
+            $total_weight       = 0;
+            $no_items           = 0;
+            $hazardous_qty      = 0;
+            $hazardous_amt      = 0;
             $item_hazardous_amt = 0;
             $product_id = array();
 
@@ -142,25 +145,24 @@ class OrderController extends Controller
                 $total_weight += $cartItem->product->weight * $cartItem->quantity;
                 $no_items += $cartItem->quantity;
                 if ($cartItem->lift_gate == 1) {
-                    $lift_gate_amt += $lift_gate_amount * $lift_gate_qty;
-                    $item_lift_gate_amt = $lift_gate_amount * $lift_gate_qty;
-                }
-                if ($coupon != null) {
-                    if ($coupon->disc_type == 'percent') {
-                        $dis_amt = ($cartItem->product->sale_price * $coupon->discount) / 100;
-                        $coupon_discount += $dis_amt * $cartItem->quantity;
-                    }else{
-                        $dis_amt = $coupon->discount;
-                        $coupon_discount += $dis_amt * $cartItem->quantity;
-                    }
+                    $lift_gate_qty += 1;
+                    $item_lift_gate_amt = $lift_gate_amount;
                 }
                 if ($cartItem->product->hazardous == 1) {
-                    $hazardous_amt += $cartItem->quantity * $hazardous_amount;
-                    $item_hazardous_amt += $cartItem->quantity * $hazardous_amount;
+                    $hazardous_qty += 1;
+                    $item_hazardous_amt = $hazardous_amount;
                 }
                 array_push($product_id, $cartItem->product->id);
                 $item = ['product_id' => $cartItem->product->id, 'quantity' => $cartItem->quantity, 'sale_price' => $cartItem->product->sale_price, 'lift_gate_amt' => $item_lift_gate_amt, 'hazardous_amt' => $item_hazardous_amt];
                 array_push($order_items, $item);
+            }
+
+            if ($hazardous_qty > 0) {
+                $hazardous_amt = $hazardous_amount;
+            }
+
+            if ($lift_gate_qty > 0) {
+                $lift_gate_amt = $lift_gate_amount;
             }
 
             $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $product_id]);
@@ -178,10 +180,18 @@ class OrderController extends Controller
             $taxAmount = 0;
             $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
             if ($tax != null) {
-                if($coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100'){
+                if ($coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
                     $taxAmount = 0;
-                }else{
+                } else {
                     $taxAmount = $tax->rate;
+                }
+            }
+
+            if ($coupon != null) {
+                if ($coupon->disc_type == 'percent') {
+                    $coupon_discount = ($payable_total_amt * $coupon->discount) / 100;
+                } else {
+                    $coupon_discount = $coupon->discount;
                 }
             }
 
@@ -189,52 +199,52 @@ class OrderController extends Controller
             $discount = $product_discount + $coupon_discount;
 
             $order = Order::create([
-                'order_no' => $orderNumber,
-                'user_id' => $user->id,
-                'order_amount' => $order_total_amt,
-                'discount_applied' => $discount,
-                'total_amount' => $payable_total_amt,
-                'lift_gate_amt' => $lift_gate_amt,
-                'tax_amount' => $taxAmount,
-                'hazardous_amt' => $hazardous_amt,
-                'no_items' => $no_items,
-                'billing_name' => $request->billing_name,
-                'billing_mobile' => $request->billing_mobile,
-                'billing_email' => $request->billing_email,
-                'billing_address' => $request->billing_address,
-                'billing_country' => $request->billing_country,
-                'billing_state' => $request->billing_state,
-                'billing_city' => $request->billing_city,
-                'billing_zip' => $request->billing_zip,
-                'billing_landmark' => $request->billing_landmark,
-                'shipping_name' => $request->shipping_name,
-                'shipping_mobile' => $request->shipping_mobile,
-                'shipping_email' => $request->shipping_email,
-                'shipping_address' => $request->shipping_address,
-                'shipping_country' => $request->shipping_country,
-                'shipping_state' => $request->shipping_state,
-                'shipping_city' => $request->shipping_city,
-                'shipping_zip' => $request->shipping_zip,
-                'shipping_landmark' => $request->shipping_landmark,
-                'order_status' => 'pending',
-                'payment_via' => $request->payment_via,
-                'payment_currency' => 'dollar',
-                'payment_status' => 'pending',
-                'shippment_via' => $shipment_via,
-                'shippment_status' => 'pending',
-                'coupon_id' => $coupon_id ?? '',
-                'coupon_discount' => $coupon_discount,
-                'order_comments' => $request->order_comments,
-                'payment_amount' => $payable_total_amt,
-                'shippment_rate' => $shipping_charge
+                'order_no'          =>  $orderNumber,
+                'user_id'           =>  $user->id,
+                'order_amount'      =>  $order_total_amt,
+                'discount_applied'  =>  $discount,
+                'total_amount'      =>  $payable_total_amt,
+                'lift_gate_amt'     =>  $lift_gate_amt,
+                'tax_amount'        =>  $taxAmount,
+                'hazardous_amt'     =>  $hazardous_amt,
+                'no_items'          =>  $no_items,
+                'billing_name'      =>  $request->billing_name,
+                'billing_mobile'    =>  $request->billing_mobile,
+                'billing_email'     =>  $request->billing_email,
+                'billing_address'   =>  $request->billing_address,
+                'billing_country'   =>  $request->billing_country,
+                'billing_state'     =>  $request->billing_state,
+                'billing_city'      =>  $request->billing_city,
+                'billing_zip'       =>  $request->billing_zip,
+                'billing_landmark'  =>  $request->billing_landmark,
+                'shipping_name'     =>  $request->shipping_name,
+                'shipping_mobile'   =>  $request->shipping_mobile,
+                'shipping_email'    =>  $request->shipping_email,
+                'shipping_address'  =>  $request->shipping_address,
+                'shipping_country'  =>  $request->shipping_country,
+                'shipping_state'    =>  $request->shipping_state,
+                'shipping_city'     =>  $request->shipping_city,
+                'shipping_zip'      =>  $request->shipping_zip,
+                'shipping_landmark' =>  $request->shipping_landmark,
+                'order_status'      =>  'pending',
+                'payment_via'       =>  $request->payment_via,
+                'payment_currency'  =>  'dollar',
+                'payment_status'    =>  'pending',
+                'shippment_via'     =>  $shipment_via,
+                'shippment_status'  =>  'pending',
+                'coupon_id'         =>  $coupon_id ?? '',
+                'coupon_discount'   =>  $coupon_discount,
+                'order_comments'    =>  $request->order_comments,
+                'payment_amount'    =>  $payable_total_amt,
+                'shippment_rate'    =>  $shipping_charge
             ]);
 
             foreach ($order_items as $item) {
                 OrderItems::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'sale_price' => $item['sale_price'],
+                    'order_id'      => $order->id,
+                    'product_id'    => $item['product_id'],
+                    'quantity'      => $item['quantity'],
+                    'sale_price'    => $item['sale_price'],
                     'lift_gate_amt' => $item['lift_gate_amt'],
                     'hazardous_amt' => $item['hazardous_amt'],
                 ]);
@@ -261,7 +271,13 @@ class OrderController extends Controller
             //     $response = $this->shipViaFedex($order->id);
             // }
 
-            // $qboresponse = $this->quickBookInvoice($order->user_id, $order->id);
+            // if($user->wp_id == null && $user->company_name != null){
+            //     $this->qboCustomer($user->company_name, $user->id);
+            // }
+
+            // if($user->wp_id != null){
+            //     $qboresponse = $this->quickBookInvoice($order->user_id, $order->id);
+            // }
 
             // $sosresponse = $this->sosItemUpdate();
 
@@ -394,9 +410,9 @@ class OrderController extends Controller
 
             curl_close($curl);
 
-            if(isset($newdata['Body']['CreateResponse']['CreateResult']['ProNumber'])){
+            if (isset($newdata['Body']['CreateResponse']['CreateResult']['ProNumber'])) {
                 return response()->json(['message' => 'Shippment created successfully', 'response' => $newdata, 'code' => 200], 200);
-            }else{
+            } else {
                 return response()->json(['message' => 'Oops! Something went wrong', 'code' => 400], 400);
             }
         } catch (\Exception $e) {
@@ -504,50 +520,48 @@ class OrderController extends Controller
             }
             if (isset($data->fault->error[0]->code)) {
                 $type = "online";
-                $token = $this->qboRefershToken($type);
+                $token = $this->accessToken($type);
                 $data = json_encode($token);
                 file_put_contents('storage/qbo.json', $data);
-                $this->quickBookInvoice($user_id, $order_id);
+                return $this->quickBookInvoice($user_id, $order_id);
             }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
     }
 
-    public function qboCustomer()
+    public function qboCustomer($companyName,$user_id)
     {
-        // $users = DB::table('wp_users')->get();
-        // $customers = DB::table('wp_customer')->get();
-        // return $customers;
         $file = file_get_contents('storage/qbo.json');
         $content = json_decode($file, true);
+        $company_name = str_replace("'", "\'", $companyName);
+        $company_name = str_replace(' ', '%20', $company_name);
 
-        $response = Http::accept('application/json')->withHeaders([
-            'Authorization' => 'Bearer ' . $content['access_token'],
-            'Content-Type' => 'application/json'
-        ])->get(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/query?query=select%20*%20from%20Customer&minorversion=' . config('qboconfig.minorversion'));
+        try {
+            $response = Http::accept('application/json')->withHeaders([
+                'Authorization' => 'Bearer ' . $content['access_token'],
+                'Content-Type' => 'application/json'
+            ])->get(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/query?query=select%20*%20from%20Customer%20Where%20CompanyName%20=%20\'' . $company_name . '\'&minorversion=' . config('qboconfig.minorversion'));
 
-        return $response;
-    }
+            $data = json_decode($response);
+            if (isset($data->fault->error[0]->code)) {
+                $type = "online";
+                $token = $this->accessToken($type);
+                $data = json_encode($token);
+                file_put_contents('storage/qbo.json', $data);
+                return $this->qboCustomer($companyName,$user_id);
+            } elseif (isset($data->QueryResponse->Customer)) {
+                $user = User::find($user_id);
+                $user->wp_id = $data->QueryResponse->Customer[0]->Id;
+                $user->update();
 
-    public function qboRefershToken($type)
-    {
-        if ($type == "online") {
-            $file = file_get_contents('storage/qbo.json');
-            $content = json_decode($file, true);
-        } else {
-            $file = file_get_contents('storage/qbopayment.json');
-            $content = json_decode($file, true);
+                return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
+            } else {
+                return response()->json(['message' => 'No Customer Found', 'code' => 400], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
-
-        $oauth2LoginHelper = new OAuth2LoginHelper(config('qboconfig.client_id'), config('qboconfig.client_secret'));
-        $accessTokenObj = $oauth2LoginHelper->refreshAccessTokenWithRefreshToken($content['refresh_token']);
-        $accessTokenValue = $accessTokenObj->getAccessToken();
-        $refreshTokenValue = $accessTokenObj->getRefreshToken();
-
-        $data = collect(['access_token' => $accessTokenValue, 'refresh_token' => $refreshTokenValue]);
-
-        return $data;
     }
 
     public function qboPayment(Request $request)
@@ -584,10 +598,10 @@ class OrderController extends Controller
 
             if (isset($qboPaymentresponse['code']) && $qboPaymentresponse['code'] == 'AuthenticationFailed') {
                 $type = "payment";
-                $token = $this->qboRefershToken($type);
+                $token = $this->accessToken($type);
                 $data = json_encode($token);
                 file_put_contents('storage/qbopayment.json', $data);
-                $this->qboPayment($request);
+                return $this->qboPayment($request);
             }
 
             $data = ['payment_id' => $request_id, 'response' => json_decode($qboPaymentresponse)];
@@ -616,45 +630,37 @@ class OrderController extends Controller
     {
         $file = file_get_contents('storage/sos.json');
         $content = json_decode($file, true);
+        $response = Http::withHeaders([
+            'Host' => 'api.sosinventory.com',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Authorization' => 'Bearer ' . $content['access_token']
+        ])->get('https://api.sosinventory.com/api/v2/item');
 
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.sosinventory.com/api/v2/item',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'Host: api.sosinventory.com',
-                'Authorization: Bearer ' . $content['access_token']
-            ),
-        ));
-
-        $response = curl_exec($curl);
         $data = json_decode($response, true);
-        foreach ($data['data'] as $key => $item) {
-            $product = Product::select('id')->where('sku', $item['sku'])->first();
-            if (!empty($product)) {
-                $product->wp_id = $item['id'];
-                $product->update();
-            }
+
+        if (isset($data['data'])) {
+            // foreach ($data['data'] as $key => $item) {
+            //     $product = Product::select('id')->where('sku', $item['sku'])->first();
+            //     if (!empty($product)) {
+            //         $product->wp_id = $item['id'];
+            //         $product->update();
+            //     }
+            // }
+            return $response;
         }
 
-        curl_close($curl);
-        return $response;
-
-        $token = $this->sosRefreshToken();
-        file_put_contents('storage/qbo.json', $token);
-        $this->sosItemUpdate();
+        if (isset($data['Message'])) {
+            $token = $this->sosRefreshToken();
+            file_put_contents('storage/qbo.json', $token);
+            return $this->sosItemUpdate();
+        }
     }
 
     public function sosRefreshToken()
     {
+        $file = file_get_contents('storage/sos.json');
+        $content = json_decode($file, true);
+
         $file = file_get_contents('storage/sos.json');
         $content = json_decode($file, true);
 
@@ -679,6 +685,7 @@ class OrderController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
+
         return $response;
     }
 }

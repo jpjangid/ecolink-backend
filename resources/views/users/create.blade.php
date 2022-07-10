@@ -47,6 +47,13 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
+                        <label for="company_name"><span style="color: red;">* </span> Company Name:</label>
+                        <input type="text" class="form-control" name="company_name" id="company_name" placeholder=" Enter Company Name" value="{{ old('company_name') }}" />
+                        @error('company_name')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
                         <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
                         @error('mobile')
