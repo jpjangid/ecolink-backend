@@ -131,8 +131,8 @@ class CouponController extends Controller
             'cat_id'                =>  $request->cat_id,
             'product_id'            =>  $request->product_id,
             'user_id'               =>  $request->user_id,
+            'type'                  =>  $request->type,
             // 'days'                  =>  $days,
-            // 'type'                  =>  $request->type,
         ]);
 
         /* After Successfull insertion of data redirecting to listing page with message */
@@ -195,7 +195,7 @@ class CouponController extends Controller
         /* Updating Data fetched by Id */
         $coupon->name                   =  $request->name;
         $coupon->code                   =  $request->code;
-        /* $coupon->type                   =  $request->type;*/
+        $coupon->type                   =  $request->type;
         $coupon->min_order_amount       =  $request->min_order_amount;
         $coupon->max_order_amount       =  $request->max_order_amount;
         $coupon->offer_start            =  $request->offer_start;
