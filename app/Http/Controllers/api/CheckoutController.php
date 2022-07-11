@@ -20,7 +20,7 @@ class CheckoutController extends Controller
 
 		$carts = Cart::select('id', 'user_id', 'product_id', 'quantity', 'lift_gate')->where('user_id', $user->id)->with('product')->get();
 
-		$user = DB::table('users')->select('id', 'name', 'email', 'address', 'city', 'state', 'country', 'pincode', 'mobile')->find($user->id);
+		$user = DB::table('users')->select('id', 'name', 'email', 'address', 'city', 'state', 'country', 'pincode', 'mobile', 'company_name')->find($user->id);
 
 		$addresses = DB::table('user_addresses')->where('user_id', $user->id)->get();
 		$lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();

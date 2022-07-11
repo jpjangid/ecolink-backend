@@ -176,7 +176,7 @@ class OrderController extends Controller
             $taxAmount = 0;
             $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
             if ($tax != null) {
-                if ($coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
                     $taxAmount = 0;
                 } else {
                     $taxAmount = $tax->rate;
