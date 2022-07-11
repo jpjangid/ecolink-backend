@@ -34,6 +34,13 @@
                         </div>
                     </div>
                     <div class="col-md-4">
+                        <label for="email"><span style="color: red;">* </span>Email:</label>
+                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ $user->email }}" readonly/>
+                        @error('email')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4">
                         <label for="name"><span style="color: red;">* </span> Full Name:</label>
                         <input type="text" class="form-control" name="name" placeholder="Enter Full Name" value="{{ $user->name }}" />
                         @error('name')
@@ -41,9 +48,9 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
-                        <label for="email"><span style="color: red;">* </span>Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ $user->email }}" readonly/>
-                        @error('email')
+                        <label for="company_name"><span style="color: red;">* </span> Company Name:</label>
+                        <input type="text" class="form-control" name="company_name" id="company_name" placeholder=" Enter Company Name" value="{{ $user->company_name }}" />
+                        @error('company_name')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
@@ -137,7 +144,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-12 mt-2">
+                    <div class="col-md-8 mt-2">
                         <label for="profile_image">Profile Image:</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">

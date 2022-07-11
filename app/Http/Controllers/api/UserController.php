@@ -16,36 +16,46 @@ use App\Mail\ForgotPassword;
 use App\Mail\VerificationMail;
 use App\Models\UserDocument;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use App\Traits\QboRefreshToken;
 
 class UserController extends Controller
 {
+    use QboRefreshToken;
+
 	public function register(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
-			'name'          =>  'required|string|max:255',
-			'email'         =>  'required|string|email|max:255|unique:users,email',
-			'password'      =>  'required|string|min:8',
-			'mobile'        =>  'required|digits:10|unique:users,mobile',
-			'address'       =>  'required',
-			'state'         =>  'required',
-			'city'          =>  'required',
-			'pincode'       =>  'required',
-			'files' 		=>  'required_if:tax_exempt,==,1',
-			'files.*'		=> 	'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+			'name'          	=>  'required|string|regex:/^[\pL\s\-]+$/u|max:255',
+			'company_name'  	=>  'required|string|regex:/^[\pL\s\-]+$/u|max:255',
+			'email'         	=>  'required|string|email|max:255|unique:users,email',
+			'password'      	=>  'required|string|min:8',
+			'mobile'        	=>  'required|digits:10|unique:users,mobile',
+			'address'       	=>  'required',
+			'state'         	=>  'required|regex:/^[\pL\s\-]+$/u',
+			'city'          	=>  'required|regex:/^[\pL\s\-]+$/u',
+			'pincode'       	=>  'required',
+			'files' 			=>  'required_if:tax_exempt,==,1',
+			'files.*'			=> 	'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
 		], [
-			'name.required'         =>  'Please Enter Name',
-			'email.required'        =>  'Please Enter Email',
-			'mobile.required'       =>  'Please Enter Mobile No.',
-			'address.required'      =>  'Please Enter Address',
-			'state.required'        =>  'Please Enter State',
-			'city.required'         =>  'Please Enter City',
-			'pincode.required'      =>  'Please Enter Zip Code',
-			'mobile.numeric'        =>  'The Mobile No. must be numeric',
-			'password.required'     =>  'Please Enter Password',
-			'files.required_if'     =>  'Please Select Files',
-			'files.*.mimes' 		=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
-			'files.*.max' 			=> 	'Sorry! Maximum allowed size for an file is 10MB',
+			'name.required'         	=>  'Please Enter Name',
+			'name.regex'                =>  'Please Enter Name in alphabets',
+			'company_name.required' 	=>  'Please Enter Company Name',
+			'company_name.regex'        =>  'Please Enter Company Name in alphabets',
+			'email.required'        	=>  'Please Enter Email',
+			'mobile.required'       	=>  'Please Enter Mobile No.',
+			'address.required'      	=>  'Please Enter Address',
+			'state.required'        	=>  'Please Enter State',
+			'name.regex'                =>  'Please Enter State in alphabets',
+			'city.required'         	=>  'Please Enter City',
+			'name.regex'                =>  'Please Enter City in alphabets',
+			'pincode.required'      	=>  'Please Enter Zip Code',
+			'mobile.numeric'        	=>  'The Mobile No. must be numeric',
+			'password.required'     	=>  'Please Enter Password',
+			'files.required_if'     	=>  'Please Select Files',
+			'files.*.mimes' 			=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+			'files.*.max' 				=> 	'Sorry! Maximum allowed size for an file is 10MB',
 		]);
 
 		if ($validator->fails()) {
@@ -75,6 +85,7 @@ class UserController extends Controller
 
 			$user = User::create([
 				'name'                  =>  $request['name'],
+				'company_name'          =>  $request['company_name'],
 				'email'                 =>  $request['email'],
 				'mobile'                =>  $request['mobile'],
 				'address'               =>  $request['address'],
@@ -104,6 +115,10 @@ class UserController extends Controller
 				'name'          =>  $request['name'],
 				'address_type'  => 'billing'
 			]);
+
+			if($user->company_name != null){
+				$this->qboCustomer($user->company_name, $user->id);
+			}
 
 			if ($request->tax_exempt == 1) {
 				$files = $request->file('files');
@@ -208,36 +223,6 @@ class UserController extends Controller
 		}
 	}
 
-	//method for user info
-	public function userInfo(Request $request)
-	{
-		$validator = Validator::make($request->all(), [
-			'user_id'       => 'required',
-		]);
-
-		if ($validator->fails()) {
-			return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
-		}
-
-		$usertoken = request()->bearerToken();
-		if (empty($usertoken)) {
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
-		if (empty($user)) {
-			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
-		}
-
-		$user = User::find($user->id);
-		$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
-
-		if (!empty($user)) {
-			return response()->json(['message' => 'User Info fetched successfully', 'code' => 200, 'data' => $user], 200);
-		} else {
-			return response()->json(['message' => 'No User Found', 'code' => 400], 400);
-		}
-	}
-
 	public function forgotPasswordEmail(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
@@ -297,6 +282,36 @@ class UserController extends Controller
 		}
 	}
 
+	//method for user info
+	public function userInfo(Request $request)
+	{
+		$validator = Validator::make($request->all(), [
+			'user_id'       => 'required',
+		]);
+
+		if ($validator->fails()) {
+			return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+		}
+
+		$usertoken = request()->bearerToken();
+		if (empty($usertoken)) {
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+		$user = DB::table('users')->select('id')->where('api_token', $usertoken)->first();
+		if (empty($user)) {
+			return response()->json(['message' => 'User is not logged in', 'code' => 400], 400);
+		}
+
+		$user = User::find($user->id);
+		$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
+
+		if (!empty($user)) {
+			return response()->json(['message' => 'User Info fetched successfully', 'code' => 200, 'data' => $user], 200);
+		} else {
+			return response()->json(['message' => 'No User Found', 'code' => 400], 400);
+		}
+	}
+
 	public function editUserInfo(Request $request)
 	{
 		$usertoken = request()->bearerToken();
@@ -310,6 +325,7 @@ class UserController extends Controller
 
 		$validator = Validator::make($request->all(), [
 			'name'          =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
+			'company_name'  =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
 			'email'         =>  'required|email|unique:users,email,' . $user->id,
 			'password'      =>  'min:8',
 			'mobile'        =>  'required|digits:10|unique:users,mobile,' . $user->id,
@@ -321,6 +337,8 @@ class UserController extends Controller
 		], [
 			'name.required'         =>  'Please Enter Name',
 			'name.regex'            =>  'Please Enter Name in alphabets',
+			'company_name.required' =>  'Please Enter Company Name',
+			'company_name.regex'    =>  'Please Enter Company Name in alphabets',
 			'email.required'        =>  'Please Enter Email',
 			'mobile.required'       =>  'Please Enter Mobile No.',
 			'address.required'      =>  'Please Enter Address',
@@ -359,6 +377,7 @@ class UserController extends Controller
 
 			/* Updating Data fetched by Id */
 			$user->name             =   $request['name'];
+			$user->company_name     =   $request['company_name'];
 			$user->email            =   $request['email'];
 			$user->mobile           =   $request['mobile'];
 			$user->address          =   $request['address'];
@@ -372,6 +391,10 @@ class UserController extends Controller
 			$user->save();
 
 			$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
+
+			if($user->wp_id == null && $user->company_name != null){
+                $this->qboCustomer($user->company_name, $user->id);
+            }
 
 			return response()->json(['message' => 'User info update successfully', 'code' => 200, 'data' => $user], 200);
 		} else {
@@ -418,4 +441,93 @@ class UserController extends Controller
 		}
 		return response()->json(['message' => 'Documents uploaded successfully', 'code' => 200], 200);
 	}
+
+    public function qboCustomer($companyName,$user_id)
+    {
+        $file = file_get_contents('storage/qbo.json');
+        $content = json_decode($file, true);
+        $company_name = str_replace("'", "\'", $companyName);
+        $company_name = str_replace(' ', '%20', $company_name);
+
+        try {
+            $response = Http::accept('application/json')->withHeaders([
+                'Authorization' => 'Bearer ' . $content['access_token'],
+                'Content-Type' => 'application/json'
+            ])->get(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/query?query=select%20*%20from%20Customer%20Where%20CompanyName%20=%20\'' . $company_name . '\'&minorversion=' . config('qboconfig.minorversion'));
+
+            $data = json_decode($response);
+            if (isset($data->fault->error[0]->code)) {
+                $type = "online";
+                $token = $this->accessToken($type);
+                $data = json_encode($token);
+                file_put_contents('storage/qbo.json', $data);
+                return $this->qboCustomer($companyName, $user_id);
+            } 
+            if (isset($data->QueryResponse->Customer)) {
+                $user = User::find($user_id);
+                $user->wp_id = $data->QueryResponse->Customer[0]->Id;
+                $user->update();
+
+                return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
+            } 
+            if(!empty($data->QueryResponse)) {
+                $response = $this->createQboCustomer($companyName,$user_id);
+
+				return $response;
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+        }
+    }
+
+    public function createQboCustomer($companyName,$user_id)
+    {
+        $user = User::find($user_id);
+
+        $file = file_get_contents('storage/qbo.json');
+        $content = json_decode($file, true);
+
+        $data['FullyQualifiedName'] = $user->name;
+        $data['PrimaryEmailAddr']['Address'] = $user->email;
+        $data['DisplayName'] = $user->name;
+        $data['PrimaryPhone']['FreeFormNumber'] = $user->phone;
+        $data['CompanyName'] = $user->company_name;
+        $data['BillAddr']['CountrySubDivisionCode'] = $user->state;
+        $data['BillAddr']['City'] = $user->city;
+        $data['BillAddr']['PostalCode'] = $user->pincode;
+        $data['BillAddr']['Line1'] = $user->address;
+        $data['BillAddr']['Country'] = 'USA';
+        $data['GivenName'] = $user->name;
+
+        try {
+            $response = Http::accept('application/json')->withHeaders([
+                'Authorization' => 'Bearer ' . $content['access_token'],
+                'Content-Type' => 'application/json'
+            ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
+
+            $data = json_decode($response);
+			
+			if (isset($data->Customer)) {
+                $user = User::find($user_id);
+                $user->wp_id = $data->Customer->Id;
+                $user->update();
+
+                return response()->json(['message' => 'Customer created Successfully', 'code' => 200], 200);
+            }
+
+            if (isset($data->fault->error[0]->code) && $data->fault->error[0]->code == 3200) {
+                $type = "online";
+                $token = $this->accessToken($type);
+                $data = json_encode($token);
+                file_put_contents('storage/qbo.json', $data);
+                return $this->createQboCustomer($companyName,$user_id);
+            }
+
+            if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
+				return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
+			}
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+        }
+    }
 }
