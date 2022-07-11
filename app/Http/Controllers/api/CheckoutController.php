@@ -37,7 +37,7 @@ class CheckoutController extends Controller
 		$hazardous = 0;
 		$hazardous_amt = 0;
 		$hazardous_qty = 0;
-		$lift_gate_qty = 1;
+		$lift_gate_qty = 0;
 		$lift_gate_amt = 0;
 		if ($carts->isNotEmpty()) {
 			foreach ($carts as $cart) {

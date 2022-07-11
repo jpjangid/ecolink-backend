@@ -144,10 +144,6 @@ class OrderController extends Controller
                 $product_discount += ($cartItem->product->regular_price - $cartItem->product->sale_price) * $cartItem->quantity;
                 $total_weight += $cartItem->product->weight * $cartItem->quantity;
                 $no_items += $cartItem->quantity;
-                if ($cartItem->lift_gate == 1) {
-                    $lift_gate_qty += 1;
-                    $item_lift_gate_amt = $lift_gate_amount;
-                }
                 if ($cartItem->product->hazardous == 1) {
                     $hazardous_qty += 1;
                     $item_hazardous_amt = $hazardous_amount;
@@ -161,7 +157,7 @@ class OrderController extends Controller
                 $hazardous_amt = $hazardous_amount;
             }
 
-            if ($lift_gate_qty > 0) {
+            if ($request->lift_gate) {
                 $lift_gate_amt = $lift_gate_amount;
             }
 

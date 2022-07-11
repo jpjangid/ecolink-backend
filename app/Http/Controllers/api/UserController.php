@@ -142,7 +142,7 @@ class UserController extends Controller
 			try {
 				Mail::to($request->email)->send(new VerificationMail($user));
 			} catch (\Exception $e) {
-				return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+				//return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
 			}
 
 			DB::commit();
