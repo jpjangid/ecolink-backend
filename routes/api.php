@@ -138,6 +138,7 @@ Route::get('shipViaSaia', [OrderController::class, 'shipViaSaia']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
 Route::get('sosRefreshToken', [OrderController::class, 'sosRefreshToken']);
 Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
+Route::get('createQboCustomer', [UserController::class, 'createQboCustomer']);
 Route::post('qboPayment', [OrderController::class, 'qboPayment']);
 Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);

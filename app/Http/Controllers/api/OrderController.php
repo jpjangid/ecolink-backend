@@ -549,16 +549,71 @@ class OrderController extends Controller
                 $token = $this->accessToken($type);
                 $data = json_encode($token);
                 file_put_contents('storage/qbo.json', $data);
-                return $this->qboCustomer($companyName,$user_id);
-            } elseif (isset($data->QueryResponse->Customer)) {
+                return $this->qboCustomer($companyName, $user_id);
+            } 
+            if (isset($data->QueryResponse->Customer)) {
                 $user = User::find($user_id);
                 $user->wp_id = $data->QueryResponse->Customer[0]->Id;
                 $user->update();
 
                 return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
-            } else {
-                return response()->json(['message' => 'No Customer Found', 'code' => 400], 400);
+            } 
+            if(!empty($data->QueryResponse)) {
+                $response = $this->createQboCustomer($companyName,$user_id);
+
+				return $response;
             }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+        }
+    }
+
+    public function createQboCustomer($companyName,$user_id)
+    {
+        $user = User::find($user_id);
+
+        $file = file_get_contents('storage/qbo.json');
+        $content = json_decode($file, true);
+
+        $data['FullyQualifiedName'] = $user->name;
+        $data['PrimaryEmailAddr']['Address'] = $user->email;
+        $data['DisplayName'] = $user->name;
+        $data['PrimaryPhone']['FreeFormNumber'] = $user->phone;
+        $data['CompanyName'] = $user->company_name;
+        $data['BillAddr']['CountrySubDivisionCode'] = $user->state;
+        $data['BillAddr']['City'] = $user->city;
+        $data['BillAddr']['PostalCode'] = $user->pincode;
+        $data['BillAddr']['Line1'] = $user->address;
+        $data['BillAddr']['Country'] = 'USA';
+        $data['GivenName'] = $user->name;
+
+        try {
+            $response = Http::accept('application/json')->withHeaders([
+                'Authorization' => 'Bearer ' . $content['access_token'],
+                'Content-Type' => 'application/json'
+            ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
+
+            $data = json_decode($response);
+			
+			if (isset($data->Customer)) {
+                $user = User::find($user_id);
+                $user->wp_id = $data->Customer->Id;
+                $user->update();
+
+                return response()->json(['message' => 'Customer created Successfully', 'code' => 200], 200);
+            }
+
+            if (isset($data->fault->error[0]->code) && $data->fault->error[0]->code == 3200) {
+                $type = "online";
+                $token = $this->accessToken($type);
+                $data = json_encode($token);
+                file_put_contents('storage/qbo.json', $data);
+                return $this->createQboCustomer($companyName,$user_id);
+            }
+
+            if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
+				return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
+			}
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
