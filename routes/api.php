@@ -142,3 +142,4 @@ Route::get('createQboCustomer', [UserController::class, 'createQboCustomer']);
 Route::post('qboPayment', [OrderController::class, 'qboPayment']);
 Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);
+Route::get('getCityList', [TaxRateController::class, 'getCityList']);
