@@ -22,7 +22,7 @@ use App\Traits\QboRefreshToken;
 
 class UserController extends Controller
 {
-    use QboRefreshToken;
+	use QboRefreshToken;
 
 	public function register(Request $request)
 	{
@@ -116,7 +116,7 @@ class UserController extends Controller
 				'address_type'  => 'billing'
 			]);
 
-			if($user->company_name != null){
+			if ($user->company_name != null) {
 				$this->qboCustomer($user->company_name, $user->id);
 			}
 
@@ -137,7 +137,7 @@ class UserController extends Controller
 			}
 
 			$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
-			$user->url = url('') . '/home/' . $user->api_token;
+			$user->url = config('frontendUrls.verification_url') . $user->api_token;
 
 			try {
 				Mail::to($request->email)->send(new VerificationMail($user));
@@ -241,7 +241,7 @@ class UserController extends Controller
 			$user->api_token        = $randomString;
 			$user->update();
 
-			$user->url = url('') . 'ecolink/profile/reset-password/' . $user->api_token;
+			$user->url = config('frontendUrls.reset_password_url') . $user->api_token;
 
 			Mail::to($request->email)->send(new ForgotPassword($user));
 			return response()->json(['message' => 'Forgot password email sent successfully', 'code' => 200], 200);
@@ -334,6 +334,7 @@ class UserController extends Controller
 			'city'          =>  'required|regex:/^[\pL\s\-]+$/u',
 			'pincode'       =>  'required',
 			'user_id'       =>  'required',
+			'files.*'		=> 	'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
 		], [
 			'name.required'         =>  'Please Enter Name',
 			'name.regex'            =>  'Please Enter Name in alphabets',
@@ -348,6 +349,8 @@ class UserController extends Controller
 			'city.regex'            =>  'Please Enter City in alphabets',
 			'pincode.required'      =>  'Please Enter Zip Code',
 			'mobile.numeric'        =>  'The Mobile No. must be numeric',
+			'files.*.mimes' 		=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+			'files.*.max' 			=> 	'Sorry! Maximum allowed size for an file is 10MB',
 		]);
 
 		if ($validator->fails()) {
@@ -356,7 +359,8 @@ class UserController extends Controller
 
 		$user = User::find($user->id);
 
-		if (!empty($user)) {
+		DB::beginTransaction();
+		try {
 			/* Storing Featured Image on local disk */
 			$image_name = $user->profile_image;
 			if ($request->hasFile('profile_image')) {
@@ -366,7 +370,7 @@ class UserController extends Controller
 				if ($request->hasFile('profile_image')) {
 					$file = $request->file('profile_image');
 					$image_name = $file->getClientOriginalName();
-					$path = Storage::putFileAs('public/profile_image/', $file, $image_name);
+					Storage::putFileAs('public/profile_image/', $file, $image_name);
 				}
 			}
 
@@ -392,13 +396,34 @@ class UserController extends Controller
 
 			$user->profile_image = asset('storage/profile_image/' . $user->profile_image);
 
-			if($user->wp_id == null && $user->company_name != null){
-                $this->qboCustomer($user->company_name, $user->id);
-            }
+			if ($user->wp_id == null && $user->company_name != null) {
+				$this->qboCustomer($user->company_name, $user->id);
+			}
+
+			if (!empty($request->file('files'))) {
+				$files = $request->file('files');
+
+				foreach ($files as $file) {
+					$name     = $file->getClientOriginalName();
+					$ext     = $file->getClientOriginalExtension();
+					Storage::putFileAs('public/documents/' . $user->id, $file, $name);
+					//store image file into directory and db
+					UserDocument::create([
+						'user_id'     => $user->id,
+						'file_type'    => $ext,
+						'file_name'    => $name
+					]);
+				}
+			}
+
+			DB::commit();
 
 			return response()->json(['message' => 'User info update successfully', 'code' => 200, 'data' => $user], 200);
-		} else {
-			return response()->json(['message' => 'No User Found', 'code' => 400], 400);
+		} catch (\Exception $e) {
+			DB::rollBack();
+
+			/* After successfull update of data redirecting to index page with message */
+			return redirect()->back()->with('danger', $e->getMessage());
 		}
 	}
 
@@ -442,92 +467,92 @@ class UserController extends Controller
 		return response()->json(['message' => 'Documents uploaded successfully', 'code' => 200], 200);
 	}
 
-    public function qboCustomer($companyName,$user_id)
-    {
-        $file = file_get_contents('storage/qbo.json');
-        $content = json_decode($file, true);
-        $company_name = str_replace("'", "\'", $companyName);
-        $company_name = str_replace(' ', '%20', $company_name);
+	public function qboCustomer($companyName, $user_id)
+	{
+		$file = file_get_contents('storage/qbo.json');
+		$content = json_decode($file, true);
+		$company_name = str_replace("'", "\'", $companyName);
+		$company_name = str_replace(' ', '%20', $company_name);
 
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content['access_token'],
-                'Content-Type' => 'application/json'
-            ])->get(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/query?query=select%20*%20from%20Customer%20Where%20CompanyName%20=%20\'' . $company_name . '\'&minorversion=' . config('qboconfig.minorversion'));
+		try {
+			$response = Http::accept('application/json')->withHeaders([
+				'Authorization' => 'Bearer ' . $content['access_token'],
+				'Content-Type' => 'application/json'
+			])->get(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/query?query=select%20*%20from%20Customer%20Where%20CompanyName%20=%20\'' . $company_name . '\'&minorversion=' . config('qboconfig.minorversion'));
 
-            $data = json_decode($response);
-            if (isset($data->fault->error[0]->code)) {
-                $type = "online";
-                $token = $this->accessToken($type);
-                $data = json_encode($token);
-                file_put_contents('storage/qbo.json', $data);
-                return $this->qboCustomer($companyName, $user_id);
-            } 
-            if (isset($data->QueryResponse->Customer)) {
-                $user = User::find($user_id);
-                $user->wp_id = $data->QueryResponse->Customer[0]->Id;
-                $user->update();
+			$data = json_decode($response);
+			if (isset($data->fault->error[0]->code)) {
+				$type = "online";
+				$token = $this->accessToken($type);
+				$data = json_encode($token);
+				file_put_contents('storage/qbo.json', $data);
+				return $this->qboCustomer($companyName, $user_id);
+			}
+			if (isset($data->QueryResponse->Customer)) {
+				$user = User::find($user_id);
+				$user->wp_id = $data->QueryResponse->Customer[0]->Id;
+				$user->update();
 
-                return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
-            } 
-            if(!empty($data->QueryResponse)) {
-                $response = $this->createQboCustomer($companyName,$user_id);
+				return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
+			}
+			if (!empty($data->QueryResponse)) {
+				$response = $this->createQboCustomer($companyName, $user_id);
 
 				return $response;
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
-    }
+			}
+		} catch (\Exception $e) {
+			return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+		}
+	}
 
-    public function createQboCustomer($companyName,$user_id)
-    {
-        $user = User::find($user_id);
+	public function createQboCustomer($companyName, $user_id)
+	{
+		$user = User::find($user_id);
 
-        $file = file_get_contents('storage/qbo.json');
-        $content = json_decode($file, true);
+		$file = file_get_contents('storage/qbo.json');
+		$content = json_decode($file, true);
 
-        $data['FullyQualifiedName'] = $user->name;
-        $data['PrimaryEmailAddr']['Address'] = $user->email;
-        $data['DisplayName'] = $user->name;
-        $data['PrimaryPhone']['FreeFormNumber'] = $user->phone;
-        $data['CompanyName'] = $user->company_name;
-        $data['BillAddr']['CountrySubDivisionCode'] = $user->state;
-        $data['BillAddr']['City'] = $user->city;
-        $data['BillAddr']['PostalCode'] = $user->pincode;
-        $data['BillAddr']['Line1'] = $user->address;
-        $data['BillAddr']['Country'] = 'USA';
-        $data['GivenName'] = $user->name;
+		$data['FullyQualifiedName'] = $user->name;
+		$data['PrimaryEmailAddr']['Address'] = $user->email;
+		$data['DisplayName'] = $user->name;
+		$data['PrimaryPhone']['FreeFormNumber'] = $user->phone;
+		$data['CompanyName'] = $user->company_name;
+		$data['BillAddr']['CountrySubDivisionCode'] = $user->state;
+		$data['BillAddr']['City'] = $user->city;
+		$data['BillAddr']['PostalCode'] = $user->pincode;
+		$data['BillAddr']['Line1'] = $user->address;
+		$data['BillAddr']['Country'] = 'USA';
+		$data['GivenName'] = $user->name;
 
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content['access_token'],
-                'Content-Type' => 'application/json'
-            ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
+		try {
+			$response = Http::accept('application/json')->withHeaders([
+				'Authorization' => 'Bearer ' . $content['access_token'],
+				'Content-Type' => 'application/json'
+			])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
 
-            $data = json_decode($response);
-			
+			$data = json_decode($response);
+
 			if (isset($data->Customer)) {
-                $user = User::find($user_id);
-                $user->wp_id = $data->Customer->Id;
-                $user->update();
+				$user = User::find($user_id);
+				$user->wp_id = $data->Customer->Id;
+				$user->update();
 
-                return response()->json(['message' => 'Customer created Successfully', 'code' => 200], 200);
-            }
+				return response()->json(['message' => 'Customer created Successfully', 'code' => 200], 200);
+			}
 
-            if (isset($data->fault->error[0]->code) && $data->fault->error[0]->code == 3200) {
-                $type = "online";
-                $token = $this->accessToken($type);
-                $data = json_encode($token);
-                file_put_contents('storage/qbo.json', $data);
-                return $this->createQboCustomer($companyName,$user_id);
-            }
+			if (isset($data->fault->error[0]->code) && $data->fault->error[0]->code == 3200) {
+				$type = "online";
+				$token = $this->accessToken($type);
+				$data = json_encode($token);
+				file_put_contents('storage/qbo.json', $data);
+				return $this->createQboCustomer($companyName, $user_id);
+			}
 
-            if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
+			if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
 				return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
 			}
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
-    }
+		} catch (\Exception $e) {
+			return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+		}
+	}
 }

@@ -123,8 +123,6 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'logout_url' => 'http://localhost/ecolinkfrontend/profile/auth',
-
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

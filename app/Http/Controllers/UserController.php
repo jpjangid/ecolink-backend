@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Models\Permission;
 use App\Models\RoleHasPermission;
 use App\Models\UserAddress;
+use App\Models\UserDocument;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -111,7 +112,9 @@ class UserController extends Controller
                 'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
                 'password'          =>  'required|min:8',
                 'role_id'           =>  'required',
-                'profile_image'     =>  'required'
+                'profile_image'     =>  'required',
+                'files' 			=>  'required_if:tax_exempt,==,1',
+                'files.*'			=> 	'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
             ], [
                 'name.required'             =>  'Please Enter Name',
                 'name.regex'                =>  'Please Enter Name in alphabets',
@@ -132,6 +135,9 @@ class UserController extends Controller
                 'mobile.numeric'            =>  'The Mobile No. must be numeric',
                 'password.required'         =>  'Please Enter Password',
                 'profile_image.required'    =>  'Please Select Profile Image',
+                'files.required_if'     	=>  'Please Select Files',
+                'files.*.mimes' 			=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+                'files.*.max' 				=> 	'Sorry! Maximum allowed size for an file is 10MB',
             ]);
 
             /* Storing Featured Image on local disk */
@@ -159,7 +165,6 @@ class UserController extends Controller
                     'email'                 =>  $request['email'],
                     'mobile'                =>  $request['mobile'],
                     'address'               =>  $request['address'],
-                    'landmark'              =>  $request['landmark'],
                     'country'               =>  $request['country'],
                     'state'                 =>  $request['state'],
                     'city'                  =>  $request['city'],
@@ -197,15 +202,31 @@ class UserController extends Controller
                     }
                 }
 
+                if (!empty($request->file('files'))) {
+                    $files = $request->file('files');
+
+                    foreach ($files as $file) {
+                        $name     = $file->getClientOriginalName();
+                        $ext     = $file->getClientOriginalExtension();
+                        Storage::putFileAs('public/documents/' . $user->id, $file, $name);
+                        //store image file into directory and db
+                        UserDocument::create([
+                            'user_id'     => $user->id,
+                            'file_type'    => $ext,
+                            'file_name'    => $name
+                        ]);
+                    }
+                }
+
                 DB::commit();
                 /* Validating Input fields */
-        
-        
+
+
                 /* After Successfull insertion of data redirecting to listing page with message */
                 return redirect('admin/users')->with('success', 'User has been added successfully');
             } catch (\Exception $e) {
                 DB::rollBack();
-    
+
                 /* After successfull update of data redirecting to index page with message */
                 return redirect()->back()->with('danger', $e->getMessage());
             }
@@ -234,20 +255,19 @@ class UserController extends Controller
             'email'             =>  'required|email|unique:users,email,' . $id,
             'mobile'            =>  'required|digits:10|unique:users,mobile,' . $id,
             'address'           =>  'required',
-            // 'landmark'          =>  'required',
             'state'             =>  'required|regex:/^[\pL\s\-]+$/u',
             'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
             'pincode'           =>  'required',
             'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
             'password'          =>  'nullable|min:8',
             'role_id'           =>  'required',
+			'files.*'			=> 	'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
         ], [
             'name.required'             =>  'Please Enter Name',
             'name.regex'                =>  'Please Enter Name in alphabets',
             'email.required'            =>  'Please Enter Email',
             'mobile.required'           =>  'Please Enter Mobile No.',
             'address.required'          =>  'Please Enter Address',
-            // 'landmark.required'         =>  'Please Enter Landmark',
             'state.required'            =>  'Please Enter State',
             'state.regex'               =>  'Please Enter State in alphabets',
             'city.required'             =>  'Please Enter City',
@@ -257,6 +277,8 @@ class UserController extends Controller
             'country.regex'             =>  'Please Enter Country in alphabets',
             'role_id.required'          =>  'Please Select Role',
             'mobile.numeric'            =>  'The Mobile No. must be numeric',
+			'files.*.mimes' 			=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+			'files.*.max' 				=> 	'Sorry! Maximum allowed size for an file is 10MB',
         ]);
 
         /* Fetching Blog Data using Id */
@@ -288,7 +310,6 @@ class UserController extends Controller
             $user->email            =   $request['email'];
             $user->mobile           =   $request['mobile'];
             $user->address          =   $request['address'];
-            $user->landmark         =   $request['landmark'];
             $user->country          =   $request['country'];
             $user->state            =   $request['state'];
             $user->city             =   $request['city'];
@@ -302,12 +323,28 @@ class UserController extends Controller
 
             $user->url = url('') . '/profile/auth';
 
-            if ($request['tax_exempt'] == 1 && $request['flag'] == 0) {
+            if ($request['tax_exempt'] == 1 && $request['flag'] == 0 && $request['role_id'] == 2) {
                 Mail::to($request->email)->send(new NotifyUser($user));
             }
 
             if ($user->wp_id == null && $user->company_name != null) {
                 $this->qboCustomer($user->company_name, $user->id);
+            }
+
+            if (!empty($request->file('files'))) {
+                $files = $request->file('files');
+
+                foreach ($files as $file) {
+                    $name     = $file->getClientOriginalName();
+                    $ext     = $file->getClientOriginalExtension();
+                    Storage::putFileAs('public/documents/' . $user->id, $file, $name);
+                    //store image file into directory and db
+                    UserDocument::create([
+                        'user_id'     => $user->id,
+                        'file_type'    => $ext,
+                        'file_name'    => $name
+                    ]);
+                }
             }
 
             DB::commit();
@@ -360,7 +397,7 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    public function qboCustomer($companyName,$user_id)
+    public function qboCustomer($companyName, $user_id)
     {
         $file = file_get_contents('storage/qbo.json');
         $content = json_decode($file, true);
@@ -380,25 +417,25 @@ class UserController extends Controller
                 $data = json_encode($token);
                 file_put_contents('storage/qbo.json', $data);
                 return $this->qboCustomer($companyName, $user_id);
-            } 
+            }
             if (isset($data->QueryResponse->Customer)) {
                 $user = User::find($user_id);
                 $user->wp_id = $data->QueryResponse->Customer[0]->Id;
                 $user->update();
 
                 return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
-            } 
-            if(!empty($data->QueryResponse)) {
-                $response = $this->createQboCustomer($companyName,$user_id);
+            }
+            if (!empty($data->QueryResponse)) {
+                $response = $this->createQboCustomer($companyName, $user_id);
 
-				return $response;
+                return $response;
             }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
     }
 
-    public function createQboCustomer($companyName,$user_id)
+    public function createQboCustomer($companyName, $user_id)
     {
         $user = User::find($user_id);
 
@@ -424,8 +461,8 @@ class UserController extends Controller
             ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
 
             $data = json_decode($response);
-			
-			if (isset($data->Customer)) {
+
+            if (isset($data->Customer)) {
                 $user = User::find($user_id);
                 $user->wp_id = $data->Customer->Id;
                 $user->update();
@@ -438,12 +475,12 @@ class UserController extends Controller
                 $token = $this->accessToken($type);
                 $data = json_encode($token);
                 file_put_contents('storage/qbo.json', $data);
-                return $this->createQboCustomer($companyName,$user_id);
+                return $this->createQboCustomer($companyName, $user_id);
             }
 
             if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
-				return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
-			}
+                return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
+            }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }

@@ -142,7 +142,17 @@
                             @enderror
                         </div>
                     </div>
-                    <input type="hidden" name="status" id="flag" value="{{ old('flag')}}">
+                    <div class="col-md-12 mt-2">
+                        <label for="files">Upload Tax Exempt Documents:</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                            @error('files')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <input type="hidden" name="status" id="flag" value="{{ old('flag') }}">
                     <div class="col-md-12 mt-2">
                         <button type="submit" class="btn btn-info">Register</button>
                     </div>
