@@ -156,7 +156,7 @@
                 if (data['msg'] == 'success') {
                     swal({
                         title: 'Active',
-                        text: "User activated.",
+                        text: "User Activated.",
                         icon: 'success',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
@@ -170,7 +170,7 @@
                 } else {
                     swal({
                         title: 'Inactive',
-                        text: "User Deactivatedd.",
+                        text: "User Deactivated.",
                         icon: 'error',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',

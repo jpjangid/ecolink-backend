@@ -319,7 +319,7 @@
                                         <span><b>Number: </b></span>
                                         <small>{{ $order->mobile }}</small><br />
                                     </td>
-                                    <td>{{ $order->payment_status}}</td>
+                                    <td>{{  ucfirst(strtolower($order->payment_status))}}</td>
                                     <td>${{ number_format((float)$order->total_amount, 2, '.', ','), }}</td>
                                 </tr>
                                 @endforeach

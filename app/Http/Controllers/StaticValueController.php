@@ -52,23 +52,12 @@ class StaticValueController extends Controller
 
     public function create()
     {
-        return view('staticvalues.create');
+        //
     }
 
     public function store(Request $request)
     {
-        /* Validating Input fields */
-        $request->validate([
-            'name'      =>  'required',
-            'type'      =>  'required',
-            'value'     =>  'required',
-        ]);
-
-        /* Storing Data in Table */
-        StaticValue::create($request->all());
-
-        /* After Successfull insertion of data redirecting to listing page with message */
-        return redirect('admin/staticvalues')->with('success', 'Static Value Added successfully');
+       //
     }
 
     public function edit($id)
