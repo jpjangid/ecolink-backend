@@ -61,7 +61,7 @@ class CheckoutController extends Controller
             if($lift_gate_qty > 0){
                 $lift_gate_amt = $lift_gate_amount;
             }
-			$payable = $order_total + $hazardous_amt + $lift_gate_amt;
+			$payable = $order_total + $hazardous_amt;
 		}
 
 		$current = date('Y-m-d H:i:s');

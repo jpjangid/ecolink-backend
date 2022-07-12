@@ -166,6 +166,10 @@ class UserController extends Controller
 			'token'         => 'required'
 		]);
 
+		if ($validator->fails()) {
+			return response()->json(['message' => $validator->errors(), 'code' => 400], 400);
+		}
+
 		$user = User::where(['email' => $request->email, 'api_token' => $request->token])->first();
 
 		if (!empty($user)) {
