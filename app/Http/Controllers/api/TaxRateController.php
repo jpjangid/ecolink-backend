@@ -46,7 +46,7 @@ class TaxRateController extends Controller
 
     public function getCityList()
     {
-        $cities = DB::table('tax_rates')->select('city')->where('city','!=',NULL)->distinct('city')->orderBy('city','asc')->get();
+        $cities = DB::table('tax_rates')->select('id','state_code','state_name','zip','city')->where('city','!=',NULL)->distinct('zip')->orderBy('state_code','asc')->get();
 
         return $cities;
     }
