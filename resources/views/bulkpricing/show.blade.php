@@ -125,7 +125,7 @@
 
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label class="required form-label" for="input_1">What item do you wish to clean & what is the surface material?</label>
+                        <label class="required form-label" for="input_1">What chemical are you interested in ordering in bulk?*</label>
                         <input type="text" class="form-control" disabled name="input_1" id="input_1" placeholder="Please Enter" value="{{ $contact->question->input_1 }}">
                         @error('input_1')
                         <span class="error invalid-feedback">{{ $message }}</span>
@@ -135,69 +135,9 @@
 
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label class="required form-label" for="input_2">What kind of soil, grease or coating do you wish to remove?</label>
+                        <label class="required form-label" for="input_2">What can we help you clean?*</label>
                         <input type="text" class="form-control" disabled name="input_2" id="input_2" placeholder="Please Enter" value="{{ $contact->question->input_2 }}">
                         @error('input_2')
-                        <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="required form-label" for="input_3">How do you currently clean this item?</label>
-                        <input type="text" class="form-control" disabled name="input_3" id="input_3" placeholder="Please Enter" value="{{ $contact->question->input_3 }}">
-                        @error('input_3')
-                        <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="required form-label" for="input_4">What chemicals or products do you currently use and in what amounts?</label>
-                        <input type="text" class="form-control" disabled name="input_4" id="input_4" placeholder="Please Enter" value="{{ $contact->question->input_4 }}">
-                        @error('input_4')
-                        <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="required form-label" for="input_5">Why are you looking to change?</label>
-                        <input type="text" class="form-control" disabled name="input_5" id="input_5" placeholder="Please Enter" value="{{ $contact->question->input_5 }}">
-                        @error('input_5')
-                        <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="required form-label" for="input_6">Other? Please explain</label>
-                        <input type="text" class="form-control" disabled name="input_6" id="input_6" placeholder="Please Enter" value="{{ $contact->question->input_6 }}">
-                        @error('input_6')
-                        <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="required form-label" for="input_7">Shipper Acct # (FedEx, UPS):</label>
-                        <input type="text" class="form-control" disabled name="input_7" id="input_7" placeholder="Please Enter" value="{{ $contact->question->input_7 }}">
-                        @error('input_7')
-                        <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="required form-label" for="input_8">I'm also interested in learning more about</label>
-                        <input type="text" class="form-control" disabled name="input_8" id="input_8" placeholder="Please Enter" value="{{ $contact->question->input_8 }}">
-                        @error('input_8')
                         <span class="error invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>

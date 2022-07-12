@@ -266,8 +266,8 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('staticvalues')->group(function () {
         Route::get('/', [StaticValueController::class, 'index']);
-        Route::get('/create', [StaticValueController::class, 'create']);
-        Route::post('/store', [StaticValueController::class, 'store']);
+        // Route::get('/create', [StaticValueController::class, 'create']);
+        // Route::post('/store', [StaticValueController::class, 'store']);
         Route::get('/edit/{id}', [StaticValueController::class, 'edit']);
         Route::put('/update/{id}', [StaticValueController::class, 'update']);
         Route::delete('/delete/{id}', [StaticValueController::class, 'destroy']);
@@ -279,6 +279,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     });
 });
 
+Route::get('qboCustomer/{companyName}/{user_id}', [UserController::class, 'qboCustomer']);
 Route::get('statelist', [LocationController::class, 'getState']);
 Route::post('citylist', [LocationController::class, 'getCity']);
 Route::post('pincodelist', [LocationController::class, 'getPincode']);

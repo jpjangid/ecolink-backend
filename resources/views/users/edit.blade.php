@@ -154,9 +154,19 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="col-md-12 mt-2">
+                        <label for="files">Upload Tax Exempt Documents:</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                            @error('files')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
                     @if($documents->isNotEmpty())
                     <div class="col-md-12 mt-2">
-                        <label>Upload Documents:</label>
+                        <label>Uploaded Documents:</label>
                         <div class="row">
                             @foreach($documents as $document)
                             @php $str = substr($document->file_name, 0, 15) . '...'; @endphp

@@ -54,6 +54,6 @@ class LoginController extends Controller
   public function logout()
   {
     Auth::logout();
-    return redirect(env('FRONTEND_URL') . '/profile/auth');
+    return redirect(config('frontendUrls.logout_url'));
   }
 }

@@ -31,7 +31,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="name"><span style="color: red;">* </span>Name</label>
-                            <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="name" id="name" placeholder="Please Enter Name" value="{{ $value->name }}">
+                            <input type="text" class="form-control form-control-solid @error('name') is-invalid @enderror" name="name" id="name" placeholder="Please Enter Name" value="{{ $value->name }}" readonly>
                             @error('name')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -42,7 +42,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="type"><span style="color: red;">* </span>Type</label>
-                            <input type="text" class="form-control form-control-solid @error('type') is-invalid @enderror" name="type" id="type" placeholder="Please Enter Type" value="{{ $value->type }}">
+                            <input type="text" class="form-control form-control-solid @error('type') is-invalid @enderror" name="type" id="type" placeholder="Please Enter Type" value="{{ $value->type }}" readonly>
                             @error('type')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -62,7 +62,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 mt-2">
-                        <button type="submit" class="btn btn-info">Add</button>
+                        <button type="submit" class="btn btn-info">Update</button>
                     </div>
                 </div>
             </form>
