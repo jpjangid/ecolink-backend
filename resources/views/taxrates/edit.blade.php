@@ -49,6 +49,17 @@
                         </div>
                     </div>
 
+                    <!-- State Name -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="state_name"><span style="color: red;">* </span>State Name</label>
+                            <input type="text" class="form-control form-control-solid @error('state_name') is-invalid @enderror" name="state_name" id="state_name" placeholder="Please Enter State Name" value="{{ $taxrate->state_name }}">
+                            @error('state_name')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
                     <!-- City -->
                     <div class="col-md-4">
                         <div class="form-group">

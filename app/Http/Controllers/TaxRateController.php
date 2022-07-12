@@ -15,7 +15,7 @@ class TaxRateController extends Controller
         if (checkpermission('TaxRateController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $alltaxrates = DB::table('tax_rates')->select('id', 'country_code', 'state_code', 'city', 'zip', 'rate')->orderby('created_at','desc')->get();
+                $alltaxrates = DB::table('tax_rates')->select('id', 'country_code', 'state_code', 'city', 'zip', 'rate', 'state_name')->orderby('created_at', 'desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $taxrates = new Collection;
@@ -23,7 +23,7 @@ class TaxRateController extends Controller
                     $taxrates->push([
                         'id'            => $taxrate->id,
                         'country'       => $taxrate->country_code,
-                        'state'         => $taxrate->state_code,
+                        'state'         => $taxrate->state_name . '(' . $taxrate->state_code . ')',
                         'city'          => $taxrate->city,
                         'zip'           => $taxrate->zip,
                         'rate'          => $taxrate->rate,
@@ -73,6 +73,7 @@ class TaxRateController extends Controller
         $request->validate([
             'country_code'      =>  'required',
             'state_code'        =>  'required',
+            'state_name'        =>  'required',
             'city'              =>  'required',
             'zip'               =>  'required',
             'rate'              =>  'required'
@@ -82,6 +83,7 @@ class TaxRateController extends Controller
         TaxRate::create([
             'country_code'      =>  $request->country_code,
             'state_code'        =>  $request->state_code,
+            'state_name'        =>  $request->state_name,
             'city'              =>  $request->city,
             'zip'               =>  $request->zip,
             'rate'              =>  $request->rate,
@@ -108,6 +110,7 @@ class TaxRateController extends Controller
         $request->validate([
             'country_code'      =>  'required',
             'state_code'        =>  'required',
+            'state_name'        =>  'required',
             'city'              =>  'required',
             'zip'               =>  'required',
             'rate'              =>  'required'
@@ -116,6 +119,7 @@ class TaxRateController extends Controller
         /* Updating Data fetched by Id */
         $taxrate = TaxRate::find($id);
         $taxrate->country_code  = $request->country_code;
+        $taxrate->state_name    = $request->state_name;
         $taxrate->state_code    = $request->state_code;
         $taxrate->city          = $request->city;
         $taxrate->zip           = $request->zip;
