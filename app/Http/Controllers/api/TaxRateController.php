@@ -43,4 +43,11 @@ class TaxRateController extends Controller
             return response()->json(['message' => 'No User Found', 'code' => 400], 400);
         }
     }
+
+    public function getCityList()
+    {
+        $cities = DB::table('tax_rates')->select('city')->where('city','!=',NULL)->distinct('city')->orderBy('city','asc')->get();
+
+        return $cities;
+    }
 }
