@@ -279,6 +279,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     });
 });
 
+Route::get('qboCustomer/{companyName}/{user_id}', [UserController::class, 'qboCustomer']);
 Route::get('statelist', [LocationController::class, 'getState']);
 Route::post('citylist', [LocationController::class, 'getCity']);
 Route::post('pincodelist', [LocationController::class, 'getPincode']);
