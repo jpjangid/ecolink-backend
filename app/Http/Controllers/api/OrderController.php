@@ -690,19 +690,21 @@ class OrderController extends Controller
         $data = json_decode($response, true);
 
         if (isset($data['data'])) {
-            // foreach ($data['data'] as $key => $item) {
-            //     $product = Product::select('id')->where('sku', $item['sku'])->first();
-            //     if (!empty($product)) {
-            //         $product->wp_id = $item['id'];
-            //         $product->update();
-            //     }
-            // }
+            foreach ($data['data'] as $key => $item) {
+                $product = Product::select('id')->where('sku', $item['sku'])->first();
+                if (!empty($product)) {
+                    $product->wp_id = $item['id'];
+                    $product->sale_price = $item['salesPrice'];
+                    $product->regular_price = $item['baseSalesPrice'];
+                    $product->update();
+                }
+            }
             return $response;
         }
 
         if (isset($data['Message'])) {
             $token = $this->sosRefreshToken();
-            file_put_contents('storage/qbo.json', $token);
+            file_put_contents('storage/sos.json', $token);
             return $this->sosItemUpdate();
         }
     }
