@@ -113,8 +113,8 @@ class UserController extends Controller
                 'password'          =>  'required|min:8',
                 'role_id'           =>  'required',
                 'profile_image'     =>  'required',
-                'files' 			=>  'required_if:tax_exempt,==,1',
-                'files.*'			=> 	'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+                'files'             =>  'required_if:tax_exempt,==,1',
+                'files.*'            =>     'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
             ], [
                 'name.required'             =>  'Please Enter Name',
                 'name.regex'                =>  'Please Enter Name in alphabets',
@@ -135,9 +135,9 @@ class UserController extends Controller
                 'mobile.numeric'            =>  'The Mobile No. must be numeric',
                 'password.required'         =>  'Please Enter Password',
                 'profile_image.required'    =>  'Please Select Profile Image',
-                'files.required_if'     	=>  'Please Select Files',
-                'files.*.mimes' 			=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
-                'files.*.max' 				=> 	'Sorry! Maximum allowed size for an file is 10MB',
+                'files.required_if'         =>  'Please Select Files',
+                'files.*.mimes'             =>     'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+                'files.*.max'                 =>     'Sorry! Maximum allowed size for an file is 10MB',
             ]);
 
             /* Storing Featured Image on local disk */
@@ -261,7 +261,7 @@ class UserController extends Controller
             'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
             'password'          =>  'nullable|min:8',
             'role_id'           =>  'required',
-			'files.*'			=> 	'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+            'files.*'            =>     'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
         ], [
             'name.required'             =>  'Please Enter Name',
             'name.regex'                =>  'Please Enter Name in alphabets',
@@ -277,8 +277,8 @@ class UserController extends Controller
             'country.regex'             =>  'Please Enter Country in alphabets',
             'role_id.required'          =>  'Please Select Role',
             'mobile.numeric'            =>  'The Mobile No. must be numeric',
-			'files.*.mimes' 			=> 	'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
-			'files.*.max' 				=> 	'Sorry! Maximum allowed size for an file is 10MB',
+            'files.*.mimes'             =>     'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+            'files.*.max'                 =>     'Sorry! Maximum allowed size for an file is 10MB',
         ]);
 
         /* Fetching Blog Data using Id */
