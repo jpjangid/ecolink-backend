@@ -18,6 +18,7 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <div id="loader"></div>
     <div class="card">
         <div class="card-body">
             <form action="{{ url('admin/blogcategory/update',$blogcategory->id) }}" method="post" enctype="multipart/form-data">

@@ -24,13 +24,21 @@ class BlogController extends Controller
                 /* Converting Selected Data into desired format */
                 $blogs = new Collection;
                 foreach ($allblogs as $blog) {
+                    if ($blog->status == 1) {
+                        $status = 'Publish';
+                    } elseif ($blog->status == 0) {
+                        $status = 'Draft';
+                    } else {
+                        $status = 'Schedule';
+                    }
                     $blogs->push([
                         'id'            => $blog->id,
                         'title'         => $blog->title,
                         'slug'          => $blog->slug,
                         'category'      => $blog->category,
-                        'publish_date'  => date('m-d-Y', strtotime($blog->publish_date)),
-                        'status' => $blog->status
+                        'publish_date'  => date('d-m-Y h:i A', strtotime($blog->publish_date)),
+                        'status' => $blog->status,
+                        'publish_blog' => $status,
                     ]);
                 }
 
