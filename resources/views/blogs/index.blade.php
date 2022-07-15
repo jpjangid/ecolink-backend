@@ -33,7 +33,13 @@
                         <li class="breadcrumb-item"><a href="{{ url('admin/blogs/create') }}" class="btn btn-info mt-o" style="float: right;">New Blog</a></li>
                     </ol>
                     <div class="row">
-                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <select id="active" class="form-control">
+                                <option value="1">Publish</option>
+                                <option value="0">Draft</option>
+                                <option value="2">Schedule</option>
+                            </select>
+                        </div>
                         <div class="col-sm-6">
                             <select id="active" class="form-control">
                                 <option value="all">All</option>
@@ -55,6 +61,7 @@
                     <th>Slug</th>
                     <th>Blog Category</th>
                     <th>Date/Time</th>
+                    <th>Publish Blog</th>
                     <th>Active</th>
                     <th class="no-sort">Action</th>
                 </tr>
@@ -126,6 +133,10 @@
                 {
                     data: 'publish_date',
                     name: 'publish_date'
+                },
+                {
+                    data: 'publish_blog',
+                    name: 'publish_blog'
                 },
                 {
                     data: 'active',

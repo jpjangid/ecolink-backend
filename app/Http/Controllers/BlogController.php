@@ -19,18 +19,26 @@ class BlogController extends Controller
             if (request()->ajax()) {
                 /* Getting all records */
                 $active = $request->active == 'all' ? array('1', '2', '0') : array($request->active);
-                $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->whereIn('status', $active)->orderby('created_at','desc')->get();
+                $allblogs = DB::table('blogs')->select('id', 'title', 'slug', 'category', 'publish_date', 'status')->where('flag', '0')->whereIn('status', $active)->orderby('created_at', 'desc')->get();
 
                 /* Converting Selected Data into desired format */
                 $blogs = new Collection;
                 foreach ($allblogs as $blog) {
+                    if ($blog->status == 1) {
+                        $status = 'Publish';
+                    } elseif ($blog->status == 0) {
+                        $status = 'Draft';
+                    } else {
+                        $status = 'Schedule';
+                    }
                     $blogs->push([
                         'id'            => $blog->id,
                         'title'         => $blog->title,
                         'slug'          => $blog->slug,
                         'category'      => $blog->category,
                         'publish_date'  => date('d-m-Y h:i A', strtotime($blog->publish_date)),
-                        'status' => $blog->status
+                        'status' => $blog->status,
+                        'publish_blog' => $status,
                     ]);
                 }
 
