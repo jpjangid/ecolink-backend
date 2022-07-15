@@ -23,11 +23,14 @@ class BlogController extends Controller
         }
         if ($request->filled('category'))
         {
-            $query = $query->where('category', '%' . $request->category . '%');
+            $query = $query->where('category', 'like', '%' . $request->category . '%');
         }
-        if ($request->filled('month'))
-        {
-            $query = $query->whereMonth('publish_date', $request->month)->whereYear('publish_date', $request->year);
+        if ($request->filled('dateFrom') && $request->filled('dateTo')) {
+            $query = $query->whereBetween('publish_date', [$request->dateFrom, $request->dateTo]);
+        } else if ($request->filled('dateFrom')) {
+            $query = $query->where('publish_date', '>=', $request->dateFrom);
+        } else if ($request->filled('dateTo')) {
+            $query = $query->where('publish_date', '<=', $request->dateTo);
         }
         $blogs = $query->paginate(20);
         if ($blogs->isNotEmpty()) {
