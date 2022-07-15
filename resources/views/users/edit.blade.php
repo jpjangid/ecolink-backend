@@ -35,7 +35,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="email"><span style="color: red;">* </span>Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ $user->email }}" readonly/>
+                        <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ $user->email }}" readonly />
                         @error('email')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -68,13 +68,13 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    {{-- <div class="col-md-4 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label for="landmark"><span style="color: red;">* </span>Landmark:</label>
                         <input type="text" class="form-control" name="landmark" id="landmark" placeholder="Enter Landmark" value="{{ $user->landmark }}" />
                         @error('landmark')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
-                    </div> --}}
+                    </div>
                     <div class="col-md-4 mt-2">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
                         <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ $user->country }}" />

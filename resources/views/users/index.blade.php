@@ -79,8 +79,9 @@
     });
 
     let userTable = null;
+
     function datatable() {
-       userTable = $('#userTable').DataTable({
+        userTable = $('#userTable').DataTable({
             destroy: true,
             scrollY: "70vh",
             processing: true,
@@ -150,7 +151,7 @@
                 _token: '{{csrf_token()}}'
             },
             beforeSend: function() {
-                
+
             },
             success: function(data) {
                 if (data['msg'] == 'success') {
@@ -161,7 +162,8 @@
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        timer: 3000
                     }).then((result) => {
                         if (result) {
                             userTable.ajax.reload();
@@ -175,7 +177,8 @@
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        timer: 3000
                     }).then((result) => {
                         if (result) {
                             userTable.ajax.reload();
