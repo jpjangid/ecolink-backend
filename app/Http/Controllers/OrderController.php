@@ -34,15 +34,15 @@ class OrderController extends Controller
                 foreach ($allorders as $order) {
                     if (!empty($order->user)) {
                         $orders->push([
-                            'id'                => $order->id,
-                            'order_no'          => $order->order_no,
-                            'client'            => $order->user->name,
-                            'order_status'      => ucfirst(strtolower($order->order_status)),
-                            'payment_status'    => ucfirst(strtolower($order->payment_status)),
-                            'total'             => '$' . number_format((float)$order->total_amount, 2, '.', ','),
-                            'date'              => date('m-d-Y', strtotime($order->created_at)),
-                            'order_comments'    => $order->order_comments,
-                            'active'            => $order->user->flag == 0 ? 'Active' : 'Deactivated'
+                            'id'                    => $order->id,
+                            'order_no'              => $order->order_no,
+                            'client'                => $order->user->name,
+                            'order_status'          => ucfirst(strtolower($order->order_status)),
+                            'payment_status'        => ucfirst(strtolower($order->payment_status)),
+                            'total'                 => '$' . number_format((float)$order->total_amount, 2, '.', ','),
+                            'date'                  => date('m-d-Y', strtotime($order->created_at)),
+                            'order_comments'        => $order->order_comments,
+                            'active'                => $order->user->flag == 0 ? 'Active' : 'Deactivated'
                         ]);
                     }
                 }
