@@ -68,132 +68,132 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    {{-- <div class="col-md-4 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label for="landmark"><span style="color: red;">* </span>Landmark:</label>
                         <input type="text" class="form-control" name="landmark" id="landmark" placeholder="Enter Landmark" value="{{ $user->landmark }}" />
-                    @error('landmark')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div> --}}
-                <div class="col-md-4 mt-2">
-                    <label for="country"><span style="color: red;">* </span>Country:</label>
-                    <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ $user->country }}" />
-                    @error('country')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-4 mt-2">
-                    <label for="state"><span style="color: red;">* </span>State:</label>
-                    <input type="text" class="form-control" name="state" placeholder="Enter State" value="{{ $user->state }}" />
-                    @error('state')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-4 mt-2">
-                    <label for="city"><span style="color: red;">* </span>City:</label>
-                    <input type="text" class="form-control" name="city" placeholder="Enter City" value="{{ $user->city }}" />
-                    @error('city')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-4 mt-2">
-                    <label for="pincode"><span style="color: red;">* </span>Zip Code:</label>
-                    <input type="text" class="form-control" name="pincode" placeholder="Enter Zip Code" value="{{ $user->pincode }}" />
-                    @error('pincode')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-4 mt-2">
-                    <label for="role_id"><span style="color: red;">* </span>Role:</label>
-                    <select class="form-control select2bs4" name="role_id" id="role_id">
-                        <option value="">Select Role</option>
-                        @foreach($roles as $role)
-                        <option value="{{$role->id}}" {{$user->role_id == $role->id ? 'selected' : ''}}>{{$role->title}}</option>
-                        @endforeach
-                    </select>
-                    @error('role_id')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-4 mt-2">
-                    <label for="password">Password:</label>
-                    <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
-                    @error('password')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-4 mt-2">
-                    <label for="tax_exempt">Tax Exempt:</label>
-                    <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
-                        <option value="">Select</option>
-                        <option value="1" {{$user->tax_exempt == 1 ? 'selected' : ''}}>Yes</option>
-                        <option value="0" {{$user->tax_exempt == 0 ? 'selected' : ''}}>No</option>
-                    </select>
-                    @error('tax_exempt')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-4 mt-2">
-                    <label for="flag">Active:</label>
-                    <select class="form-control select2bs4" name="flag" id="flag">
-                        <option value="">Select</option>
-                        <option value="0" {{$user->flag == 0 ? 'selected' : ''}}>Yes</option>
-                        <option value="1" {{$user->flag == 1 ? 'selected' : ''}}>No</option>
-                    </select>
-                    @error('flag')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-md-8 mt-2">
-                    <label for="profile_image">Profile Image:</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
-                        <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
-                        @error('profile_image')
+                        @error('landmark')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                </div>
-                <div class="col-md-12 mt-2 document" hidden="hidden">
-                    <label for="files">Upload Tax Exempt Documents:</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
-                        <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
-                        @error('files')
+                    <div class="col-md-4 mt-2">
+                        <label for="country"><span style="color: red;">* </span>Country:</label>
+                        <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ $user->country }}" />
+                        @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                </div>
-                @if($documents->isNotEmpty())
-                <div class="col-md-12 mt-2 document" hidden="hidden">
-                    <label>Uploaded Documents:</label>
-                    <div class="row">
-                        @foreach($documents as $document)
-                        @php $str = substr($document->file_name, 0, 15) . '...'; @endphp
-                        @if($document->file_type != 'pdf')
-                        <div class="col-md-2">
-                            <img src="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" class="img-rounded" alt="{{ $document->file_name }}" width="150" height="150">
-                            <br>
-                            <a href="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" target="_blank">{{$str}}</a>
+                    <div class="col-md-4 mt-2">
+                        <label for="state"><span style="color: red;">* </span>State:</label>
+                        <input type="text" class="form-control" name="state" placeholder="Enter State" value="{{ $user->state }}" />
+                        @error('state')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="city"><span style="color: red;">* </span>City:</label>
+                        <input type="text" class="form-control" name="city" placeholder="Enter City" value="{{ $user->city }}" />
+                        @error('city')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="pincode"><span style="color: red;">* </span>Zip Code:</label>
+                        <input type="text" class="form-control" name="pincode" placeholder="Enter Zip Code" value="{{ $user->pincode }}" />
+                        @error('pincode')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="role_id"><span style="color: red;">* </span>Role:</label>
+                        <select class="form-control select2bs4" name="role_id" id="role_id">
+                            <option value="">Select Role</option>
+                            @foreach($roles as $role)
+                            <option value="{{$role->id}}" {{$user->role_id == $role->id ? 'selected' : ''}}>{{$role->title}}</option>
+                            @endforeach
+                        </select>
+                        @error('role_id')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="password">Password:</label>
+                        <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
+                        @error('password')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="flag">Active:</label>
+                        <select class="form-control select2bs4" name="flag" id="flag">
+                            <option value="">Select</option>
+                            <option value="0" {{$user->flag == 0 ? 'selected' : ''}}>Yes</option>
+                            <option value="1" {{$user->flag == 1 ? 'selected' : ''}}>No</option>
+                        </select>
+                        @error('flag')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="tax_exempt">Tax Exempt:</label>
+                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
+                            <option value="">Select</option>
+                            <option value="1" {{$user->tax_exempt == 1 ? 'selected' : ''}}>Yes</option>
+                            <option value="0" {{$user->tax_exempt == 0 ? 'selected' : ''}}>No</option>
+                        </select>
+                        @error('tax_exempt')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-8 mt-2">
+                        <label for="profile_image">Profile Image:</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                            @error('profile_image')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-                        @else
-                        <div class="col-md-2">
-                            <object data="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" type="application/pdf" width="150" height="150"></object>
-                            <br>
-                            <a href="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" target="_blank">{{$str}}</a>
+                    </div>
+                    <div class="col-md-12 mt-2 document" hidden="hidden">
+                        <label for="files">Upload Tax Exempt Documents:</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                            @error('files')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-                        @endif
-                        @endforeach
+                    </div>
+                    @if($documents->isNotEmpty())
+                    <div class="col-md-12 mt-2 document" hidden="hidden">
+                        <label>Uploaded Documents:</label>
+                        <div class="row">
+                            @foreach($documents as $document)
+                            @php $str = substr($document->file_name, 0, 15) . '...'; @endphp
+                            @if($document->file_type != 'pdf')
+                            <div class="col-md-2">
+                                <img src="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" class="img-rounded" alt="{{ $document->file_name }}" width="150" height="150">
+                                <br>
+                                <a href="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" target="_blank">{{$str}}</a>
+                            </div>
+                            @else
+                            <div class="col-md-2">
+                                <object data="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" type="application/pdf" width="150" height="150"></object>
+                                <br>
+                                <a href="{{ asset('storage/documents/'.$user->id.'/'.$document->file_name) }}" target="_blank">{{$str}}</a>
+                            </div>
+                            @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                    <div class="col-md-12 mt-2">
+                        <button type="submit" class="btn btn-info">Update</button>
                     </div>
                 </div>
-                @endif
-                <div class="col-md-12 mt-2">
-                    <button type="submit" class="btn btn-info">Update</button>
-                </div>
+            </form>
         </div>
-        </form>
     </div>
-</div>
 </div>
 @endsection
 @section('js')

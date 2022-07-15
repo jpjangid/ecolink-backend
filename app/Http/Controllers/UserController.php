@@ -361,6 +361,7 @@ class UserController extends Controller
             /* After successfull update of data redirecting to index page with message */
             return redirect('admin/users')->with('success', 'User updated successfully');
         } catch (\Exception $e) {
+            dd($e);
             DB::rollBack();
 
             /* After successfull update of data redirecting to index page with message */

@@ -82,21 +82,22 @@
       right: 0;
       bottom: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.75) url(https://i.stack.imgur.com/hzk6C.gif) no-repeat center center;
+      background: rgba(0, 0, 0, 0.75) url(https://i0.wp.com/mdhsociety.com/wp-content/uploads/2017/11/throbber.gif?fit=480%2C480&ssl=1) no-repeat center center;
+      background-size: 100px 100px;
       z-index: 10000;
     }
 
     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-        background: transparent;
-        bottom: 0;
-        color: transparent;
-        cursor: pointer;
-        height: 35px;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 28px;
-        width: auto;
+      background: transparent;
+      bottom: 0;
+      color: transparent;
+      cursor: pointer;
+      height: 35px;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 28px;
+      width: auto;
     }
   </style>
   @yield('css')
