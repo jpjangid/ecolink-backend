@@ -526,7 +526,7 @@ class OrderController extends Controller
         }
     }
 
-    public function qboCustomer($companyName,$user_id)
+    public function qboCustomer($companyName, $user_id)
     {
         $file = file_get_contents('storage/qbo.json');
         $content = json_decode($file, true);
@@ -546,25 +546,25 @@ class OrderController extends Controller
                 $data = json_encode($token);
                 file_put_contents('storage/qbo.json', $data);
                 return $this->qboCustomer($companyName, $user_id);
-            } 
+            }
             if (isset($data->QueryResponse->Customer)) {
                 $user = User::find($user_id);
                 $user->wp_id = $data->QueryResponse->Customer[0]->Id;
                 $user->update();
 
                 return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
-            } 
-            if(!empty($data->QueryResponse)) {
-                $response = $this->createQboCustomer($companyName,$user_id);
+            }
+            if (!empty($data->QueryResponse)) {
+                $response = $this->createQboCustomer($companyName, $user_id);
 
-				return $response;
+                return $response;
             }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
     }
 
-    public function createQboCustomer($companyName,$user_id)
+    public function createQboCustomer($companyName, $user_id)
     {
         $user = User::find($user_id);
 
@@ -590,8 +590,8 @@ class OrderController extends Controller
             ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
 
             $data = json_decode($response);
-			
-			if (isset($data->Customer)) {
+
+            if (isset($data->Customer)) {
                 $user = User::find($user_id);
                 $user->wp_id = $data->Customer->Id;
                 $user->update();
@@ -604,12 +604,12 @@ class OrderController extends Controller
                 $token = $this->accessToken($type);
                 $data = json_encode($token);
                 file_put_contents('storage/qbo.json', $data);
-                return $this->createQboCustomer($companyName,$user_id);
+                return $this->createQboCustomer($companyName, $user_id);
             }
 
             if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
-				return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
-			}
+                return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
+            }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
@@ -696,6 +696,13 @@ class OrderController extends Controller
                     $product->wp_id = $item['id'];
                     $product->sale_price = $item['salesPrice'];
                     $product->regular_price = $item['baseSalesPrice'];
+                    if ($item['customFields'] != null) {
+                        foreach ($item['customFields'] as $customField) {
+                            if ($customField['name'] == 'Insurance') {
+                                $product->insurance = $customField['value'] == true ? 1 : 0;
+                            }
+                        }
+                    }
                     $product->update();
                 }
             }

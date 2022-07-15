@@ -27,6 +27,13 @@ trait SosItemUpdate
                     $product->wp_id = $item['id'];
                     $product->sale_price = $item['salesPrice'];
                     $product->regular_price = $item['baseSalesPrice'];
+                    if ($item['customFields'] != null) {
+                        foreach ($item['customFields'] as $customField) {
+                            if ($customField['name'] == 'Insurance') {
+                                $product->insurance = $customField['value'] == true ? 1 : 0;
+                            }
+                        }
+                    }
                     $product->update();
                 }
             }
