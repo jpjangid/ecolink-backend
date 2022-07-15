@@ -94,11 +94,11 @@ class CouponController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'          =>  'required|unique:coupons,name',
-            'code'          =>  'required|unique:coupons,code',
-            'show_in_front' =>  'required',
-            'offer_start'   =>  'date',
-            'offer_end'     =>  'date|after:offer_start',
+            'name'                      => 'required|unique:coupons,name',
+            'code'                      => 'required|unique:coupons,code',
+            'show_in_front'             => 'required',
+            'offer_start'               => 'date',
+            'offer_end'                 => 'date|after:offer_start',
         ], [
             'name.required'             =>  'Coupan Name is required',
             'code.required'             =>  'Coupon Code is required',
@@ -158,11 +158,11 @@ class CouponController extends Controller
     {
         /* Validating Input fields */
         $request->validate([
-            'name'          =>  'required|unique:coupons,name,' . $id,
-            'code'          =>  'required|unique:coupons,code,' . $id,
-            'show_in_front' =>  'required',
-            'offer_start'   =>  'date',
-            'offer_end'     =>  'date|after:offer_start',
+            'name'                      =>  'required|unique:coupons,name,' . $id,
+            'code'                      =>  'required|unique:coupons,code,' . $id,
+            'show_in_front'             =>  'required',
+            'offer_start'               =>  'date',
+            'offer_end'                 =>  'date|after:offer_start',
         ], [
             'name.required'             =>  'Name is required',
             'code.required'             =>  'Coupon Code is required',
