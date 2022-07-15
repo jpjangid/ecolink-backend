@@ -54,7 +54,7 @@
                     <th>Title</th>
                     <th>Slug</th>
                     <th>Blog Category</th>
-                    <th>Date/Time</th>
+                    <th>Date</th>
                     <th>Active</th>
                     <th class="no-sort">Action</th>
                 </tr>
@@ -100,7 +100,7 @@
     function datatable() {
         var blogTable = $('#blogTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],

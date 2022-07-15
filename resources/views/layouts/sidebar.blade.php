@@ -394,7 +394,7 @@
 				</li>
 				@endif
 
-				@if(checkpermission('ReturnController@index'))
+				{{-- @if(checkpermission('ReturnController@index'))
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/returns') }}" class="nav-link">
 						<i class="fa fa-undo nav-icon"></i>
@@ -403,7 +403,7 @@
 						</p>
 					</a>
 				</li>
-				@endif
+				@endif --}}
 
 				@if(checkpermission('AskChemistController@index'))
 				<li class="nav-item has-treeview">
@@ -484,7 +484,7 @@
 				@endif
 				@endif
 				
-				@if(checkpermission('StaticValueController@index'))
+
 				<li class="nav-item has-treeview">
 					<a href="{{ url('admin/staticvalues') }}" class="nav-link">
 						<i class="fas fa-solid fa-pen nav-icon"></i>
@@ -493,7 +493,7 @@
 						</p>
 					</a>
 				</li>
-				@endif
+
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

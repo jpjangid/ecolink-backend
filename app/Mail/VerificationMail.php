@@ -28,6 +28,7 @@ class VerificationMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Verification Mail')->markdown('emails.verification');
+        return $this->from('developerecolink@gmail.com', 'Email Verification!')
+            ->subject('Verification Mail')->markdown('emails.verification');
     }
 }

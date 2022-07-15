@@ -81,7 +81,7 @@
     function datatable() {
         var couponTable = $('#couponTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             scrollX: true,
             processing: true,
             serverSide: true,
@@ -164,7 +164,7 @@
                 if (data['msg'] == 'success') {
                     swal({
                         title: 'Active!',
-                        text: "Coupan status updated successfully.",
+                        text: "Coupon status updated successfully.",
                         icon: 'success',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
@@ -179,7 +179,7 @@
                 } else {
                     swal({
                         title: 'Inactive',
-                        text: "Coupan status updated successfully.",
+                        text: "Coupon status updated successfully.",
                         icon: 'error',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',

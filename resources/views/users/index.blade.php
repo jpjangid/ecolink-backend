@@ -79,10 +79,11 @@
     });
 
     let userTable = null;
+
     function datatable() {
-       userTable = $('#userTable').DataTable({
+        userTable = $('#userTable').DataTable({
             destroy: true,
-            scrollY: "55vh",
+            scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],
@@ -150,18 +151,19 @@
                 _token: '{{csrf_token()}}'
             },
             beforeSend: function() {
-                
+
             },
             success: function(data) {
                 if (data['msg'] == 'success') {
                     swal({
                         title: 'Active',
-                        text: "User activated.",
+                        text: "User Activated.",
                         icon: 'success',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        timer: 3000
                     }).then((result) => {
                         if (result) {
                             userTable.ajax.reload();
@@ -170,12 +172,13 @@
                 } else {
                     swal({
                         title: 'Inactive',
-                        text: "User Deactivatedd.",
+                        text: "User Deactivated.",
                         icon: 'error',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        timer: 3000
                     }).then((result) => {
                         if (result) {
                             userTable.ajax.reload();

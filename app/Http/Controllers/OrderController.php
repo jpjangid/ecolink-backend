@@ -28,7 +28,7 @@ class OrderController extends Controller
                     'user' => function ($q) use ($active) {
                         return $q->whereIn('flag', $active);
                     }
-                ])->orderby('created_at','desc')->get();
+                ])->orderby('created_at', 'desc')->get();
 
                 $orders = new Collection;
                 foreach ($allorders as $order) {
@@ -37,10 +37,10 @@ class OrderController extends Controller
                             'id'                => $order->id,
                             'order_no'          => $order->order_no,
                             'client'            => $order->user->name,
-                            'order_status'      => $order->order_status,
-                            'payment_status'    => $order->payment_status,
+                            'order_status'      => ucfirst(strtolower($order->order_status)),
+                            'payment_status'    => ucfirst(strtolower($order->payment_status)),
                             'total'             => '$' . number_format((float)$order->total_amount, 2, '.', ','),
-                            'date'              => date('d-m-Y h:i A', strtotime($order->created_at)),
+                            'date'              => date('m-d-Y', strtotime($order->created_at)),
                             'order_comments'    => $order->order_comments,
                             'active'            => $order->user->flag == 0 ? 'Active' : 'Deactivated'
                         ]);
@@ -194,7 +194,7 @@ class OrderController extends Controller
         $products = DB::table('products')->where('status', 1)->orderBy('name', 'asc')->get();
         $users = DB::table('users')->where('role_id', '!=', 1)->where('flag', 0)->orderBy('name', 'asc')->get();
         $order = Order::where('id', $id)->with('items')->first();
-        
+
         return view('orders.edit', compact('products', 'users', 'order'));
     }
 
@@ -299,7 +299,7 @@ class OrderController extends Controller
         }
 
         foreach ($request->product_id as $key => $item) {
-            if(!empty($item)){
+            if (!empty($item)) {
                 $product = DB::table('products')->find($item);
                 if (!empty($item) && !empty($request->quantity[$key])) {
                     OrderItems::create([

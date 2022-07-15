@@ -28,6 +28,6 @@ class ForgotPassword extends Mailable
      */
     public function build()
     {
-        return $this->subject('Change Password')->markdown('emails.forgotpassword');
+        return $this->subject('Change Password')->from('developerecolink@gmail.com', 'Ecolink')->markdown('emails.forgotpassword');
     }
 }

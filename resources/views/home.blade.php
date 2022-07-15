@@ -313,13 +313,13 @@
                                 @foreach( $orders as $order)
                                 <tr>
                                     <td>{{ !empty($order->items[0]) ? $order->items[0]->product->name : '' }}</td>
-                                    <td><a href="{{ url('admin/orders/order_detail',$order->id)}}">{{ $order->order_no}}</a></td>
+                                    <td><a href="{{ url('admin/orders/order_detail',$order->id)}}"><span>#</span>{{ $order->order_no}}</a></td>
                                     <td> <span><b>Name: </b></span>
                                         <small>{{ $order->user->name }}</small><br />
                                         <span><b>Number: </b></span>
                                         <small>{{ $order->mobile }}</small><br />
                                     </td>
-                                    <td>{{ $order->payment_status}}</td>
+                                    <td>{{  ucfirst(strtolower($order->payment_status))}}</td>
                                     <td>${{ number_format((float)$order->total_amount, 2, '.', ','), }}</td>
                                 </tr>
                                 @endforeach

@@ -28,6 +28,7 @@ use App\Http\Controllers\BulkPricingController;
 use App\Http\Controllers\TechnicalSupportController;
 use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\api\UserController as APiUserController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StaticValueController;
 
 /*
@@ -265,14 +266,20 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('staticvalues')->group(function () {
         Route::get('/', [StaticValueController::class, 'index']);
-        Route::get('/create', [StaticValueController::class, 'create']);
-        Route::post('/store', [StaticValueController::class, 'store']);
+        // Route::get('/create', [StaticValueController::class, 'create']);
+        // Route::post('/store', [StaticValueController::class, 'store']);
         Route::get('/edit/{id}', [StaticValueController::class, 'edit']);
         Route::put('/update/{id}', [StaticValueController::class, 'update']);
         Route::delete('/delete/{id}', [StaticValueController::class, 'destroy']);
     });
+
+    Route::prefix('settings')->group(function(){
+        Route::get('/edit/{category_title}/{category_des}', [SettingController::class, 'edit']);
+        Route::put('/update/{category_title}/{category_des}', [SettingController::class, 'update']);
+    });
 });
 
+Route::get('qboCustomer/{companyName}/{user_id}', [UserController::class, 'qboCustomer']);
 Route::get('statelist', [LocationController::class, 'getState']);
 Route::post('citylist', [LocationController::class, 'getCity']);
 Route::post('pincodelist', [LocationController::class, 'getPincode']);

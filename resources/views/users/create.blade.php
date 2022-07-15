@@ -47,6 +47,13 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
+                        <label for="company_name"><span style="color: red;">* </span> Company Name:</label>
+                        <input type="text" class="form-control" name="company_name" id="company_name" placeholder=" Enter Company Name" value="{{ old('company_name') }}" />
+                        @error('company_name')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
                         <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
                         @error('mobile')
@@ -88,7 +95,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="pincode"><span style="color: red;">* </span>Zip Code:</label>
                         <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Zip Code" value="{{ old('pincode') }}" />
                         @error('pincode')
@@ -114,6 +121,17 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
+                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
+                            <option value="">Select</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        @error('tax_exempt')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                     <div class="col-md-8 mt-2">
                         <label for="profile_image"><span style="color: red;">* </span>Profile Image:</label>
                         <div class="custom-file">
@@ -124,7 +142,17 @@
                             @enderror
                         </div>
                     </div>
-                    <input type="hidden" name="status" id="flag" value="{{ old('flag')}}">
+                    <div class="col-md-12 mt-2">
+                        <label for="files">Upload Tax Exempt Documents:</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
+                            <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
+                            @error('files')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <input type="hidden" name="status" id="flag" value="{{ old('flag') }}">
                     <div class="col-md-12 mt-2">
                         <button type="submit" class="btn btn-info">Register</button>
                     </div>

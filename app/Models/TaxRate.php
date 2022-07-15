@@ -9,5 +9,5 @@ class TaxRate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['country_code', 'state_code', 'zip', 'city', 'rate', 'tax_name', 'priority', 'compound', 'shipping', 'tax_class'];
+    protected $fillable = ['country_code', 'state_code', 'zip', 'city', 'rate', 'tax_name', 'priority', 'compound', 'shipping', 'tax_class', 'state_name'];
 }

@@ -30,7 +30,7 @@ class Subscribe extends Mailable
     public function build()
     {
         return $this->markdown('emails.subscribe')
-            ->from('developerecolink@gmail.com', 'ecolink')
+            ->from('developerecolink@gmail.com', 'Ecolink')
             ->subject('Thank For Subscribe ')
             ->with([
                 'email' => $this->email

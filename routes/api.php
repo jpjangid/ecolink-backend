@@ -80,6 +80,7 @@ Route::middleware('auth:api')->group(function () {
     //Route For User Exempt
     Route::post('taxExempt', [TaxRateController::class, 'taxExempt']);
     Route::get('/current-user', [UserController::class, 'getCurrentUser']);
+    Route::post('uploadDocuments', [UserController::class, 'uploadDocuments']);
 });
 
 //Route for Forgot password
@@ -117,6 +118,8 @@ Route::get('getCategories', [CategoryController::class, 'index']);
 //Route For Getting Category Using slug
 Route::post('getCategory', [CategoryController::class, 'category']);
 
+Route::get('categories/{slug}', [CategoryController::class, 'getCategoryDetails']);
+
 //Route for Global Search
 Route::post('globalSearch', [HomeController::class, 'globalSearch']);
 //Route for Filter Product
@@ -128,10 +131,15 @@ Route::post('get-fedex-rates', [CheckoutController::class, 'getFedexShippingRate
 Route::post('get-saia-rates', [CheckoutController::class, 'getSaiaShippingRates']);
 
 //Route For Getting Tax Using zip
-Route::post('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);
+Route::get('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);
 Route::get('quickBookInvoice', [OrderController::class, 'quickBookInvoice']);
 Route::get('shipViaFedex', [OrderController::class, 'shipViaFedex']);
+Route::get('shipViaSaia', [OrderController::class, 'shipViaSaia']);
 Route::get('sosItemUpdate', [OrderController::class, 'sosItemUpdate']);
+Route::get('sosRefreshToken', [OrderController::class, 'sosRefreshToken']);
 Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
-Route::post('getStaticValue', [StaticValueController::class, 'getStaticValue']);
+Route::get('createQboCustomer', [UserController::class, 'createQboCustomer']);
+Route::post('qboPayment', [OrderController::class, 'qboPayment']);
+Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);
+Route::get('getCityList', [TaxRateController::class, 'getCityList']);
