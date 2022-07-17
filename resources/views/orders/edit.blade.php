@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/orders/update', $order->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/orders/update', $order->id) }}" id="addData" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="row">
@@ -374,6 +374,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/orders/addorderrules.js') }}"></script>
 <script>
     $(document).ready(function() {
         calculateTotal();

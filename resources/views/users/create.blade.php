@@ -12,7 +12,8 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('admin/users') }}" class="btn btn-info mt-o" style="float: right;">Back</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('admin/users') }}" class="btn btn-info mt-o"
+                                style="float: right;">Back</a></li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -22,92 +23,106 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="post" action="{{ url('admin/users/store') }}" enctype="multipart/form-data">
+            <form method="post" id="addData" action="{{ url('admin/users/store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <img src="{{ asset('default.jpg') }}" class="img-rounded" width="150" height="150" id="blah"><br>
+                                <img src="{{ asset('default.jpg') }}" class="img-rounded" width="150" height="150"
+                                    id="blah"><br>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <label for="email"><span style="color: red;">* </span>Email:</label>
-                        <input type="email" class="form-control" name="email" id="email" placeholder=" Enter Email" value="{{ old('email') }}" />
+                        <input type="email" class="form-control" name="email" id="email" placeholder=" Enter Email"
+                            value="{{ old('email') }}" />
                         @error('email')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="name"><span style="color: red;">* </span> Full Name:</label>
-                        <input type="text" class="form-control" name="name" id="name" placeholder=" Enter Full Name" value="{{ old('name') }}" />
+                        <input type="text" class="form-control" name="name" id="name" placeholder=" Enter Full Name"
+                            value="{{ old('name') }}" />
                         @error('name')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label for="company_name"><span style="color: red;">* </span> Company Name:</label>
-                        <input type="text" class="form-control" name="company_name" id="company_name" placeholder=" Enter Company Name" value="{{ old('company_name') }}" />
+                        <input type="text" class="form-control" name="company_name" id="company_name"
+                            placeholder=" Enter Company Name" value="{{ old('company_name') }}" />
                         @error('company_name')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
-                        <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
+                        <input type="number" maxlength="10"
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                            class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile No."
+                            value="{{ old('mobile') }}" />
                         @error('mobile')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="address"><span style="color: red;">* </span>Address:</label>
-                        <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address" value="{{ old('address') }}" />
+                        <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address"
+                            value="{{ old('address') }}" />
                         @error('address')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="landmark"><span style="color: red;">* </span>Landmark:</label>
-                        <input type="text" class="form-control" name="landmark" id="landmark" placeholder="Enter Landmark" value="{{ old('landmark') }}" />
+                        <input type="text" class="form-control" name="landmark" id="landmark"
+                            placeholder="Enter Landmark" value="{{ old('landmark') }}" />
                         @error('landmark')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
-                        <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country" value="{{ old('country') }}" />
+                        <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country"
+                            value="{{ old('country') }}" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="state"><span style="color: red;">* </span>State:</label>
-                        <input type="text" class="form-control" name="state" id="state" placeholder="Enter State" value="{{ old('state') }}" />
+                        <input type="text" class="form-control" name="state" id="state" placeholder="Enter State"
+                            value="{{ old('state') }}" />
                         @error('state')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="city"><span style="color: red;">* </span>City:</label>
-                        <input type="text" class="form-control" name="city" id="city" placeholder="Enter City" value="{{ old('city') }}" />
+                        <input type="text" class="form-control" name="city" id="city" placeholder="Enter City"
+                            value="{{ old('city') }}" />
                         @error('city')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="pincode"><span style="color: red;">* </span>Zip Code:</label>
-                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Zip Code" value="{{ old('pincode') }}" />
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Zip Code"
+                            value="{{ old('pincode') }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="role_id"><span style="color: red;">* </span>Role:</label>
-                        <select class="form-control select2bs4" name="role_id" id="role_id">
+                        <select class="form-control" name="role_id" id="role_id">
                             <option value="">Select Role</option>
                             @foreach($roles as $role)
-                            <option value="{{$role->id}}" {{ old('role_id') == $role->id ? 'selected' : ''}}>{{$role->title}}</option>
+                            <option value="{{$role->id}}" {{ old('role_id')==$role->id ? 'selected' :
+                                ''}}>{{$role->title}}</option>
                             @endforeach
                         </select>
                         @error('role_id')
@@ -116,14 +131,15 @@
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="password"><span style="color: red;">* </span>Password:</label>
-                        <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
+                        <input type="text" class="form-control" name="password" placeholder="Enter Password"
+                            value="{{ old('password') }}" />
                         @error('password')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-2 mt-2">
                         <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
-                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
+                        <select class="form-control" name="tax_exempt" id="tax_exempt">
                             <option value="">Select</option>
                             <option value="1">Yes</option>
                             <option value="0">No</option>
@@ -132,10 +148,23 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="flag">Active:</label>
+                        <select class="form-control" name="flag" id="flag">
+                            <option value="">Select</option>
+                            <option value="0" {{old('flag') == 0 ? 'selected' : ''}}>Yes</option>
+                            <option value="1" {{old('flag') == 1 ? 'selected' : ''}}>No</option>
+                        </select>
+                        @error('flag')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                     <div class="col-md-8 mt-2">
                         <label for="profile_image"><span style="color: red;">* </span>Profile Image:</label>
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);"
+                                accept="image/x-png,image/gif,image/jpeg">
                             <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
                             @error('profile_image')
                             <span class="text-danger">{{ $message }}</span>
@@ -145,7 +174,8 @@
                     <div class="col-md-12 mt-2">
                         <label for="files">Upload Tax Exempt Documents:</label>
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
+                            <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01"
+                                name="files[]" multiple>
                             <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
                             @error('files')
                             <span class="text-danger">{{ $message }}</span>
@@ -163,6 +193,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/users/adduserrules.js') }}"></script>
 <script type=text/javascript>
     $('#email').on('change', function() {
         var email = this.value;
