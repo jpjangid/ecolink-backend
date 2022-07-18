@@ -40,6 +40,23 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-file"></i>
+						<p>
+							Reports
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						<li class="nav-item">
+							<a href="{{ url('admin/reports/sales') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Sales Report</p>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
 						<i class="nav-icon fas fa-user"></i>
 						<p>
 							Users
