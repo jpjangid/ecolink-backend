@@ -20,7 +20,7 @@ class BlogCategoryController extends Controller
         if (checkpermission('BlogCategoryController@index')) {
             if (request()->ajax()) {
                 /* Getting all records */
-                $allblogcategories = BlogCategory::where('flag', '0')->orderby('created_at','desc')->get();
+                $allblogcategories = BlogCategory::where('flag', '0')->orderby('created_at', 'desc')->get();
                 /* Converting Selected Data into desired format */
                 $blogCategories = new Collection;
                 foreach ($allblogcategories as $allblogcategory) {
@@ -42,7 +42,7 @@ class BlogCategoryController extends Controller
                                 <form action="' . $delete_url . '" method="post">
                                     <input type="hidden" name="_token" value="' . csrf_token() . '">
                                     <input type="hidden" name="_method" value="DELETE">
-                                    <button class="delete btn btn-danger btn-xs cart_confirm"><i class="fas fa-trash"></i></button>
+                                    <button class="delete btn btn-danger btn-xs blog_categrory_confirm"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>';
                         return $btn;
