@@ -224,7 +224,7 @@ class ProductController extends Controller
         $request->validate([
             'name'                  =>  'required',
             'variant'               =>  'required',
-            'slug'                  =>  'required|unique:products,slug,' . $id,
+            'slug'                  =>  'required|unique:products,slug,'.$id,
             'description'           =>  'required',
             'sku'                   =>  'required',
             'stock'                 =>  'required',
