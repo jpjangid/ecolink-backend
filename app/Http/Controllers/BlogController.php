@@ -24,6 +24,13 @@ class BlogController extends Controller
                 /* Converting Selected Data into desired format */
                 $blogs = new Collection;
                 foreach ($allblogs as $blog) {
+                    if ($blog->status == 1) {
+                        $status = 'Publish';
+                    } elseif ($blog->status == 0) {
+                        $status = 'Draft';
+                    } else {
+                        $status = 'Schedule';
+                    }
                     $blogs->push([
                         'id'                => $blog->id,
                         'title'             => $blog->title,
