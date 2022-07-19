@@ -19,7 +19,6 @@
         </div><!-- /.container-fluid -->
     </div>
     <div id="loader"></div>
-
     <div class="card">
         <div class="card-body">
             <form method="post" action="{{ url('admin/users/update', $id) }}" enctype="multipart/form-data">
@@ -122,18 +121,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-2 mt-2">
-                        <label for="tax_exempt">Tax Exempt:</label>
-                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
-                            <option value="">Select</option>
-                            <option value="1" {{$user->tax_exempt == 1 ? 'selected' : ''}}>Yes</option>
-                            <option value="0" {{$user->tax_exempt == 0 ? 'selected' : ''}}>No</option>
-                        </select>
-                        @error('tax_exempt')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="col-md-2 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label for="flag">Active:</label>
                         <select class="form-control select2bs4" name="flag" id="flag">
                             <option value="">Select</option>
@@ -141,6 +129,17 @@
                             <option value="1" {{$user->flag == 1 ? 'selected' : ''}}>No</option>
                         </select>
                         @error('flag')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label for="tax_exempt">Tax Exempt:</label>
+                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
+                            <option value="">Select</option>
+                            <option value="1" {{$user->tax_exempt == 1 ? 'selected' : ''}}>Yes</option>
+                            <option value="0" {{$user->tax_exempt == 0 ? 'selected' : ''}}>No</option>
+                        </select>
+                        @error('tax_exempt')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
@@ -154,7 +153,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-12 mt-2">
+                    <div class="col-md-12 mt-2 document" hidden="hidden">
                         <label for="files">Upload Tax Exempt Documents:</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
@@ -165,7 +164,7 @@
                         </div>
                     </div>
                     @if($documents->isNotEmpty())
-                    <div class="col-md-12 mt-2">
+                    <div class="col-md-12 mt-2 document" hidden="hidden">
                         <label>Uploaded Documents:</label>
                         <div class="row">
                             @foreach($documents as $document)
@@ -226,5 +225,23 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+</script>
+<script>
+    $(document).ready(function() {
+        var check = $('#tax_exempt').val();
+        if (check != "" && check != "0") {
+            $('.document').removeAttr('hidden');
+        } else {
+            $(".document").attr("hidden", "hidden");
+        }
+    });
+    $('body').on('change', '#tax_exempt', function() {
+        if ($(this).val() != "" && $(this).val() != "0") {
+            $('.document').removeAttr('hidden');
+        } else {
+            $(".document").attr("hidden", "hidden");
+            $("#panno").val("");
+        }
+    });
 </script>
 @endsection
