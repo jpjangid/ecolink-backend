@@ -19,7 +19,6 @@
         </div><!-- /.container-fluid -->
     </div>
     <div id="loader"></div>
-
     <div class="card">
         <div class="card-body">
             <form method="post" action="{{ url('admin/users/update', $id) }}" enctype="multipart/form-data">
