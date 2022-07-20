@@ -81,6 +81,7 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'billing_name'          =>  'required',
             'billing_mobile'        =>  'required|digits:10',
@@ -142,12 +143,16 @@ class OrderController extends Controller
         }
         $orderNumber = $this->order_no();
 
+
+        $total_amount = $request->total_amt;
+        $total_left_gate = $request->lift_gate_amt;
+        $amount_total = $total_amount + $total_left_gate;
         $order = Order::create([
             'order_no'                  =>  $orderNumber,
             'user_id'                   =>  $user_id,
             'order_amount'              =>  $request->total_amt,
             'discount_applied'          =>  $request->discount,
-            'total_amount'              =>  $request->total_amt,
+            'total_amount'              =>  $amount_total,
             'no_items'                  =>  $request->total_qty,
             'billing_name'              =>  $request->billing_name,
             'billing_mobile'            =>  $request->billing_mobile,
@@ -170,7 +175,7 @@ class OrderController extends Controller
             'order_status'              =>  $request->order_status,
             'payment_status'            =>  $request->payment_status,
             'shippment_via'             =>  $request->shippment_via,
-            'payment_amount'            =>  $request->total_amt,
+            'payment_amount'            =>  $amount_total,
             'sale_price'                =>  $request->sale_price
         ]);
 
@@ -261,12 +266,14 @@ class OrderController extends Controller
 
             $user_id = $user->id;
         }
-
+        $total_amount = $request->total_amt;
+        $total_left_gate = $request->lift_gate_amt;
+        $amount_total = $total_amount + $total_left_gate;
         $order = Order::where('id', $id)->update([
             'user_id'                   =>  $user_id,
             'order_amount'              =>  $request->total_amt,
             'discount_applied'          =>  $request->discount,
-            'total_amount'              =>  $request->total_amt,
+            'total_amount'              =>  $amount_total,
             'no_items'                  =>  $request->total_qty,
             'billing_name'              =>  $request->billing_name,
             'billing_mobile'            =>  $request->billing_mobile,
@@ -289,7 +296,8 @@ class OrderController extends Controller
             'order_status'              =>  $request->order_status,
             'payment_status'            =>  $request->payment_status,
             'shippment_via'             =>  $request->shippment_via,
-            'payment_amount'            =>  $request->total_amt,
+            'payment_amount'            =>  $amount_total,
+            'lift_gate_amt'            =>  $request->lift_gate_amt,
             // 'sale_price'                =>  $request->sale_price
         ]);
 
@@ -376,5 +384,12 @@ class OrderController extends Controller
         $product = DB::table('products')->find($request->id);
 
         return response()->json($product);
+    }
+
+    public function StaticValue(Request $request)
+    {
+        $left_gate = DB::table('static_values')->select('id', 'name', 'value')->where('name', $request->name)->first();
+
+        return response()->json($left_gate);
     }
 }

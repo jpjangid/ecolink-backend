@@ -3,7 +3,7 @@
 @section('title', 'Edit Order')
 
 @section('content')
-<div class="content" >
+<div class="content">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -276,9 +276,9 @@
                         <tbody>
                             @foreach($order->items as $item)
                             <tr>
-                                
+
                                 <td>
-                                    <input type="hidden" value="{{ $item->product_id }}" class="store_product_id" name="product_id[]"/>
+                                    <input type="hidden" value="{{ $item->product_id }}" class="store_product_id" name="product_id[]" />
                                     <select class="form-control select2 product_id" disabled>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
@@ -307,6 +307,31 @@
                             @error('total_qty')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
+                        </div>
+                    </div>
+                    <!-- left Gate -->
+                    @php
+                    if($order->lift_gate_amt > 0){
+                    $gate_yes = '1';
+                    }else{
+                    $gate_yes = '0';
+                    }
+                    @endphp
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label"> Left Gate</label>
+                            <select class="form-control" name="left_gate" id="left_gate">
+                                <option value="" selected>Select Left Gate</option>
+                                <option value="1" {{ $gate_yes == '1' ? 'selected' : '' }}>Yes</option>
+                                <option value="0" {{ $gate_yes == '0' ? 'selected' : '' }}>No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Discount -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="lift_gate_amt"> Left Gate Amount </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('lift_gate_amt') is-invalid @enderror" name="lift_gate_amt" id="lift_gate_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter lift_gate_amt" value="{{ old('lift_gate_amt') }}" readonly>
                         </div>
                     </div>
 
@@ -378,6 +403,7 @@
     $(document).ready(function() {
         calculateTotal();
         getAddresses();
+        get_letgate()
     });
 
     $(document).on('change', '#same', function() {
@@ -509,12 +535,12 @@
                 row.find(".sale_price").val(data.sale_price);
                 calculateProductTotal(row);
             }
-        
+
         });
-        
+
     }
 
-    
+
 
     $(document).on('keyup', '.quantity', function() {
         var row = $(this).closest('tr');
@@ -568,5 +594,43 @@
             calculateTotal();
         }
     }
+</script>
+<script>
+    function get_letgate() {
+        var id = $('#left_gate').val();
+        $.ajax({
+            url: "{{ url('admin/orders/static_value') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id: id,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                $("#lift_gate_amt").val(data.value);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).on('change', '#left_gate', function() {
+        var id = $('#left_gate').val();
+        if (id == 1) {
+            $.ajax({
+                url: "{{ url('admin/orders/static_value') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id: id,
+                    _token: '{{csrf_token()}}'
+                },
+                success: function(data) {
+                    $("#lift_gate_amt").val(data.value);
+                }
+            });
+        } else {
+            $('#lift_gate_amt').val(0);
+        }
+    });
 </script>
 @endsection

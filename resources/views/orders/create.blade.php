@@ -285,7 +285,8 @@
                                     <input type="number" name="quantity[]" class="form-control quantity" min="1" oninput="validity.valid||(value='');" placeholder="Enter Quantity" required>
                                 </td>
                                 <td><input type="text" name="sale_price[]" class="form-control sale_price" placeholder="Enter Sale Price" readonly></td>
-                                <td><input type="text" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly></td>
+                                <td><input type="text" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly>
+                                </td>
                                 <td><button type="button" class="btn btn-danger btn-sm delete_row"><i class="fa fa-minus-circle"></i></button></td>
                             </tr>
                         </tbody>
@@ -303,7 +304,31 @@
                             @enderror
                         </div>
                     </div>
-
+                    <!-- left Gate -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label"> Left Gate</label>
+                            <select class="form-control" name="left_gate" id="left_gate">
+                                <option value="" selected>Select Left Gate</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Discount -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="lift_gate_amt"> Left Gate Amount </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('lift_gate_amt') is-invalid @enderror" name="lift_gate_amt" id="lift_gate_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter lift_gate_amt" value="{{ old('lift_gate_amt') }}" readonly>
+                        </div>
+                    </div>
+                    <!-- Hazardous -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="hazardous_amt"> Hazardous </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('hazardous_amt') is-invalid @enderror" name="hazardous_amt" id="hazardous_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter hazardous_amt" value="{{ old('hazardous_amt') }}" readonly>
+                        </div>
+                    </div>
                     <!-- Discount -->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -490,6 +515,7 @@
             success: function(data) {
                 row.find(".sale_price").val(data.sale_price);
                 calculateProductTotal(row);
+
             }
         });
     });
@@ -546,5 +572,28 @@
             calculateTotal();
         }
     }
+</script>
+<script>
+    $(document).on('change', '#left_gate', function() {
+        var id = $('#left_gate').val();
+        var name = 'Lift Gate';
+        if (id == 1) {
+            $.ajax({
+                url: "{{ url('admin/orders/static_value') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id: id,
+                    name: name,
+                    _token: '{{csrf_token()}}'
+                },
+                success: function(data) {
+                    $("#lift_gate_amt").val(data.value);
+                }
+            });
+        } else {
+            $('#lift_gate_amt').val(0);
+        }
+    });
 </script>
 @endsection

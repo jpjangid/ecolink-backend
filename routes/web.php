@@ -173,6 +173,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/getAddresses', [OrderController::class, 'getAddresses']);
         Route::post('/getAddressDetail', [OrderController::class, 'getAddressDetail']);
         Route::post('/getProductById', [OrderController::class, 'getProductById']);
+        Route::post('/static_value', [OrderController::class, 'StaticValue']);
     });
 
     Route::prefix('returns')->group(function () {
@@ -273,7 +274,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::delete('/delete/{id}', [StaticValueController::class, 'destroy']);
     });
 
-    Route::prefix('settings')->group(function(){
+    Route::prefix('settings')->group(function () {
         Route::get('/edit/{category_title}/{category_des}', [SettingController::class, 'edit']);
         Route::put('/update/{category_title}/{category_des}', [SettingController::class, 'update']);
     });
