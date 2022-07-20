@@ -37,7 +37,8 @@ class BlogController extends Controller
                         'slug'              => $blog->slug,
                         'category'          => $blog->category,
                         'publish_date'      => date('m-d-Y', strtotime($blog->publish_date)),
-                        'status'            => $blog->status
+                        'status'            => $blog->status,
+                        'publish_blog'      => $status
                     ]);
                 }
 
