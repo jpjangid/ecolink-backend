@@ -99,7 +99,7 @@ class UserController extends Controller
             $user->update();
             return redirect('admin/users')->with('success', 'User has been added successfully');
         } else {
-            $request->validate([
+            $validations = [
                 'name'              =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
                 'company_name'      =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
                 'email'             =>  'required|email|max:255|unique:users,email',
@@ -112,10 +112,9 @@ class UserController extends Controller
                 'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
                 'password'          =>  'required|min:8',
                 'role_id'           =>  'required',
-                'profile_image'     =>  'required',
-                'files'             =>  'required_if:tax_exempt,==,1',
-                'files.*'           =>  'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
-            ], [
+                'profile_image'     =>  'required'
+            ];
+            $validationMessages = [
                 'name.required'             =>  'Please Enter Name',
                 'name.regex'                =>  'Please Enter Name in alphabets',
                 'company_name.required'     =>  'Please Enter Company Name',
@@ -135,11 +134,19 @@ class UserController extends Controller
                 'mobile.numeric'            =>  'The Mobile No. must be numeric',
                 'password.required'         =>  'Please Enter Password',
                 'profile_image.required'    =>  'Please Select Profile Image',
-                'files.required_if'         =>  'Please Select Files',
-                'files.*.mimes'             =>  'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
-                'files.*.max'               =>  'Sorry! Maximum allowed size for an file is 10MB',
-            ]);
-
+            ];
+            if ($request->tax_exempt == 1) {
+                $validations = array_merge($validations, [
+                    'files'             =>  'required_if:tax_exempt,==,1',
+                    'files.*'            =>  'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+                ]);
+                $validationMessages = array_merge($validationMessages, [
+                    'files.required_if'         =>  'Please Select Files',
+                    'files.*.mimes'             =>     'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+                    'files.*.max'                 =>     'Sorry! Maximum allowed size for an file is 10MB',
+                ]);
+            }
+            $request->validate($validations, $validationMessages);
             /* Storing Featured Image on local disk */
             $image_name = "";
             if ($request->hasFile('profile_image')) {
@@ -172,6 +179,7 @@ class UserController extends Controller
                     'password'              =>  $pass,
                     'role_id'               =>  $request['role_id'],
                     'profile_image'         =>  $image_name,
+                    'tax_exempt'         =>  $request['tax_exempt'],
                 ]);
 
                 UserAddress::create([
@@ -250,6 +258,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         /* Validating Input fields */
+
         $request->validate([
             'name'              =>  'required|regex:/^[\pL\s\-]+$/u',
             'email'             =>  'required|email|unique:users,email,' . $id,

@@ -86,7 +86,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="publish_date"><span style="color: red;">* </span>Date/Time</label>
-                            <input type="datetime-local" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ date('Y-m-d\TH:i', strtotime($blog->publish_date)) }}" placeholder="Please Enter Meta Tag" />
+                            <input type="datetime-local" class="form-control @error('publish_date') is-invalid @enderror" name="publish_date" id="publish_date" value="{{ date('Y-m-d\TH:i', strtotime($blog->publish_date)) }}" placeholder="Please Enter Date/Time" />
                             @error('publish_date')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror

@@ -26,10 +26,10 @@ class CouponController extends Controller
                         'name'          =>  $coupon->name,
                         'code'          =>  $coupon->code,
                         // 'type'          =>  $coupon->type,
-                        'offer_start'   =>  date('d-m-Y h:i A', strtotime($coupon->offer_start)),
-                        'offer_end'     =>  date('d-m-Y h:i A', strtotime($coupon->offer_end)),
+                        'offer_start'   =>  date('d-m-Y H:i', strtotime($coupon->offer_start)),
+                        'offer_end'     =>  date('d-m-Y H:i', strtotime($coupon->offer_end)),
                         // 'days'          =>  $coupon->days,
-                        'created_at'    =>  date('d-m-Y h:i A', strtotime($coupon->created_at)),
+                        'created_at'    =>  date('d-m-Y H:i', strtotime($coupon->created_at)),
                         'show_in_front' =>  $coupon->show_in_front
                     ]);
                 }

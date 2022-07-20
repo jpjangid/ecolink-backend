@@ -338,7 +338,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="short_desc"><span style="color: red;">* </span>Short Description</label>
-                            <textarea class="form-control @error('short_desc') is-invalid @enderror" name="short_desc"><?php echo old('short_desc'); ?></textarea>
+                            <textarea class="form-control @error('short_desc') is-invalid @enderror" name="short_desc"><?php echo $product->short_desc; ?></textarea>
                             @error('short_desc')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
