@@ -34,12 +34,24 @@
                 </div><!-- /.col -->
             </div><!-- /.row -->
             <div class="row">
-                <div class="col-sm-8"></div>
-                <div class="col-sm-4">
+                <div class="col-sm-5"></div>
+                <div class="col-sm-4 input-group">
+                    <select class="form-control select2bs4" data-clear-button="true" id="product">
+                        <option value="">Select Product</option>
+                        @foreach($products as $product)
+                        <option value="{{ $product->id }}">{{ $product->name }}({{$product->variant}})</option>
+                        @endforeach
+                    </select>
+                    <button class="btn bg-transparent" style="margin-left: -40px; z-index: 100;" id="clear">
+                        <i class="fa fa-times"></i>
+                      </button>
+                </div>
+                <div class="col-sm-3">
+                    <input type="hidden" id="date" />
                     <div class="btn-group float-right" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-secondary dateFilter" value="week">Week</button>
-                        <button type="button" class="btn btn-secondary dateFilter" value="month">Month</button>
-                        <button type="button" class="btn btn-secondary dateFilter" value="year">Year</button>
+                        <button type="button" class="btn btn-secondary dateFilter week" value="week">Week</button>
+                        <button type="button" class="btn btn-secondary dateFilter month" value="month">Month</button>
+                        <button type="button" class="btn btn-secondary dateFilter year" value="year">Year</button>
                     </div>
                 </div>
             </div>
@@ -53,6 +65,7 @@
                     <th>Order No.</th>
                     <th>Quantity</th>
                     <th>Customer</th>
+                    <th>Product</th>
                     <th>Total Amount</th>
                     <th>Order Date</th>
                 </tr>
@@ -68,16 +81,36 @@
     $(function() {
         $('.dateFilter:first').addClass('active');
         var date = $('.dateFilter').val();
-        datatable(date);
+        $('#date').val(date);
+        var product = $('#product').val();
+        datatable(date,product);
     });
 
     $(document).on('click','.dateFilter',function(){
         $('.dateFilter').removeClass('active');
         var date = this.value;
-        datatable(date);
+        $('.'+date).addClass('active');
+        $('#date').val(date);
+        var product = $('#product').val();
+        datatable(date,product);
     });
 
-    function datatable(date) {
+    $(document).on('change','#product',function(){
+        var date = $('#date').val();
+        $('.'+date).addClass('active');
+        var product = $('#product').val();
+        datatable(date,product);
+    });
+
+    $(document).on('click','#clear',function(){
+        $("select option").filter(":selected").remove();
+        var date = $('#date').val();
+        $('.'+date).addClass('active');
+        var product = $('#product').val();
+        datatable(date,product);
+    });
+
+    function datatable(date,product) {
         var salesReportTable = $('#salesReportTable').DataTable({
             destroy: true,
             scrollY: "70vh",
@@ -89,6 +122,7 @@
                 type: "GET",
                 data: function (d) {
                     d.date = date;
+                    d.product = product;
                     d._token = '{{csrf_token()}}';
                 }
             },
@@ -103,6 +137,10 @@
                 {
                     data: 'customer',
                     name: 'customer'
+                },
+                {
+                    data: 'product',
+                    name: 'product'
                 },
                 {
                     data: 'amount',
