@@ -115,7 +115,7 @@
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label for="password"><span style="color: red;">* </span>Password:</label>
+                        <label for="password"><span style="color: red;"> </span>Password:</label>
                         <input type="text" class="form-control" name="password" placeholder="Enter Password" value="{{ old('password') }}" />
                         @error('password')
                         <span class="text-danger">{{ $message }}</span>
@@ -132,6 +132,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <input type="hidden" id="oldtax_exempt" value="{{ old('tax_exempt') }}">
                     <div class="col-md-8 mt-2">
                         <label for="profile_image"><span style="color: red;">* </span>Profile Image:</label>
                         <div class="custom-file">
@@ -142,8 +143,8 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-12 mt-2">
-                        <label for="files">Upload Tax Exempt Documents:</label>
+                    <div class="col-md-12 mt-2 document" hidden="hidden">
+                        <label for="files"><span style="color: red;">* </span>Upload Tax Exempt Documents:</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="files[]" multiple>
                             <label class="custom-file-label" for="inputGroupFile01">Choose File</label>
@@ -207,5 +208,23 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+</script>
+<script>
+    $(document).ready(function() {
+        var check = $('#oldtax_exempt').val();
+        if (check != "" && check != "0") {
+            $('.document').removeAttr('hidden');
+        } else {
+            $(".document").attr("hidden", "hidden");
+        }
+    });
+    $('body').on('change', '#tax_exempt', function() {
+        if ($(this).val() != "" && $(this).val() != "0") {
+            $('.document').removeAttr('hidden');
+        } else {
+            $(".document").attr("hidden", "hidden");
+            $("#panno").val("");
+        }
+    });
 </script>
 @endsection

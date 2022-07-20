@@ -37,7 +37,7 @@ class ReturnController extends Controller
                         'client'            => $return_order->user->name,
                         'reason'            => $return_order->reason,
                         'return_status'     => $return_order->status,
-                        'date'              => date('d-m-Y h:i A', strtotime($return_order->created_at)),
+                        'date'              => date('d-m-Y H:i', strtotime($return_order->created_at)),
                     ]);
                 }
 

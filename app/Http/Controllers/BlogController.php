@@ -32,13 +32,13 @@ class BlogController extends Controller
                         $status = 'Schedule';
                     }
                     $blogs->push([
-                        'id'            => $blog->id,
-                        'title'         => $blog->title,
-                        'slug'          => $blog->slug,
-                        'category'      => $blog->category,
-                        'publish_date'  => date('d-m-Y h:i A', strtotime($blog->publish_date)),
-                        'status' => $blog->status,
-                        'publish_blog' => $status,
+                        'id'                => $blog->id,
+                        'title'             => $blog->title,
+                        'slug'              => $blog->slug,
+                        'category'          => $blog->category,
+                        'publish_date'      => date('m-d-Y', strtotime($blog->publish_date)),
+                        'status'            => $blog->status,
+                        'publish_blog'      => $status
                     ]);
                 }
 

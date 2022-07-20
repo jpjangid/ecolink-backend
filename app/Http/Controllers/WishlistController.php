@@ -24,7 +24,7 @@ class WishlistController extends Controller
                         'id'            => $wishlist->id,
                         'user'          => $wishlist->user->name,
                         'product'       => $wishlist->product->name,
-                        'created_at'    => date('d-m-Y h:i A', strtotime($wishlist->created_at)),
+                        'created_at'    => date('d-m-Y H:i', strtotime($wishlist->created_at)),
                     ]);
                 }
 
