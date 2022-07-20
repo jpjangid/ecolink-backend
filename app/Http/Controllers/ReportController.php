@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class ReportController extends Controller
         if (request()->ajax()) {
             $date = $request->date;
             $product = $request->product;
-            $from_date = date('Y-m-d');
+            $from_date = date('Y-m-d', strtotime('+1 day'));
             if ($request->date == 'week') {
                 $day = date('w');
                 $day = $day - 1;
@@ -80,5 +81,47 @@ class ReportController extends Controller
                 ->make(true);
         }
         return view('reports.salesreport', compact('products'));
+    }
+
+    public function abandonedCartReport(Request $request)
+    {
+        $products = $this->products;
+        if (request()->ajax()) {
+            $date = $request->date;
+            $product = $request->product;
+            $from_date = date('Y-m-d', strtotime('+1 day'));
+            if ($request->date == 'week') {
+                $day = date('w');
+                $day = $day - 1;
+                $to_date = date('Y-m-d', strtotime('-' . $day . ' days'));
+            }
+            if ($request->date == 'month') {
+                $to_date = date('Y-m-d', strtotime(date('Y-m-01')));
+            }
+            if ($request->date == 'year') {
+                $to_date = date('Y-m-d', strtotime(date('Y-01-01')));
+            }
+            $allcarts = Cart::select('id', 'user_id', 'product_id', 'quantity', 'created_at')->where([['created_at', '>=', $to_date], ['created_at', '<=', $from_date]])->when($product, function ($query, $product) {
+                return $query->where('product_id', $product);
+            })->with('user:id,name', 'product:id,name,variant')->orderby('created_at','desc')->get();
+
+            /* Converting Selected Data into desired format */
+            $carts = new Collection;
+            foreach ($allcarts as $cart) {
+                $carts->push([
+                    'id'            => $cart->id,
+                    'user'          => $cart->user->name,
+                    'product'       => $cart->product->name. '(' . $cart->product->variant. ')',
+                    'quantity'      => $cart->quantity,
+                    'created_at'    => date('d-m-Y h:i A', strtotime($cart->created_at)),
+                ]);
+            }
+
+            /* Sending data through yajra datatable for server side rendering */
+            return Datatables::of($carts)
+                ->addIndexColumn()
+                ->make(true);
+        }
+        return view('reports.cartreport', compact('products'));
     }
 }

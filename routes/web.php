@@ -280,6 +280,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::prefix('reports')->group(function(){
         Route::get('/sales', [ReportController::class, 'salesReport']);
+        Route::get('/carts', [ReportController::class, 'abandonedCartReport']);
     });
 });
 
