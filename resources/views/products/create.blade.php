@@ -303,6 +303,19 @@
                         </div>
                     </div>
 
+                    <!-- Dropship Location-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="dropship">Dropship Location</label>
+                            <select class="form-control @error('dropship') is-invalid @enderror" name="dropship">
+                                <option value="">Select Dropship Location</option>
+                                @foreach($dropships as $dropship)
+                                <option value="{{ $dropship->id }}" {{ old("dropship") == $dropship->id ? "selected":"" }}>{{ $dropship->name }}, {{ $dropship->city }}, {{ $dropship->state }}, {{ $dropship->country }}, {{$dropship->zip}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Product is Hazardous -->
                     <div class="col-md-4">
                         <div class="form-group">
