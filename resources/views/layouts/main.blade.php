@@ -40,6 +40,13 @@
   <link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
   <!-- summernote -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-bs4.min.css" rel="stylesheet">
+
+  <!-- Your Summernote Ajax plugin import -->
+  <link href="{{ asset('css/summernote/summernote-ext-ajaximageupload.css')}}" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ asset('css/summernote/custom.css')}}">
   <style>
     .container-fluid {
       overflow-x: auto;
@@ -164,8 +171,33 @@
   <!-- Summernote -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.js"></script>
 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <!-- Your Summernote JS file import -->
+  <script src="https:/summernote/cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-bs4.min.js"></script>
+  <script src="{{ asset('js/summernote/summernote-ext-ajaximageupload.js')}}"></script>
+
   <script type="text/javascript">
     // var editor = new FroalaEditor('#wysiwyg');
+    $('#summernote').summernote({
+      height: (($(window).height()) - 150) + 'px',
+      toolbar: [
+        // [groupName, [list of button]]    
+        ['style1', ['style']],
+        ['style3', ['bold', 'italic', 'underline', 'hr']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['font', ['strikethrough', 'superscript', 'subscript']],
+        ['style4', ['fontname', 'fontsizeunit']],
+        ['fontsize', ['fontsize', 'height']],
+        ['color', ['color']],
+        ['insert', ['ajaximageupload', 'link', 'video', 'table']],
+        ['view', ['fullscreen', 'codeview', 'help']],
+        ['style2', ['undo', 'redo', 'clear']]
+      ],
+      disableResizeEditor: true
+    });
+    $('.note-statusbar').hide();
     $('#wysiwyg').summernote();
     $(function() {
       $('.select2bs4').select2({
