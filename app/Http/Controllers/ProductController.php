@@ -75,7 +75,9 @@ class ProductController extends Controller
             /* Loading Create Page with categories data */
             $categories  = DB::table('categories')->where(['flag' => '0'])->get();
 
-            return view('products.create', compact('categories'));
+            $dropships = DB::table('dropships')->get();
+
+            return view('products.create', compact('categories', 'dropships'));
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }
@@ -103,6 +105,7 @@ class ProductController extends Controller
             'height'                =>  'required',
             'width'                 =>  'required',
             'length'                =>  'required',
+            'dropship'              =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'variant.required'              =>  'Please Enter Product Variant Name',
@@ -121,6 +124,7 @@ class ProductController extends Controller
             'height.required'               =>  'Please Enter Height',
             'width.required'                =>  'Please Enter Width',
             'length.required'               =>  'Please Enter length',
+            'dropship.required'             =>  'Please Enter Dropship Location'
         ]);
 
         /* Storing OG Image on local disk */
@@ -179,6 +183,7 @@ class ProductController extends Controller
             'width'                 =>  $request->width,
             'height'                =>  $request->height,
             'shipping_class'        =>  $request->shipping_class,
+            'dropship'              =>  $request->dropship,
             'insurance'             =>  $request->insurance,
             'hazardous'             =>  $request->hazardous,
             'head_schema'           =>  $request->head_schema,
@@ -212,7 +217,9 @@ class ProductController extends Controller
 
             $product = DB::table('products')->find($id);
 
-            return view('products.edit', compact('categories', 'product', 'id'));
+            $dropships = DB::table('dropships')->get();
+
+            return view('products.edit', compact('categories', 'product', 'dropships', 'id'));
         } else {
             return redirect()->back()->with('danger', 'You dont have required permission!');
         }
@@ -238,6 +245,7 @@ class ProductController extends Controller
             'height'                =>  'required',
             'width'                 =>  'required',
             'length'                =>  'required',
+            'dropship'              =>  'required',
         ], [
             'name.required'                 =>  'Please Enter Product Name',
             'variant.required'              =>  'Please Enter Product Variant Name',
@@ -255,6 +263,7 @@ class ProductController extends Controller
             'height.required'               =>  'Please Enter Height',
             'width.required'                =>  'Please Enter Width',
             'length.required'               =>  'Please Enter length',
+            'dropship.required'             =>  'Pleae Select Dropship Location'
         ]);
 
         /* Fetching Blog Data using Id */
@@ -315,6 +324,7 @@ class ProductController extends Controller
         $product->width                 =  $request->width;
         $product->height                =  $request->height;
         $product->shipping_class        =  $request->shipping_class;
+        $product->dropship              =  $request->dropship;
         $product->insurance             =  $request->insurance;
         $product->hazardous             =  $request->hazardous;
         $product->head_schema           =  $request->head_schema;
