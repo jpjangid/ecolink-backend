@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/notices/update', $notice->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/notices/update', $notice->id) }}" id="addData" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="row">
@@ -122,4 +122,7 @@
         </div>
     </div>
 </div>
+@endsection
+@section('js')
+<script src="{{ asset('js/validations/notices/addnoticerules.js') }}"></script>
 @endsection

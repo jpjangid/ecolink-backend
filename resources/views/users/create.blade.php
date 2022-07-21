@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="post" action="{{ url('admin/users/store') }}" enctype="multipart/form-data">
+            <form method="post" id="addData" action="{{ url('admin/users/store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
@@ -53,7 +53,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
                         <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile No." value="{{ old('mobile') }}" />
                         @error('mobile')
@@ -104,10 +104,11 @@
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="role_id"><span style="color: red;">* </span>Role:</label>
-                        <select class="form-control select2bs4" name="role_id" id="role_id">
+                        <select class="form-control" name="role_id" id="role_id">
                             <option value="">Select Role</option>
                             @foreach($roles as $role)
-                            <option value="{{$role->id}}" {{ old('role_id') == $role->id ? 'selected' : ''}}>{{$role->title}}</option>
+                            <option value="{{$role->id}}" {{ old('role_id')==$role->id ? 'selected' :
+                                ''}}>{{$role->title}}</option>
                             @endforeach
                         </select>
                         @error('role_id')
@@ -121,12 +122,23 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
-                        <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
+                    <div class="col-md-2 mt-2">
+                        <label for="flag"><span style="color: red;">* </span>Active:</label>
+                        <select class="form-control" name="flag" id="flag">
                             <option value="">Select</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
+                            <option value="0" <?php old('flag') == 0 ? 'selected' : '' ?>>Yes</option>
+                            <option value="1" <?php old('flag') == 1 ? 'selected' : '' ?>>No</option>
+                        </select>
+                        @error('flag')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
+                        <select class="form-control" name="tax_exempt" id="tax_exempt">
+                            <option value="">Select</option>
+                            <option value="1" <?php old('tax_exempt') == 1 ? 'selected' : '' ?>>Yes</option>
+                            <option value="0" <?php old('tax_exempt') == 0 ? 'selected' : '' ?>>No</option>
                         </select>
                         @error('tax_exempt')
                         <span class="text-danger">{{ $message }}</span>
@@ -164,6 +176,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/users/adduserrules.js') }}"></script>
 <script type=text/javascript>
     $('#email').on('change', function() {
         var email = this.value;
@@ -176,7 +189,6 @@
             },
             dataType: 'json',
             success: function(result) {
-                console.log(result);
                 if (result.flag == '1') {
                     document.getElementById("name").value = result.name;
                     document.getElementById("mobile").value = result.mobile;

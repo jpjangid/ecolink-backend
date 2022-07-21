@@ -21,7 +21,7 @@
     <div id="loader"></div>
     <div class="card">
         <div class="card-body">
-            <form method="post" action="{{ url('admin/users/update', $id) }}" enctype="multipart/form-data">
+            <form method="post" id="addData" action="{{ url('admin/users/update', $id) }}" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="row">
@@ -41,7 +41,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="name"><span style="color: red;">* </span> Full Name:</label>
-                        <input type="text" class="form-control" name="name" placeholder="Enter Full Name" value="{{ $user->name }}" />
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Enter Full Name" value="{{ $user->name }}" />
                         @error('name')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -53,16 +53,16 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-2">
                         <label for="mobile"><span style="color: red;">* </span>Mobile No:</label>
-                        <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" placeholder="Enter Mobile No." value="{{ $user->mobile }}" />
+                        <input type="number" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" name="mobile" id="mobile" placeholder="Enter Mobile No." value="{{ $user->mobile }}" />
                         @error('mobile')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="address"><span style="color: red;">* </span>Address:</label>
-                        <input type="text" class="form-control" name="address" placeholder="Enter Address" value="{{ $user->address }}" />
+                        <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address" value="{{ $user->address }}" />
                         @error('address')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -76,28 +76,28 @@
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="country"><span style="color: red;">* </span>Country:</label>
-                        <input type="text" class="form-control" name="country" placeholder="Enter Country" value="{{ $user->country }}" />
+                        <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country" value="{{ $user->country }}" />
                         @error('country')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="state"><span style="color: red;">* </span>State:</label>
-                        <input type="text" class="form-control" name="state" placeholder="Enter State" value="{{ $user->state }}" />
+                        <input type="text" class="form-control" name="state" id="state" placeholder="Enter State" value="{{ $user->state }}" />
                         @error('state')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="city"><span style="color: red;">* </span>City:</label>
-                        <input type="text" class="form-control" name="city" placeholder="Enter City" value="{{ $user->city }}" />
+                        <input type="text" class="form-control" name="city" id="city" placeholder="Enter City" value="{{ $user->city }}" />
                         @error('city')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="pincode"><span style="color: red;">* </span>Zip Code:</label>
-                        <input type="text" class="form-control" name="pincode" placeholder="Enter Zip Code" value="{{ $user->pincode }}" />
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Zip Code" value="{{ $user->pincode }}" />
                         @error('pincode')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -121,7 +121,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-2 mt-2">
                         <label for="flag">Active:</label>
                         <select class="form-control select2bs4" name="flag" id="flag">
                             <option value="">Select</option>
@@ -132,7 +132,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-2 mt-2">
                         <label for="tax_exempt">Tax Exempt:</label>
                         <select class="form-control select2bs4" name="tax_exempt" id="tax_exempt">
                             <option value="">Select</option>
@@ -196,6 +196,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/users/edituserrules.js') }}"></script>
 <script type=text/javascript>
     if ($("#state > option:selected").val() != "") {
         var state = $("#state > option:selected").val();

@@ -261,22 +261,26 @@ class UserController extends Controller
 
         $request->validate([
             'name'              =>  'required|regex:/^[\pL\s\-]+$/u',
+            'company_name'      =>  'required|regex:/^[\pL\s\-]+$/u|max:255',
             'email'             =>  'required|email|unique:users,email,' . $id,
             'mobile'            =>  'required|digits:10|unique:users,mobile,' . $id,
             'address'           =>  'required',
+            'landmark'          =>  'required',
             'state'             =>  'required|regex:/^[\pL\s\-]+$/u',
             'city'              =>  'required|regex:/^[\pL\s\-]+$/u',
             'pincode'           =>  'required',
             'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
             'password'          =>  'nullable|min:8',
             'role_id'           =>  'required',
-            'files.*'            =>     'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+            'files.*'           =>  'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
         ], [
             'name.required'             =>  'Please Enter Name',
+            'company_name.required'     =>  'Please Enter Company Name',
             'name.regex'                =>  'Please Enter Name in alphabets',
             'email.required'            =>  'Please Enter Email',
             'mobile.required'           =>  'Please Enter Mobile No.',
             'address.required'          =>  'Please Enter Address',
+            'landmark.required'         =>  'Please Enter Landmark',
             'state.required'            =>  'Please Enter State',
             'state.regex'               =>  'Please Enter State in alphabets',
             'city.required'             =>  'Please Enter City',
@@ -286,8 +290,8 @@ class UserController extends Controller
             'country.regex'             =>  'Please Enter Country in alphabets',
             'role_id.required'          =>  'Please Select Role',
             'mobile.numeric'            =>  'The Mobile No. must be numeric',
-            'files.*.mimes'             =>     'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
-            'files.*.max'                 =>     'Sorry! Maximum allowed size for an file is 10MB',
+            'files.*.mimes'             =>  'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+            'files.*.max'               =>  'Sorry! Maximum allowed size for an file is 10MB',
         ]);
 
         /* Fetching Blog Data using Id */

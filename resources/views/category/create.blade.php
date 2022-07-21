@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/categories/store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/categories/store') }}" id="addData" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
@@ -220,6 +220,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/categories/addcategoryrules.js') }}"></script>
 <script type=text/javascript>
     function readURL(input) {
         if (input.files && input.files[0]) {

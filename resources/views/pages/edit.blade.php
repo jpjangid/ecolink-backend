@@ -26,7 +26,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/pages/update', $id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/pages/update', $id) }}" id="addData" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="row">
@@ -254,7 +254,6 @@
 </div>
 @endsection
 @section('js')
-
 <script type=text/javascript>
     function readURL(input) {
         if (input.files && input.files[0]) {

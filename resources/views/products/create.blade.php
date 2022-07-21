@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/products/store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/products/store') }}" id="addData" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
@@ -303,6 +303,19 @@
                         </div>
                     </div>
 
+                    <!-- Dropship Location-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="dropship">Dropship Location</label>
+                            <select class="form-control @error('dropship') is-invalid @enderror" name="dropship">
+                                <option value="">Select Dropship Location</option>
+                                @foreach($dropships as $dropship)
+                                <option value="{{ $dropship->id }}" {{ old("dropship") == $dropship->id ? "selected":"" }}>{{ $dropship->name }}, {{ $dropship->city }}, {{ $dropship->state }}, {{ $dropship->country }}, {{$dropship->zip}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Product is Hazardous -->
                     <div class="col-md-4">
                         <div class="form-group">
@@ -463,6 +476,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/products/addproductrules.js') }}"></script>
 <script type=text/javascript>
     function readURL(input) {
         if (input.files && input.files[0]) {

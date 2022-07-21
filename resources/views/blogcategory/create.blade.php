@@ -21,7 +21,7 @@
     <div id="loader"></div>
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/blogcategory/store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/blogcategory/store') }}" id="addData" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <!-- Blog Category Name -->
@@ -44,4 +44,7 @@
         </div>
     </div>
 </div>
+@endsection
+@section('js')
+<script src="{{ asset('js/validations/blogCategories/addcategoryrules.js') }}"></script>
 @endsection
