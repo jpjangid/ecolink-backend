@@ -273,7 +273,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::delete('/delete/{id}', [StaticValueController::class, 'destroy']);
     });
 
-    Route::prefix('settings')->group(function(){
+    Route::prefix('settings')->group(function () {
         Route::get('/edit/{category_title}/{category_des}', [SettingController::class, 'edit']);
         Route::put('/update/{category_title}/{category_des}', [SettingController::class, 'update']);
     });
