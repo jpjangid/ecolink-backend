@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/staticvalues/update', $id) }}" method="post">
+            <form action="{{ url('admin/staticvalues/update', $id) }}" id="addData" method="post">
                 @method('PUT')
                 @csrf
                 <div class="row">
@@ -69,4 +69,7 @@
         </div>
     </div>
 </div>
+@endsection
+@section('js')
+<script src="{{ asset('js/validations/staticvalues/addstaticvaluerules.js') }}"></script>
 @endsection

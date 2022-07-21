@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/sub/categories/store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/sub/categories/store') }}" id="addData" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
@@ -98,7 +98,7 @@
                     </div>
 
                     <!-- Category image -->
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="image"><span style="color: red;">* </span>Featured Image:</label>
                             <div class="custom-file">
@@ -238,6 +238,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/sub_categories/addcategoryrules.js') }}"></script>
 <script type=text/javascript>
     function readURL(input) {
         if (input.files && input.files[0]) {

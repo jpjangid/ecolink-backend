@@ -250,6 +250,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/pages/addpagerules.js') }}"></script>
 <script type=text/javascript>
     function readURL(input) {
         if (input.files && input.files[0]) {
