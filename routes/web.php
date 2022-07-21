@@ -27,11 +27,10 @@ use App\Http\Controllers\TaxRateController;
 use App\Http\Controllers\BulkPricingController;
 use App\Http\Controllers\TechnicalSupportController;
 use App\Http\Controllers\BlogCategoryController;
-use App\Http\Controllers\api\UserController as APiUserController;
 use App\Http\Controllers\DropshipController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StaticValueController;
-use App\Models\Dropship;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -278,6 +277,11 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     Route::prefix('settings')->group(function(){
         Route::get('/edit/{category_title}/{category_des}', [SettingController::class, 'edit']);
         Route::put('/update/{category_title}/{category_des}', [SettingController::class, 'update']);
+    });
+
+    Route::prefix('reports')->group(function(){
+        Route::get('/sales', [ReportController::class, 'salesReport']);
+        Route::get('/carts', [ReportController::class, 'abandonedCartReport']);
     });
 
     Route::prefix('dropship')->group(function (){
