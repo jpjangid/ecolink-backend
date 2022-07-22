@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/taxrates/update', $taxrate->id) }}" method="post">
+            <form action="{{ url('admin/taxrates/update', $taxrate->id) }}" id="addData" method="post">
                 @method('PUT')
                 @csrf
                 <div class="row">
@@ -102,4 +102,7 @@
         </div>
     </div>
 </div>
+@endsection
+@section('js')
+<script src="{{ asset('js/validations/taxRates/addtaxraterules.js') }}"></script>
 @endsection

@@ -40,6 +40,29 @@
 
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-file"></i>
+						<p>
+							Reports
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						<li class="nav-item">
+							<a href="{{ url('admin/reports/sales') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Sales Report</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ url('admin/reports/carts') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Abandoned Cart Report</p>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
 						<i class="nav-icon fas fa-user"></i>
 						<p>
 							Users
@@ -198,6 +221,34 @@
 							<a href="{{ url('admin/products') }}" class="nav-link">
 								<i class="far fa-circle nav-icon"></i>
 								<p>Product List</p>
+							</a>
+						</li>
+						@endif
+					</ul>
+				</li>
+
+				<li class="nav-item has-treeview">
+					<a href="#" class="nav-link">
+						<i class="nav-icon fas fa-map-pin"></i>
+						<p>
+							Dropship Locations
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview">
+						@if(checkpermission('ProductController@index'))
+						<li class="nav-item">
+							<a href="{{ url('admin/dropship/create') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Add Dropship Location</p>
+							</a>
+						</li>
+						@endif
+						@if(checkpermission('ProductController@index'))
+						<li class="nav-item">
+							<a href="{{ url('admin/dropship') }}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Dropship Location List</p>
 							</a>
 						</li>
 						@endif

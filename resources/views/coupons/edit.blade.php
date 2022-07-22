@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/coupons/update', $id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/coupons/update', $id) }}" id="addData" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="row">
@@ -200,6 +200,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/coupons/editcouponrules.js') }}"></script>
 <script>
     $(document).on('change', '#disc_type', function() {
         var type = $('#disc_type').val();

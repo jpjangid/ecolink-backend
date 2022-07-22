@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ url('admin/orders/store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url('admin/orders/store') }}" id="addData" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
 
@@ -429,6 +429,7 @@
 </div>
 @endsection
 @section('js')
+<script src="{{ asset('js/validations/orders/addorderrules.js') }}"></script>
 <script>
     $(document).ready(function() {
         getCouponCode();
