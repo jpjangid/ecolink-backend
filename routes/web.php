@@ -174,6 +174,11 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/getAddressDetail', [OrderController::class, 'getAddressDetail']);
         Route::post('/getProductById', [OrderController::class, 'getProductById']);
         Route::post('/static_value', [OrderController::class, 'StaticValue']);
+        Route::post('/getHazardous', [OrderController::class, 'getHazardous']);
+        Route::post('/getCouponCode', [OrderController::class, 'getCouponCode']);
+        Route::post('/codeApplied', [OrderController::class, 'codeApplied']);
+        Route::post('/getShippingCharge', [OrderController::class, 'getShippingCharge']);
+        Route::post('/getTaxableAmount', [OrderController::class, 'getTaxableAmount']);
     });
 
     Route::prefix('returns')->group(function () {

@@ -179,7 +179,7 @@ class OrderController extends Controller
                 if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
                     $taxAmount = 0;
                 } else {
-                    $taxAmount = $tax->rate;
+                    $taxAmount = ($payable_total_amt * $tax->rate) / 100;
                 }
             }
 

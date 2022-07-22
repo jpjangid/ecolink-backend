@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Order;
@@ -14,9 +15,16 @@ use Yajra\DataTables\DataTables;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Traits\ShippingRate;
+use App\Traits\QboRefreshToken;
+use Illuminate\Support\Facades\Http;
+use App\Models\Product;
 
 class OrderController extends Controller
 {
+    use ShippingRate;
+    use QboRefreshToken;
+
     public function index(Request $request)
     {
         if (checkpermission('OrderController@index')) {
@@ -73,15 +81,16 @@ class OrderController extends Controller
 
     public function create()
     {
-        $products = DB::table('products')->where('status', 1)->orderBy('name', 'asc')->get();
+        $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->orderBy('name', 'asc')->get();
         $users = DB::table('users')->where('role_id', '!=', 1)->where('flag', 0)->orderBy('name', 'asc')->get();
+        $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
 
-        return view('orders.create', compact('products', 'users'));
+        return view('orders.create', compact('products', 'users', 'lift_gate'));
     }
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         $request->validate([
             'billing_name'          =>  'required',
             'billing_mobile'        =>  'required|digits:10',
@@ -144,16 +153,83 @@ class OrderController extends Controller
         $orderNumber = $this->order_no();
 
 
-        $total_amount = $request->total_amt;
-        $total_left_gate = $request->lift_gate_amt;
-        $amount_total = $total_amount + $total_left_gate;
+        $sale_price = 0;
+        $hazardous_qty = 0;
+        $hazardous_amt = 0;
+        $lift_gate_amt = 0;
+        $discount_amt = 0;
+        $items = 0;
+        $total_weight = 0;
+        foreach ($request->product_id as $key => $product_id) {
+            $items += 1;
+            $product = DB::table('products')->find($product_id);
+            $sale_price += $product->sale_price;
+            $total_weight += $product->weight * $request->quantity[$key];
+            if ($product->hazardous == 1) {
+                $hazardous_qty += 1;
+            }
+        }
+
+        $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
+
+        $shipment_via = 0;
+        $shipping_charge = 0;
+        if ($total_weight >= 71) {
+            $shipment_via = 'saia';
+            $shipping_charge = $this->getSaiaShipRate($newRequest);
+        } else {
+            $shipment_via = 'fedex';
+            $shipping_charge = $this->getFedexShipRate($newRequest);
+        }
+
+        $order_amt = $sale_price;
+        $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+        $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
+        $lift_gate_amount = $lift_gate->value ?? 0;
+        $hazardous_amount = $hazardous->value ?? 0;
+        if ($hazardous_qty > 0) {
+            $hazardous_amt = $hazardous_amount;
+        }
+
+        if ($request->lift_gate == 1) {
+            $lift_gate_amt = $lift_gate_amount;
+        }
+
+        $coupon_id = '';
+        $coupon = '';
+        if (!empty($request->coupon)) {
+            $coupon = DB::table('coupons')->find($request->coupon);
+            if ($coupon != null) {
+                $coupon_id = $coupon->id;
+                if ($coupon->disc_type == 'percent') {
+                    $discount_amt = ($order_amt * $coupon->discount) / 100;
+                } else {
+                    $discount_amt = $coupon->discount;
+                }
+            }
+        }
+
+        $taxAmount = 0;
+        $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
+        if ($tax != null) {
+            if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                $taxAmount = 0;
+            } else {
+                $taxAmount = ($order_amt * $tax->rate) / 100;
+            }
+        }
+
+        $order_total = $order_amt + $lift_gate_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
         $order = Order::create([
             'order_no'                  =>  $orderNumber,
             'user_id'                   =>  $user_id,
-            'order_amount'              =>  $request->total_amt,
-            'discount_applied'          =>  $request->discount,
-            'total_amount'              =>  $amount_total,
-            'no_items'                  =>  $request->total_qty,
+            'order_amount'              =>  $order_amt,
+            'discount_applied'          =>  $discount_amt,
+            'lift_gate_amt'             =>  $lift_gate_amt,
+            'hazardous_amt'             =>  $hazardous_amt,
+            'tax_amount'                =>  $taxAmount,
+            'total_amount'              =>  $order_total,
+            'no_items'                  =>  $items,
             'billing_name'              =>  $request->billing_name,
             'billing_mobile'            =>  $request->billing_mobile,
             'billing_email'             =>  $request->billing_email,
@@ -174,9 +250,15 @@ class OrderController extends Controller
             'shipping_landmark'         =>  $request->shipping_landmark,
             'order_status'              =>  $request->order_status,
             'payment_status'            =>  $request->payment_status,
-            'shippment_via'             =>  $request->shippment_via,
-            'payment_amount'            =>  $amount_total,
-            'sale_price'                =>  $request->sale_price
+            'payment_currency'          =>  'dollar',
+            'payment_status'            =>  'pending',
+            'shippment_via'             =>  $shipment_via,
+            'shippment_status'          =>  'pending',
+            'coupon_id'                 =>  $coupon_id ?? '',
+            'coupon_discount'           =>  $discount_amt,
+            'order_comments'            =>  $request->order_comments,
+            'payment_amount'            =>  $order_total,
+            'shippment_rate'            =>  $shipping_charge
         ]);
 
         foreach ($request->product_id as $key => $item) {
@@ -199,8 +281,14 @@ class OrderController extends Controller
         $products = DB::table('products')->where('status', 1)->orderBy('name', 'asc')->get();
         $users = DB::table('users')->where('role_id', '!=', 1)->where('flag', 0)->orderBy('name', 'asc')->get();
         $order = Order::where('id', $id)->with('items')->first();
+        if ($order->lift_gate_amt > 0) {
+            $order->lift_gate_status = '1';
+        } else {
+            $order->lift_gate_status = '0';
+        }
+        $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
 
-        return view('orders.edit', compact('products', 'users', 'order'));
+        return view('orders.edit', compact('products', 'users', 'order', 'lift_gate'));
     }
 
     public function update(Request $request, $id)
@@ -391,5 +479,89 @@ class OrderController extends Controller
         $left_gate = DB::table('static_values')->select('id', 'name', 'value')->where('name', $request->name)->first();
 
         return response()->json($left_gate);
+    }
+
+    public function getHazardous(Request $request)
+    {
+        $products = DB::table('products')->select('hazardous')->whereIn('id', $request->product_ids)->get();
+        $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
+        $hazardous_amt = 0;
+        if ($products->isNotEmpty()) {
+            foreach ($products as $product) {
+                if ($product->hazardous == 1) {
+                    $hazardous_amt = $hazardous->value;
+                }
+            }
+        }
+
+        return $hazardous_amt;
+    }
+
+    public function getCouponCode(Request $request)
+    {
+        $current = date('Y-m-d H:i:s');
+
+        $coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['type', '!=', 'customer_based'], ['offer_start', '<=', $current], ['offer_end', '>=', $current]])->orWhere([['type', 'customer_based'], ['user_id', $request->user_id]])->get();
+
+        return $coupons;
+    }
+
+    public function codeApplied(Request $request)
+    {
+        $coupon = DB::table('coupons')->find($request->id);
+
+        if (!empty($coupon->min_order_amount) && $coupon->min_order_amount > $request->total) {
+            return response()->json(['message' => 'Cart total should be greater than or equal to ' . $coupon->min_order_amount, 'code' => 400], 400);
+        }
+
+        $discount_amt = 0;
+        if ($coupon->disc_type == 'percent') {
+            $discount_amt = ($request->total * $coupon->discount) / 100;
+        } else {
+            $discount_amt = $coupon->discount;
+        }
+
+        return $discount_amt;
+    }
+
+    public function getTaxableAmount(Request $request)
+    {
+        $taxAmount = 0;
+        $coupon = DB::table('coupons')->find($request->coupon);
+        $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
+        if ($tax != null) {
+            if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                $taxAmount = 0;
+            } else {
+                $taxAmount = ($request->total * $tax->rate) / 100;
+            }
+        }
+
+        return number_format((float)$taxAmount, 2, '.', '');;
+    }
+
+    public function getShippingCharge(Request $request)
+    {
+        $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
+
+        $products = DB::table('products')->select('hazardous')->whereIn('id', $request->product_ids)->get();
+        $total_weight = 0;
+        if ($products->isNotEmpty()) {
+            foreach ($products as $product) {
+                $total_weight += $product->weight * $request->quantity;
+            }
+        }
+
+        $shipment_via = 0;
+        $shipping_charge = 0;
+        if ($total_weight >= 71) {
+            $shipment_via = 'saia';
+            $shipping_charge = $this->getSaiaShipRate($newRequest);
+        } else {
+            $shipment_via = 'fedex';
+            $shipping_charge = $this->getFedexShipRate($newRequest);
+        }
+
+        return number_format((float)$shipping_charge, 2, '.', '');;
     }
 }

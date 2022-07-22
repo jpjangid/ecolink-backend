@@ -309,29 +309,52 @@
                             @enderror
                         </div>
                     </div>
-                    <!-- left Gate -->
-                    @php
-                    if($order->lift_gate_amt > 0){
-                    $gate_yes = '1';
-                    }else{
-                    $gate_yes = '0';
-                    }
-                    @endphp
+
+                    <!-- Total Order Amount -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label"> Left Gate</label>
-                            <select class="form-control" name="left_gate" id="left_gate">
-                                <option value="" selected>Select Left Gate</option>
-                                <option value="1" {{ $gate_yes == '1' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ $gate_yes == '0' ? 'selected' : '' }}>No</option>
+                            <label class="required form-label" for="order_amount"> Total Order Amount </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('order_amount') is-invalid @enderror" name="order_amount" id="order_amount" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Total Order Amount" value="{{ $order->order_amount }}" readonly>
+                            <input type="hidden" id="lift_gate_value" value="{{ $lift_gate->value }}" />
+                        </div>
+                    </div>
+
+                    <!-- lift Gate -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label"> Lift Gate</label>
+                            <select class="form-control" name="lift_gate" id="lift_gate">
+                                <option value="" selected>Select Lift Gate</option>
+                                <option value="1" {{ $order->lift_gate_status == '1' ? 'selected' : '' }}>Yes</option>
+                                <option value="0" {{ $order->lift_gate_status == '0' ? 'selected' : '' }}>No</option>
                             </select>
                         </div>
                     </div>
-                    <!-- Discount -->
+
+                    <!-- Lift Gate Amount -->
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="required form-label" for="lift_gate_amt"> Left Gate Amount </label>
-                            <input type="number" step=".01" class="form-control form-control-solid @error('lift_gate_amt') is-invalid @enderror" name="lift_gate_amt" id="lift_gate_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter lift_gate_amt" value="{{ old('lift_gate_amt') }}" readonly>
+                            <label class="required form-label" for="lift_gate_amt"> Lift Gate Amount </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('lift_gate_amt') is-invalid @enderror" name="lift_gate_amt" id="lift_gate_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Lift Gate Amount" value="{{ $order->lift_gate_amt }}" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Hazardous -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="hazardous_amt"> Hazardous </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('hazardous_amt') is-invalid @enderror" name="hazardous_amt" id="hazardous_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Hazardous" value="{{ $order->hazardous_amt }}" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Coupon Code -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label"> Coupon Code</label>
+                            <select class="form-control select2bs4" name="coupon" id="coupon">
+                                <option value="">Select Coupon Code</option>
+                            </select>
+                            <input type="hidden" id="coupon_id" value="{{ $order->coupon_id }}" />
                         </div>
                     </div>
 
@@ -339,7 +362,34 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="discount"> Discount Amount </label>
-                            <input type="number" step=".01" class="form-control form-control-solid @error('discount') is-invalid @enderror" name="discount" id="discount" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Discount" value="{{ $order->discount_applied }}">
+                            <input type="number" step=".01" class="form-control form-control-solid @error('discount') is-invalid @enderror" name="discount" id="discount" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Discount" value="{{ $order->discount_applied }}" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Ship Via -->
+                    {{-- <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label"> Ship Via </label>
+                            <select class="form-control" name="shippment_via">
+                                <option value="saia" {{ $order->shippment_via == 'saia' ? 'selected' : '' }}>Saia</option>
+                                <option value="fedex" {{ $order->shippment_via == 'fedex' ? 'selected' : '' }}>Fedex</option>
+                            </select>
+                        </div>
+                    </div> --}}
+
+                    <!-- Shipping Charge -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="shipping_charge"> Shipping Charge </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('shipping_charge') is-invalid @enderror" name="shipping_charge" id="shipping_charge" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Shipping Charge" value="0" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Taxable Amount -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="tax_amt"> Taxable Amount </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('tax_amt') is-invalid @enderror" name="tax_amt" id="tax_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Taxable Amount" value="0" readonly>
                         </div>
                     </div>
 
@@ -376,17 +426,6 @@
                             </select>
                         </div>
                     </div>
-
-                    <!-- Ship Via -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="required form-label"> Ship Via </label>
-                            <select class="form-control" name="shippment_via">
-                                <option value="saia" {{ $order->shippment_via == 'saia' ? 'selected' : '' }}>Saia</option>
-                                <option value="fedex" {{ $order->shippment_via == 'fedex' ? 'selected' : '' }}>Fedex</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 mt-2">
@@ -401,9 +440,10 @@
 @section('js')
 <script>
     $(document).ready(function() {
+        getCouponCode();
         calculateTotal();
         getAddresses();
-        get_letgate()
+        lift_gate();
     });
 
     $(document).on('change', '#same', function() {
@@ -439,10 +479,72 @@
             $('#shipping_city').val("");
             $('#shipping_zip').val("");
         }
+        getTaxableAmount();
     });
 
     $(document).on('change', '#customer', function() {
+        getCouponCode();
         getAddresses();
+    });
+
+    function getCouponCode() {
+        var user_id = $('#customer').val();
+        var coupon_id = $('#coupon_id').val();
+        $.ajax({
+            url: "{{ url('admin/orders/getCouponCode') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                user_id: user_id,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                $('#coupon').empty();
+                $("#coupon").append('<option value="">Select Coupon Code</option>');
+                $.each(data, function(key, value) {
+                    var value_type = value.disc_type == 'percent' ? value.discount + '%' : '$' + value.discount;
+                    if (coupon_id == value.id) {
+                        $("#coupon").append('<option value="' + value.id + '">' + value.code + '(' + value_type + ')' + '</option>');
+                    } else {
+                        $("#coupon").append('<option value="' + value.id + '">' + value.code + '(' + value_type + ')' + '</option>');
+                    }
+                });
+            }
+        });
+    }
+
+    $(document).on('change', '#coupon', function() {
+        var id = $('#coupon').val();
+        var total = $(".total_amt").val();
+        if (id != '') {
+            if (total > 0 || total != '') {
+                $.ajax({
+                    url: "{{ url('admin/orders/codeApplied') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id: id,
+                        total: total,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        $('#discount').val(data);
+                        calculateTotal();
+                    }
+                });
+            } else {
+                swal({
+                    title: 'Oops!',
+                    text: "Please add product to use coupon.",
+                    icon: 'error',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'OK',
+                    timer: 3000
+                })
+            }
+        }
     });
 
     function getAddresses() {
@@ -535,12 +637,8 @@
                 row.find(".sale_price").val(data.sale_price);
                 calculateProductTotal(row);
             }
-
         });
-
     }
-
-
 
     $(document).on('keyup', '.quantity', function() {
         var row = $(this).closest('tr');
@@ -553,15 +651,19 @@
         var total = price * qty;
         row.find(".product_total").val(total);
         calculateTotal();
-        discount();
     }
 
     function calculateTotal() {
         var total_amt = 0;
         var total_qty = 0;
+        var product_ids = [];
         $('.main_table tr').each(function() {
             var ptotal = $(this).find(".product_total").val();
             var qty = $(this).find(".quantity").val();
+            var product_id = $(this).find(".product_id").val();
+            if (product_id != undefined) {
+                product_ids.push(product_id);
+            }
             if (!isNaN(ptotal) && ptotal != '') {
                 total_amt += parseFloat(ptotal);
             }
@@ -570,67 +672,82 @@
             }
         });
 
+        hazardous(product_ids);
+        var hazardous_amt = $('#hazardous_amt').val();
+        hazardous_amt = hazardous_amt != '' ? hazardous_amt : 0;
+        var lift_gate_amt = $('#lift_gate_amt').val();
+        lift_gate_amt = lift_gate_amt != '' ? lift_gate_amt : 0;
+        var discount = $('#discount').val();
+        discount = discount != '' ? discount : 0;
+        total_amt = parseFloat(total_amt) + parseFloat(hazardous_amt) + parseFloat(lift_gate_amt) - parseFloat(discount);
+
         $(".total_qty").val(total_qty);
         $(".total_amt").val(total_amt);
     }
 
-    $(document).on('keyup', '#discount', function() {
-        discount();
-    });
-
-    function discount() {
-        var discount = $('#discount').val();
-        var total_amt = 0;
-        $('.main_table tr').each(function() {
-            var ptotal = $(this).find(".product_total").val();
-            if (!isNaN(ptotal) && ptotal != '') {
-                total_amt += parseFloat(ptotal);
-            }
-        });
-        if (!isNaN(discount) && discount != '') {
-            total = parseFloat(total_amt) - parseFloat(discount);
-            $(".total_amt").val(total);
-        } else {
-            calculateTotal();
-        }
-    }
-</script>
-<script>
-    function get_letgate() {
-        var id = $('#left_gate').val();
+    function hazardous(product_ids) {
         $.ajax({
-            url: "{{ url('admin/orders/static_value') }}",
+            url: "{{ url('admin/orders/getHazardous') }}",
             type: "POST",
             dataType: "json",
             data: {
-                id: id,
+                product_ids: product_ids,
                 _token: '{{csrf_token()}}'
             },
             success: function(data) {
-                $("#lift_gate_amt").val(data.value);
+                $('#hazardous_amt').val(data);
             }
         });
     }
-</script>
-<script>
-    $(document).on('change', '#left_gate', function() {
-        var id = $('#left_gate').val();
+
+    // $(document).on('keyup', '#discount', function() {
+    //     discount();
+    // });
+
+    // function discount() {
+    //     var discount = $('#discount').val();
+    //     var total_amt = 0;
+    //     $('.main_table tr').each(function() {
+    //         var ptotal = $(this).find(".product_total").val();
+    //         if (!isNaN(ptotal) && ptotal != '') {
+    //             total_amt += parseFloat(ptotal);
+    //         }
+    //     });
+    //     if (!isNaN(discount) && discount != '') {
+    //         total = parseFloat(total_amt) - parseFloat(discount);
+    //         $(".total_amt").val(total);
+    //     } else {
+    //         calculateTotal();
+    //     }
+    // }
+    
+    $(document).on('change', '#lift_gate', function() {
+        lift_gate();
+    });
+
+    function lift_gate() {
+        var id = $('#lift_gate').val();
+        var name = 'Lift Gate';
+        var lift_gate_value = $('#lift_gate_value').val();
         if (id == 1) {
-            $.ajax({
-                url: "{{ url('admin/orders/static_value') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    id: id,
-                    _token: '{{csrf_token()}}'
-                },
-                success: function(data) {
-                    $("#lift_gate_amt").val(data.value);
-                }
-            });
+            $("#lift_gate_amt").val(parseFloat(lift_gate_value));
+            // $.ajax({
+            //     url: "{{ url('admin/orders/static_value') }}",
+            //     type: "POST",
+            //     dataType: "json",
+            //     data: {
+            //         id: id,
+            //         name: name,
+            //         _token: '{{csrf_token()}}'
+            //     },
+            //     success: function(data) {
+            //         $("#lift_gate_amt").val(parseFloat(data.value));
+            //     }
+            // });
         } else {
             $('#lift_gate_amt').val(0);
         }
-    });
+        calculateTotal();
+    }
 </script>
 @endsection
