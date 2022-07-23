@@ -24,9 +24,6 @@ $(document).ready(function() {
             address: {
                 required: true
             },
-            landmark: {
-                required: true
-            },
             city: {
                 required: true,
                 maxlength: 40
@@ -72,9 +69,6 @@ $(document).ready(function() {
             },
             address: {
                 required: "Please Enter Address",
-            },
-            landmark: {
-                required: "Please Enter Landmark",
             },
             city: {
                 required: "Please Enter City",

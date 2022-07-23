@@ -13,9 +13,6 @@ $(document).ready(function() {
             billing_address: {
                 required: true
             },
-            billing_landmark: {
-                required: true
-            },
             billing_country: {
                 required: true
             },
@@ -38,9 +35,6 @@ $(document).ready(function() {
                 required: true
             },
             shipping_address: {
-                required: true
-            },
-            shipping_landmark: {
                 required: true
             },
             shipping_country: {
@@ -75,9 +69,6 @@ $(document).ready(function() {
             billing_address: {
                 required: "Please Enter Billing Address",
             },
-            billing_landmark: {
-                required: "Please Enter Billing Landmark",
-            },
             billing_country: {
                 required: "Please Enter Billing Country",
             },
@@ -101,9 +92,6 @@ $(document).ready(function() {
             },
             shipping_address: {
                 required: "Please Enter Shipping Address",
-            },
-            shipping_landmark: {
-                required: "Please Enter Shipping Landmark",
             },
             shipping_country: {
                 required: "Please Enter Shipping Country",
