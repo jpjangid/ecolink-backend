@@ -53,7 +53,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="value"><span style="color: red;">* </span>Value</label>
-                            <input type="text" class="form-control form-control-solid @error('value') is-invalid @enderror" name="value" id="value" placeholder="Please Enter Value" value="{{ $value->value }}">
+                            <input type="number" class="form-control form-control-solid @error('value') is-invalid @enderror" name="value" id="value" placeholder="Please Enter Value" value="{{ $value->value }}">
                             @error('value')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
