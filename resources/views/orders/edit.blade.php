@@ -3,7 +3,7 @@
 @section('title', 'Edit Order')
 
 @section('content')
-<div class="content" >
+<div class="content">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -276,9 +276,9 @@
                         <tbody>
                             @foreach($order->items as $item)
                             <tr>
-                                
+
                                 <td>
-                                    <input type="hidden" value="{{ $item->product_id }}" class="store_product_id" name="product_id[]"/>
+                                    <input type="hidden" value="{{ $item->product_id }}" class="store_product_id" name="product_id[]" />
                                     <select class="form-control select2 product_id" disabled>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
@@ -360,6 +360,26 @@
                                 <option value="saia" {{ $order->shippment_via == 'saia' ? 'selected' : '' }}>Saia</option>
                                 <option value="fedex" {{ $order->shippment_via == 'fedex' ? 'selected' : '' }}>Fedex</option>
                             </select>
+                        </div>
+                    </div>
+                    <!-- order notes -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="order_notes"><span style="color: red;"> </span>Order Notes <span style="font-weight: normal;">(optional)</span></label>
+                            <textarea class="form-control @error('order_notes') is-invalid @enderror" name="order_notes" placeholder="Notes about your order, e.g. special notes for delivery."><?php echo $order->order_notes; ?></textarea>
+                            @error('order_notes')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <!-- search keywords  -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="search_keywords"><span style="color: red;"></span>What keyword phrase did you enter to find our website? <span style="font-weight: normal;">(optional)</span> </label>
+                            <input type="text" class="form-control form-control-solid @error('search_keywords') is-invalid @enderror" name="search_keywords" id="search_keywords" placeholder="(e.g. industrial degreasers, rust removers, etc.)" value="{{ $order->search_keywords }}">
+                            @error('search_keywords')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -510,12 +530,12 @@
                 row.find(".sale_price").val(data.sale_price);
                 calculateProductTotal(row);
             }
-        
+
         });
-        
+
     }
 
-    
+
 
     $(document).on('keyup', '.quantity', function() {
         var row = $(this).closest('tr');

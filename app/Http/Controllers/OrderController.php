@@ -171,7 +171,9 @@ class OrderController extends Controller
             'payment_status'            =>  $request->payment_status,
             'shippment_via'             =>  $request->shippment_via,
             'payment_amount'            =>  $request->total_amt,
-            'sale_price'                =>  $request->sale_price
+            'sale_price'                =>  $request->sale_price,
+            'order_notes'               =>  $request->order_notes,
+            'search_keywords'           =>  $request->search_keywords
         ]);
 
         foreach ($request->product_id as $key => $item) {
@@ -290,6 +292,8 @@ class OrderController extends Controller
             'payment_status'            =>  $request->payment_status,
             'shippment_via'             =>  $request->shippment_via,
             'payment_amount'            =>  $request->total_amt,
+            'order_notes'               =>  $request->order_notes,
+            'search_keywords'           =>  $request->search_keywords
             // 'sale_price'                =>  $request->sale_price
         ]);
 
