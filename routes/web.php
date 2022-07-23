@@ -63,6 +63,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     Route::get('profile/{id}', [ProfileController::class, 'edit']);
     Route::patch('profile/update/{id}', [ProfileController::class, 'update']);
 
+
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::get('create', [UserController::class, 'create']);
@@ -141,6 +142,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::delete('/delete/{id}', [PageController::class, 'destroy']);
         Route::get('/copy/{id}', [PageController::class, 'copy']);
         Route::post('/update_status', [PageController::class, 'update_status']);
+        Route::post('/summernote', [PageController::class, 'summernote']);
     });
 
     Route::prefix('coupons')->group(function () {
@@ -279,12 +281,12 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::put('/update/{category_title}/{category_des}', [SettingController::class, 'update']);
     });
 
-    Route::prefix('reports')->group(function(){
+    Route::prefix('reports')->group(function () {
         Route::get('/sales', [ReportController::class, 'salesReport']);
         Route::get('/carts', [ReportController::class, 'abandonedCartReport']);
     });
 
-    Route::prefix('dropship')->group(function (){
+    Route::prefix('dropship')->group(function () {
         Route::get('/', [DropshipController::class, 'index']);
         Route::get('/create', [DropshipController::class, 'create']);
         Route::post('/store', [DropshipController::class, 'store']);
