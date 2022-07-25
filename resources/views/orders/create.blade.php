@@ -274,7 +274,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select name="product_id[]" class="form-control select2 product_id" required>
+                                    <select name="product_id[]" class="form-control select2bs4 product_id" required>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
                                         <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? "selected" : "" }}>{{ $product->name }} - {{$product->variant}}</option>
@@ -415,6 +415,26 @@
                                 <option value="pending">Pending</option>
                                 <option value="completed">Completed</option>
                             </select>
+                        </div>
+                    </div>
+                    <!-- order notes -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="order_notes"><span style="color: red;"> </span>Order Notes <span style="font-weight: normal;">(optional)</span></label>
+                            <textarea class="form-control @error('order_notes') is-invalid @enderror" name="order_notes" placeholder="Notes about your order, e.g. special notes for delivery."><?php echo old('order_notes') ?></textarea>
+                            @error('order_notes')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <!-- search keywords  -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="search_keywords"><span style="color: red;"></span>What keyword phrase did you enter to find our website? <span style="font-weight: normal;">(optional)</span> </label>
+                            <input type="text" class="form-control form-control-solid @error('search_keywords') is-invalid @enderror" name="search_keywords" id="search_keywords" placeholder="(e.g. industrial degreasers, rust removers, etc.)" value="{{ old('search_keywords') }}">
+                            @error('search_keywords')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>

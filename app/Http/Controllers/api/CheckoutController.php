@@ -47,26 +47,26 @@ class CheckoutController extends Controller
 				$order_total += $cart->product->sale_price * $cart->quantity;
 				$total_discount += $product_discount;
 				$product_count +=  $cart->quantity;
-                if ($cart->lift_gate == 1) {
-                    $lift_gate_qty += 1;
-                }
-                if ($cart->product->hazardous == 1) {
-                    $hazardous_qty += 1;
-                }
+				if ($cart->lift_gate == 1) {
+					$lift_gate_qty += 1;
+				}
+				if ($cart->product->hazardous == 1) {
+					$hazardous_qty += 1;
+				}
 			}
-            if($hazardous_qty > 0){
-                $hazardous_amt = $hazardous_amount;
-            }
+			if ($hazardous_qty > 0) {
+				$hazardous_amt = $hazardous_amount;
+			}
 
-            if($lift_gate_qty > 0){
-                $lift_gate_amt = $lift_gate_amount;
-            }
+			if ($lift_gate_qty > 0) {
+				$lift_gate_amt = $lift_gate_amount;
+			}
 			$payable = $order_total + $hazardous_amt;
 		}
 
 		$current = date('Y-m-d H:i:s');
 
-		$coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['type','!=','customer_based'],['offer_start', '<=', $current], ['offer_end', '>=', $current],['min_order_amount','<=', $order_total]])->orWhere([['type','customer_based'],['user_id', $user->id]])->get();
+		$coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->orWhere([['type', 'customer_based'], ['user_id', $user->id]])->get();
 
 		$data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses, 'hazardous_amt' => $hazardous_amt, 'lift_gate_amt' => $lift_gate_amt]);
 
@@ -75,13 +75,21 @@ class CheckoutController extends Controller
 
 	public function getFedexShippingRates(Request $request): \Illuminate\Http\JsonResponse
 	{
+		$fedex_markup = DB::table('static_values')->where('name', 'FedEx Markup')->first();
+		$fedex_markup_percent = $fedex_markup->value ?? 0;
+
 		$rate = $this->getFedexShipRate($request);
-		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
+		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate * ((100 + ($fedex_markup_percent)) / 100), 'code' => '200'], 200);
+		//return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 
 	public function getSaiaShippingRates(Request $request): \Illuminate\Http\JsonResponse
 	{
+		$saia_markup = DB::table('static_values')->where('name', 'SAIA Markup')->first();
+		$saia_markup_percent = $saia_markup->value ?? 0;
+
 		$rate = $this->getSaiaShipRate($request);
-		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
+		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate * ((100 + ($saia_markup_percent)) / 100), 'code' => '200'], 200);
+		// return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 }

@@ -263,7 +263,9 @@ class OrderController extends Controller
                 'coupon_discount'           =>  $discount_amt,
                 'order_comments'            =>  $request->order_comments,
                 'payment_amount'            =>  $order_total,
-                'shippment_rate'            =>  $shipping_charge
+                'shippment_rate'            =>  $shipping_charge,
+                'order_notes'               =>  $request->order_notes,
+                'search_keywords'           =>  $request->search_keywords
             ]);
 
             foreach ($request->product_id as $key => $item) {
@@ -496,7 +498,9 @@ class OrderController extends Controller
                 'coupon_discount'           =>  $discount_amt,
                 'order_comments'            =>  $request->order_comments,
                 'payment_amount'            =>  $order_total,
-                'shippment_rate'            =>  $shipping_charge
+                'shippment_rate'            =>  $shipping_charge,
+                'order_notes'               =>  $request->order_notes,
+                'search_keywords'           =>  $request->search_keywords
             ]);
 
             $items = OrderItems::where('order_id', $id)->get();

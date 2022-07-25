@@ -233,7 +233,9 @@ class OrderController extends Controller
                 'coupon_discount'   =>  $coupon_discount,
                 'order_comments'    =>  $request->order_comments,
                 'payment_amount'    =>  $payable_total_amt,
-                'shippment_rate'    =>  $shipping_charge
+                'shippment_rate'    =>  $shipping_charge,
+                'order_notes'       =>  $request->order_notes,
+                'search_keywords'   =>  $request->search_keywords
             ]);
 
             foreach ($order_items as $item) {

@@ -426,6 +426,26 @@
                             </select>
                         </div>
                     </div>
+                    <!-- order notes -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="order_notes"><span style="color: red;"> </span>Order Notes <span style="font-weight: normal;">(optional)</span></label>
+                            <textarea class="form-control @error('order_notes') is-invalid @enderror" name="order_notes" placeholder="Notes about your order, e.g. special notes for delivery."><?php echo $order->order_notes; ?></textarea>
+                            @error('order_notes')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <!-- search keywords  -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="required form-label" for="search_keywords"><span style="color: red;"></span>What keyword phrase did you enter to find our website? <span style="font-weight: normal;">(optional)</span> </label>
+                            <input type="text" class="form-control form-control-solid @error('search_keywords') is-invalid @enderror" name="search_keywords" id="search_keywords" placeholder="(e.g. industrial degreasers, rust removers, etc.)" value="{{ $order->search_keywords }}">
+                            @error('search_keywords')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 mt-2">
