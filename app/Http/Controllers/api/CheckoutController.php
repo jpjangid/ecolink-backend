@@ -66,7 +66,7 @@ class CheckoutController extends Controller
 
 		$current = date('Y-m-d H:i:s');
 
-		$coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->orWhere([['type', 'customer_based'], ['user_id', $user->id]])->get();
+		$coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->orWhere([['type', 'customer_based'], ['user_id', $user->id],['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->get();
 
 		$data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses, 'hazardous_amt' => $hazardous_amt, 'lift_gate_amt' => $lift_gate_amt]);
 
