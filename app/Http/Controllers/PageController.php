@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 class PageController extends Controller
 {
@@ -323,6 +324,7 @@ class PageController extends Controller
 
         $resp_mes = '';
         $resp = '';
+        $currentURL = url()->previous();
 
         // If a file is present...
         if (isset($_FILES["file"]["type"])) {
@@ -338,7 +340,7 @@ class PageController extends Controller
                 $photo_mime_type = $handle->file_src_mime;
 
                 if ($handle->uploaded) {
-                    $complete_dir_name = 'public/storage/upload/';
+                    $complete_dir_name = 'storage/upload/';
 
                     // Parameters before uploading the photo
                     $handle->image_resize = false;

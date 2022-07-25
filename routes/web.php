@@ -62,6 +62,8 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     //Profile Route
     Route::get('profile/{id}', [ProfileController::class, 'edit']);
     Route::patch('profile/update/{id}', [ProfileController::class, 'update']);
+    Route::post('/summernote', [PageController::class, 'summernote']);
+
 
 
     Route::prefix('users')->group(function () {
@@ -142,7 +144,6 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::delete('/delete/{id}', [PageController::class, 'destroy']);
         Route::get('/copy/{id}', [PageController::class, 'copy']);
         Route::post('/update_status', [PageController::class, 'update_status']);
-        Route::post('/summernote', [PageController::class, 'summernote']);
     });
 
     Route::prefix('coupons')->group(function () {

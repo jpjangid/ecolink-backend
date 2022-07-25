@@ -5,9 +5,8 @@
     Updated by Axel Hardy (https://axelhardy.com/en)
     March 2020.
 */
-$pathurl = 'http://localhost:8001/admin/pages/summernote/';
-var php_upload_path = $pathurl;
-
+// $pathurl = 'http://localhost:8001/admin/pages/summernote/';
+var php_upload_path = window.location.origin + '/admin/summernote';
 (function(factory) {
     /* global define */
     if (typeof define === 'function' && define.amd) {
