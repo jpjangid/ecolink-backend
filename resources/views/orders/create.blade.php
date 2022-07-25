@@ -431,10 +431,91 @@
 @section('js')
 <script src="{{ asset('js/validations/orders/addorderrules.js') }}"></script>
 <script>
+    function getShippingCharge(product_ids, total_qty) {
+        return new Promise((resolve) => {
+            var shipping_country = $('#shipping_country').val();
+            var shipping_state = $('#shipping_state').val();
+            var shipping_city = $('#shipping_city').val();
+            var shipping_zip = $('#shipping_zip').val();
+            if (shipping_country !== undefined && shipping_state !== undefined && shipping_city !== undefined && shipping_zip !== undefined && product_ids.length !== 0 && total_qty !== 0) {
+                $.ajax({
+                    url: "{{ url('admin/orders/getShippingCharge') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        shipping_country: shipping_country,
+                        shipping_state: shipping_state,
+                        shipping_city: shipping_city,
+                        shipping_zip: shipping_zip,
+                        product_id: product_ids,
+                        quantity: total_qty,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        $('#shipping_charge').val(data);
+                        resolve(true);
+                    }
+                });
+            } else {
+                $('#shipping_charge').val(0);
+                resolve(true);
+            }
+        });
+    }
+
+    function getTaxableAmount() {
+        return new Promise((resolve) => {
+            var shipping_zip = $('#shipping_zip').val();
+            var total = $('#order_amount').val();
+            var coupon = $('#coupon').val();
+            if (total > 0 && shipping_zip !== '') {
+                $.ajax({
+                    url: "{{ url('admin/orders/getTaxableAmount') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        shipping_zip: shipping_zip,
+                        total: total,
+                        coupon: coupon,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        $('#tax_amt').val(data);
+                        resolve(true);
+                    }
+                });
+            } else {
+                $('#tax_amt').val(0);
+                resolve(true);
+            }
+        });
+    }
+
+    function hazardous(product_ids) {
+        return new Promise((resolve) => {
+            if (product_ids.length !== 0) {
+                $.ajax({
+                    url: "{{ url('admin/orders/getHazardous') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        product_ids: product_ids,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        $('#hazardous_amt').val(data);
+                        resolve(true);
+                    }
+                });
+            } else {
+                $('#hazardous_amt').val(0);
+                resolve(true);
+            }
+        });
+    }
+
     $(document).ready(function() {
         getCouponCode();
-        lift_gate();
-        calculateTotal();
         $('#discount').val("");
     });
 
@@ -499,6 +580,94 @@
         setAddress();
     });
 
+    // $(document).on('change', '#shipping_zip', function() {
+    //     getTaxableAmount();
+    // });
+
+    $(document).on('change', '#coupon', function() {
+        couponApplied();
+    });
+
+    $(document).on('click', '.add_row', function() {
+        var table = $('.main_table'),
+            lastRow = table.find('tbody tr:last'),
+            rowClone = lastRow.clone();
+        rowClone.find("input").val("").end();
+        rowClone.find("select").val("").end();
+        var newrow = table.find('tbody').append(rowClone);
+    });
+
+    $(document).on('click', '.delete_row', function() {
+        var rowCount = $('.main_table tbody tr').length;
+        if (rowCount > 1) {
+            var row = $(this).closest('tr');
+            row.remove();
+            calculateTotal();
+            couponApplied();
+        }
+    });
+
+    $(document).on('change', '.product_id', function() {
+        var row = $(this).closest('tr');
+        var id = row.find(".product_id").val();
+        $.ajax({
+            url: "{{ url('admin/orders/getProductById') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id: id,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                row.find(".sale_price").val(data.sale_price);
+                calculateProductTotal(row);
+                couponApplied();
+            }
+        });
+    });
+
+    $(document).on('keyup', '.quantity', function() {
+        var row = $(this).closest('tr');
+        calculateProductTotal(row);
+    });
+
+    function calculateProductTotal(row) {
+        var price = row.find(".sale_price").val();
+        var qty = row.find(".quantity").val();
+        var total = price * qty;
+        row.find(".product_total").val(total);
+        calculateTotal();
+    }
+
+    $(document).on('change', '#lift_gate', function() {
+        lift_gate();
+    });
+
+    function lift_gate() {
+        var id = $('#lift_gate').val();
+        var name = 'Lift Gate';
+        var lift_gate_value = $('#lift_gate_value').val();
+        if (id == 1) {
+            $("#lift_gate_amt").val(parseFloat(lift_gate_value));
+            // $.ajax({
+            //     url: "{{ url('admin/orders/static_value') }}",
+            //     type: "POST",
+            //     dataType: "json",
+            //     data: {
+            //         id: id,
+            //         name: name,
+            //         _token: '{{csrf_token()}}'
+            //     },
+            //     success: function(data) {
+            //         $("#lift_gate_amt").val(parseFloat(data.value));
+            //     }
+            // });
+        } else {
+            $('#lift_gate_amt').val(0);
+        }
+        calculateTotal();
+    }
+
     function getCouponCode() {
         var user_id = $('#customer').val();
         $.ajax({
@@ -519,38 +688,6 @@
             }
         });
     }
-
-    $(document).on('change', '#shipping_zip', function() {
-        getTaxableAmount();
-    });
-
-    function getTaxableAmount() {
-        var shipping_zip = $('#shipping_zip').val();
-        var total = $('#order_amount').val();
-        var coupon = $('#coupon').val();
-        if (total > 0 && shipping_zip !== '') {
-            $.ajax({
-                url: "{{ url('admin/orders/getTaxableAmount') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    shipping_zip: shipping_zip,
-                    total: total,
-                    coupon: coupon,
-                    _token: '{{csrf_token()}}'
-                },
-                success: function(data) {
-                    $('#tax_amt').val(data);
-                }
-            });
-        } else {
-            $('#tax_amt').val(0);
-        }
-    }
-
-    $(document).on('change', '#coupon', function() {
-        couponApplied();
-    });
 
     function couponApplied() {
         var id = $('#coupon').val();
@@ -610,58 +747,7 @@
         });
     }
 
-    $(document).on('click', '.add_row', function() {
-        var table = $('.main_table'),
-            lastRow = table.find('tbody tr:last'),
-            rowClone = lastRow.clone();
-        rowClone.find("input").val("").end();
-        rowClone.find("select").val("").end();
-        var newrow = table.find('tbody').append(rowClone);
-    });
-
-    $(document).on('click', '.delete_row', function() {
-        var rowCount = $('.main_table tbody tr').length;
-        if (rowCount > 1) {
-            var row = $(this).closest('tr');
-            row.remove();
-            calculateTotal();
-            couponApplied();
-        }
-    });
-
-    $(document).on('change', '.product_id', function() {
-        var row = $(this).closest('tr');
-        var id = row.find(".product_id").val();
-        $.ajax({
-            url: "{{ url('admin/orders/getProductById') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id: id,
-                _token: '{{csrf_token()}}'
-            },
-            success: function(data) {
-                row.find(".sale_price").val(data.sale_price);
-                calculateProductTotal(row);
-                couponApplied();
-            }
-        });
-    });
-
-    $(document).on('keyup', '.quantity', function() {
-        var row = $(this).closest('tr');
-        calculateProductTotal(row);
-    });
-
-    function calculateProductTotal(row) {
-        var price = row.find(".sale_price").val();
-        var qty = row.find(".quantity").val();
-        var total = price * qty;
-        row.find(".product_total").val(total);
-        calculateTotal();
-    }
-
-    function calculateTotal() {
+    async function calculateTotal() {
         var total_amt = 0;
         var total_qty = 0;
         var product_ids = [];
@@ -679,127 +765,31 @@
                 total_qty += parseInt(qty);
             }
         });
-        
-        hazardous(product_ids);
-        getShippingCharge(product_ids)
-        
+
         $('#order_amount').val(total_amt);
 
-        var hazardous_amt = $('#hazardous_amt').val();
-        hazardous_amt = hazardous_amt != '' ? hazardous_amt : 0;
+        await hazardous(product_ids);
+        await getShippingCharge(product_ids, total_qty)
+        await getTaxableAmount();
 
-        let shipping_charge = $('#shipping_charge').val();
-        shipping_charge = shipping_charge !== '' ? shipping_charge : 0;
+        let hazardous_amt = $('#hazardous_amt').val();
+        hazardous_amt = hazardous_amt != '' ? hazardous_amt : 0;
 
         let lift_gate_amt = $('#lift_gate_amt').val();
         lift_gate_amt = lift_gate_amt !== '' ? lift_gate_amt : 0;
 
-        var discount = $('#discount').val();
+        let tax_amt = $('#tax_amt').val();
+        let shipping_charge = $('#shipping_charge').val();
+
+        let discount = $('#discount').val();
         discount = discount != '' ? discount : 0;
 
-        var tax_amt = $('#tax_amt').val();
         tax_amt = tax_amt != '' ? tax_amt : 0;
 
-        total_amt = parseFloat(total_amt) + parseFloat(hazardous_amt) + parseFloat(lift_gate_amt) + parseFloat(tax_amt) - parseFloat(discount);
+        total_amt = parseFloat(total_amt) + parseFloat(hazardous_amt) + parseFloat(lift_gate_amt) + parseFloat(tax_amt) + parseFloat(shipping_charge) - parseFloat(discount);
 
         $(".total_qty").val(total_qty);
-        $(".total_amt").val(total_amt);
-    }
-
-    function hazardous(product_ids) {
-        if(product_ids.length !== 0){
-            $.ajax({
-                url: "{{ url('admin/orders/getHazardous') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    product_ids: product_ids,
-                    _token: '{{csrf_token()}}'
-                },
-                success: function(data) {
-                    $('#hazardous_amt').val(data);
-                }
-            });
-        }else{
-            $('#hazardous_amt').val(0);
-        }
-    }
-
-    function getShippingCharge(product_ids) {
-        var shipping_country = $('#shipping_country').val();
-        var shipping_state = $('#shipping_state').val();
-        var shipping_city = $('#shipping_city').val();
-        var shipping_zip = $('#shipping_zip').val();
-        if (shipping_country !== '' && shipping_state !== '' && shipping_city !== '' && shipping_zip !== '' && product_ids.length !== 0) {
-            $.ajax({
-                url: "{{ url('admin/orders/getCouponCode') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    shipping_country: shipping_country,
-                    shipping_state: shipping_state,
-                    shipping_city: shipping_city,
-                    shipping_zip: shipping_zip,
-                    product_id: product_ids,
-                    _token: '{{csrf_token()}}'
-                },
-                success: function(data) {
-                    $('#shipping_charge').val(data);
-                }
-            });
-        } else {
-            $('#shipping_charge').val(0);
-        }
-    }
-
-    // $(document).on('keyup', '#discount', function() {
-    //     discount();
-    // });
-
-    // function discount() {
-    //     var discount = $('#discount').val();
-    //     var total_amt = 0;
-    //     $('.main_table tr').each(function() {
-    //         var ptotal = $(this).find(".product_total").val();
-    //         if (!isNaN(ptotal) && ptotal != '') {
-    //             total_amt += parseFloat(ptotal);
-    //         }
-    //     });
-    //     if (!isNaN(discount) && discount != '') {
-    //         total = parseFloat(total_amt) - parseFloat(discount);
-    //         $(".total_amt").val(total);
-    //     } else {
-    //         calculateTotal();
-    //     }
-    // }
-
-    $(document).on('change', '#lift_gate', function() {
-        lift_gate();
-    });
-
-    function lift_gate() {
-        var id = $('#lift_gate').val();
-        var name = 'Lift Gate';
-        var lift_gate_value = $('#lift_gate_value').val();
-        if (id == 1) {
-            $("#lift_gate_amt").val(parseFloat(lift_gate_value));
-            // $.ajax({
-            //     url: "{{ url('admin/orders/static_value') }}",
-            //     type: "POST",
-            //     dataType: "json",
-            //     data: {
-            //         id: id,
-            //         name: name,
-            //         _token: '{{csrf_token()}}'
-            //     },
-            //     success: function(data) {
-            //         $("#lift_gate_amt").val(parseFloat(data.value));
-            //     }
-            // });
-        } else {
-            $('#lift_gate_amt').val(0);
-        }
-        calculateTotal();
+        $(".total_amt").val(total_amt.toFixed(2));
     }
 </script>
 @endsection

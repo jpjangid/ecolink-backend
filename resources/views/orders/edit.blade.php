@@ -303,7 +303,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="total_qty"><span style="color: red;">* </span> Total Quantity </label>
-                            <input type="number" class="form-control form-control-solid @error('total_qty') is-invalid @enderror total_qty" name="total_qty" id="total_qty" placeholder="Please Enter Total Quantity" value="{{ $order->no_items }}" readonly>
+                            <input type="number" class="form-control form-control-solid @error('total_qty') is-invalid @enderror total_qty" name="total_qty" id="total_qty" placeholder="Please Enter Total Quantity" value="{{ $order->total_qty }}" readonly>
                             @error('total_qty')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -367,7 +367,7 @@
                     </div>
 
                     <!-- Ship Via -->
-                    {{-- <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label"> Ship Via </label>
                             <select class="form-control" name="shippment_via">
@@ -375,13 +375,13 @@
                                 <option value="fedex" {{ $order->shippment_via == 'fedex' ? 'selected' : '' }}>Fedex</option>
                             </select>
                         </div>
-                    </div> --}}
+                    </div> -->
 
                     <!-- Shipping Charge -->
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="shipping_charge"> Shipping Charge </label>
-                            <input type="number" step=".01" class="form-control form-control-solid @error('shipping_charge') is-invalid @enderror" name="shipping_charge" id="shipping_charge" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Shipping Charge" value="0" readonly>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('shipping_charge') is-invalid @enderror" name="shipping_charge" id="shipping_charge" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Shipping Charge" value="{{ $order->shippment_rate }}" readonly>
                         </div>
                     </div>
 
@@ -389,7 +389,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="tax_amt"> Taxable Amount </label>
-                            <input type="number" step=".01" class="form-control form-control-solid @error('tax_amt') is-invalid @enderror" name="tax_amt" id="tax_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Taxable Amount" value="0" readonly>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('tax_amt') is-invalid @enderror" name="tax_amt" id="tax_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Taxable Amount" value="{{ $order->tax_amount }}" readonly>
                         </div>
                     </div>
 
@@ -440,11 +440,94 @@
 @section('js')
 <script src="{{ asset('js/validations/orders/addorderrules.js') }}"></script>
 <script>
+    function hazardous(product_ids) {
+        return new Promise((resolve) => {
+            if (product_ids.length !== 0) {
+                $.ajax({
+                    url: "{{ url('admin/orders/getHazardous') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        product_ids: product_ids,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        $('#hazardous_amt').val(data.toFixed(2));
+                        resolve(true);
+                    }
+                });
+            } else {
+                $('#hazardous_amt').val(0);
+                resolve(true);
+            }
+        });
+    }
+
+    function getShippingCharge(product_ids, total_qty) {
+        return new Promise((resolve) => {
+            var shipping_country = $('#shipping_country').val();
+            var shipping_state = $('#shipping_state').val();
+            var shipping_city = $('#shipping_city').val();
+            var shipping_zip = $('#shipping_zip').val();
+            if (shipping_country !== undefined && shipping_state !== undefined && shipping_city !== undefined && shipping_zip !== undefined && product_ids.length !== 0 && total_qty !== 0) {
+                $.ajax({
+                    url: "{{ url('admin/orders/getShippingCharge') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        shipping_country: shipping_country,
+                        shipping_state: shipping_state,
+                        shipping_city: shipping_city,
+                        shipping_zip: shipping_zip,
+                        product_id: product_ids,
+                        quantity: total_qty,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        $('#shipping_charge').val(data.toFixed(2));
+                        resolve(true);
+                    }
+                });
+            } else {
+                $('#shipping_charge').val(0);
+                resolve(true);
+            }
+        });
+    }
+
+    function getTaxableAmount() {
+        return new Promise((resolve) => {
+            var shipping_zip = $('#shipping_zip').val();
+            var total = $('#order_amount').val();
+            var coupon = $('#coupon').val();
+            if (total > 0 && shipping_zip !== '') {
+                $.ajax({
+                    url: "{{ url('admin/orders/getTaxableAmount') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        shipping_zip: shipping_zip,
+                        total: total,
+                        coupon: coupon,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        $('#tax_amt').val(data.toFixed(2));
+                        resolve(true);
+                    }
+                });
+            } else {
+                $('#tax_amt').val(0);
+                resolve(true);
+            }
+        });
+    }
+
     $(document).ready(function() {
         getCouponCode();
-        calculateTotal();
         getAddresses();
         lift_gate();
+        calculateTotal();
     });
 
     $(document).on('change', '#same', function() {
@@ -488,32 +571,6 @@
         getAddresses();
     });
 
-    function getCouponCode() {
-        var user_id = $('#customer').val();
-        var coupon_id = $('#coupon_id').val();
-        $.ajax({
-            url: "{{ url('admin/orders/getCouponCode') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                user_id: user_id,
-                _token: '{{csrf_token()}}'
-            },
-            success: function(data) {
-                $('#coupon').empty();
-                $("#coupon").append('<option value="">Select Coupon Code</option>');
-                $.each(data, function(key, value) {
-                    var value_type = value.disc_type == 'percent' ? value.discount + '%' : '$' + value.discount;
-                    if (coupon_id == value.id) {
-                        $("#coupon").append('<option value="' + value.id + '">' + value.code + '(' + value_type + ')' + '</option>');
-                    } else {
-                        $("#coupon").append('<option value="' + value.id + '">' + value.code + '(' + value_type + ')' + '</option>');
-                    }
-                });
-            }
-        });
-    }
-
     $(document).on('change', '#coupon', function() {
         var id = $('#coupon').val();
         var total = $(".total_amt").val();
@@ -548,54 +605,9 @@
         }
     });
 
-    function getAddresses() {
-        var id = $('#customer').val();
-        $.ajax({
-            url: "{{ url('admin/orders/getAddresses') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id: id,
-                _token: '{{csrf_token()}}'
-            },
-            success: function(data) {
-                $('#customer_address').empty();
-                console.log(data);
-                $.each(data, function(key, value) {
-                    $("#customer_address").append('<option value="' + value.id + '">' + value.address + '</option>');
-                });
-                setAddress();
-            }
-        });
-    }
-
     $(document).on('change', '#customer_address', function() {
         setAddress();
     });
-
-    function setAddress() {
-        var id = $('#customer_address').val();
-        $.ajax({
-            url: "{{ url('admin/orders/getAddressDetail') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id: id,
-                _token: '{{csrf_token()}}'
-            },
-            success: function(data) {
-                $('#billing_name').val(data.name);
-                $('#billing_mobile').val(data.mobile);
-                $('#billing_email').val(data.email);
-                $('#billing_address').val(data.address);
-                $('#billing_landmark').val(data.landmark);
-                $('#billing_country').val(data.country);
-                $('#billing_state').val(data.state);
-                $('#billing_city').val(data.city);
-                $('#billing_zip').val(data.zip);
-            }
-        });
-    }
 
     $(document).on('click', '.add_row', function() {
         var table = $('.main_table'),
@@ -623,105 +635,11 @@
         getSalePrice(row);
     });
 
-    function getSalePrice(row) {
-        var id = row.find(".product_id").val();
-        row.find(".store_product_id").val(id);
-        $.ajax({
-            url: "{{ url('admin/orders/getProductById') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id: id,
-                _token: '{{csrf_token()}}'
-            },
-            success: function(data) {
-                row.find(".sale_price").val(data.sale_price);
-                calculateProductTotal(row);
-            }
-        });
-    }
-
     $(document).on('keyup', '.quantity', function() {
         var row = $(this).closest('tr');
         calculateProductTotal(row);
     });
 
-    function calculateProductTotal(row) {
-        var price = row.find(".sale_price").val();
-        var qty = row.find(".quantity").val();
-        var total = price * qty;
-        row.find(".product_total").val(total);
-        calculateTotal();
-    }
-
-    function calculateTotal() {
-        var total_amt = 0;
-        var total_qty = 0;
-        var product_ids = [];
-        $('.main_table tr').each(function() {
-            var ptotal = $(this).find(".product_total").val();
-            var qty = $(this).find(".quantity").val();
-            var product_id = $(this).find(".product_id").val();
-            if (product_id != undefined) {
-                product_ids.push(product_id);
-            }
-            if (!isNaN(ptotal) && ptotal != '') {
-                total_amt += parseFloat(ptotal);
-            }
-            if (!isNaN(qty) && qty != '') {
-                total_qty += parseInt(qty);
-            }
-        });
-
-        hazardous(product_ids);
-        var hazardous_amt = $('#hazardous_amt').val();
-        hazardous_amt = hazardous_amt != '' ? hazardous_amt : 0;
-        var lift_gate_amt = $('#lift_gate_amt').val();
-        lift_gate_amt = lift_gate_amt != '' ? lift_gate_amt : 0;
-        var discount = $('#discount').val();
-        discount = discount != '' ? discount : 0;
-        total_amt = parseFloat(total_amt) + parseFloat(hazardous_amt) + parseFloat(lift_gate_amt) - parseFloat(discount);
-
-        $(".total_qty").val(total_qty);
-        $(".total_amt").val(total_amt);
-    }
-
-    function hazardous(product_ids) {
-        $.ajax({
-            url: "{{ url('admin/orders/getHazardous') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                product_ids: product_ids,
-                _token: '{{csrf_token()}}'
-            },
-            success: function(data) {
-                $('#hazardous_amt').val(data);
-            }
-        });
-    }
-
-    // $(document).on('keyup', '#discount', function() {
-    //     discount();
-    // });
-
-    // function discount() {
-    //     var discount = $('#discount').val();
-    //     var total_amt = 0;
-    //     $('.main_table tr').each(function() {
-    //         var ptotal = $(this).find(".product_total").val();
-    //         if (!isNaN(ptotal) && ptotal != '') {
-    //             total_amt += parseFloat(ptotal);
-    //         }
-    //     });
-    //     if (!isNaN(discount) && discount != '') {
-    //         total = parseFloat(total_amt) - parseFloat(discount);
-    //         $(".total_amt").val(total);
-    //     } else {
-    //         calculateTotal();
-    //     }
-    // }
-    
     $(document).on('change', '#lift_gate', function() {
         lift_gate();
     });
@@ -749,6 +667,182 @@
             $('#lift_gate_amt').val(0);
         }
         calculateTotal();
+    }
+
+    function getSalePrice(row) {
+        var id = row.find(".product_id").val();
+        row.find(".store_product_id").val(id);
+        $.ajax({
+            url: "{{ url('admin/orders/getProductById') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id: id,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                row.find(".sale_price").val(data.sale_price);
+                calculateProductTotal(row);
+            }
+        });
+    }
+
+    function setAddress() {
+        var id = $('#customer_address').val();
+        $.ajax({
+            url: "{{ url('admin/orders/getAddressDetail') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id: id,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                $('#billing_name').val(data.name);
+                $('#billing_mobile').val(data.mobile);
+                $('#billing_email').val(data.email);
+                $('#billing_address').val(data.address);
+                $('#billing_landmark').val(data.landmark);
+                $('#billing_country').val(data.country);
+                $('#billing_state').val(data.state);
+                $('#billing_city').val(data.city);
+                $('#billing_zip').val(data.zip);
+            }
+        });
+    }
+
+    function getAddresses() {
+        var id = $('#customer').val();
+        $.ajax({
+            url: "{{ url('admin/orders/getAddresses') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id: id,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                $('#customer_address').empty();
+                $.each(data, function(key, value) {
+                    $("#customer_address").append('<option value="' + value.id + '">' + value.address + '</option>');
+                });
+                setAddress();
+            }
+        });
+    }
+
+    function calculateProductTotal(row) {
+        var price = row.find(".sale_price").val();
+        var qty = row.find(".quantity").val();
+        var total = price * qty;
+        row.find(".product_total").val(total);
+        calculateTotal();
+    }
+
+    function getCouponCode() {
+        var user_id = $('#customer').val();
+        var coupon_id = $('#coupon_id').val();
+        $.ajax({
+            url: "{{ url('admin/orders/getCouponCode') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                user_id: user_id,
+                _token: '{{csrf_token()}}'
+            },
+            success: function(data) {
+                $('#coupon').empty();
+                $("#coupon").append('<option value="">Select Coupon Code</option>');
+                $.each(data, function(key, value) {
+                    var value_type = value.disc_type == 'percent' ? value.discount + '%' : '$' + value.discount;
+                    if (coupon_id == value.id) {
+                        $("#coupon").append('<option value="' + value.id + '">' + value.code + '(' + value_type + ')' + '</option>');
+                    } else {
+                        $("#coupon").append('<option value="' + value.id + '">' + value.code + '(' + value_type + ')' + '</option>');
+                    }
+                });
+            }
+        });
+    }
+
+    function couponApplied() {
+        var id = $('#coupon').val();
+        var total = $('#order_amount').val();
+        if (id !== '') {
+            if (total > 0 || total !== '') {
+                $.ajax({
+                    url: "{{ url('admin/orders/codeApplied') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id: id,
+                        total: total,
+                        _token: '{{csrf_token()}}'
+                    },
+                    success: function(data) {
+                        var discount = data.toFixed(2);
+                        $('#discount').val(discount);
+                        calculateTotal();
+                    }
+                });
+            } else {
+                swal({
+                    title: 'Oops!',
+                    text: "Please add product to use coupon.",
+                    icon: 'error',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'OK',
+                    timer: 3000
+                })
+            }
+        }
+    }
+
+    async function calculateTotal() {
+        var total_amt = 0;
+        var total_qty = 0;
+        var product_ids = [];
+        $('.main_table tr').each(function() {
+            var ptotal = $(this).find(".product_total").val();
+            var qty = $(this).find(".quantity").val();
+            var product_id = $(this).find(".product_id").val();
+            if (product_id != undefined) {
+                product_ids.push(product_id);
+            }
+            if (!isNaN(ptotal) && ptotal != '') {
+                total_amt += parseFloat(ptotal);
+            }
+            if (!isNaN(qty) && qty != '') {
+                total_qty += parseInt(qty);
+            }
+        });
+
+        $('#order_amount').val(total_amt);
+
+        await hazardous(product_ids);
+        await getShippingCharge(product_ids, total_qty)
+        await getTaxableAmount();
+
+        let hazardous_amt = $('#hazardous_amt').val();
+        hazardous_amt = hazardous_amt != '' ? hazardous_amt : 0;
+
+        let lift_gate_amt = $('#lift_gate_amt').val();
+        lift_gate_amt = lift_gate_amt !== '' ? lift_gate_amt : 0;
+
+        let tax_amt = $('#tax_amt').val();
+        let shipping_charge = $('#shipping_charge').val();
+
+        let discount = $('#discount').val();
+        discount = discount != '' ? discount : 0;
+
+        tax_amt = tax_amt != '' ? tax_amt : 0;
+
+        total_amt = parseFloat(total_amt) + parseFloat(hazardous_amt) + parseFloat(lift_gate_amt) + parseFloat(tax_amt) + parseFloat(shipping_charge) - parseFloat(discount);
+
+        $(".total_qty").val(total_qty);
+        $(".total_amt").val(total_amt.toFixed(2));
     }
 </script>
 @endsection

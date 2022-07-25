@@ -90,7 +90,6 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
         $request->validate([
             'billing_name'          =>  'required',
             'billing_mobile'        =>  'required|digits:10',
@@ -115,165 +114,193 @@ class OrderController extends Controller
             'product_total'         =>  'required',
         ]);
 
-        if (!empty($request->customer)) {
-            $user_id = $request->customer;
-        } else {
-            /* Hashing password */
-            $pass = Hash::make($request['billing_mobile']);
+        DB::beginTransaction();
 
-            /* Storing Data in Table */
-            $user = User::create([
-                'name'                  =>  $request['billing_name'],
-                'email'                 =>  $request['billing_email'],
-                'mobile'                =>  $request['billing_mobile'],
-                'address'               =>  $request['billing_address'],
-                'country'               =>  $request['billing_country'],
-                'state'                 =>  $request['billing_state'],
-                'city'                  =>  $request['billing_city'],
-                'pincode'               =>  $request['billing_zip'],
-                'password'              =>  $pass,
-                'role_id'               =>  2,
-            ]);
+        try {
+            if (!empty($request->customer)) {
+                $user_id = $request->customer;
+            } else {
+                /* Hashing password */
+                $pass = Hash::make($request['billing_mobile']);
 
-            UserAddress::create([
-                'user_id'       =>  $user->id,
-                'name'          =>  $request['billing_name'],
-                'email'         =>  $request['billing_email'],
-                'mobile'        =>  $request['billing_mobile'],
-                'address'       =>  $request['billing_address'],
-                'country'       =>  $request['billing_country'],
-                'state'         =>  $request['billing_state'],
-                'city'          =>  $request['billing_city'],
-                'zip'           =>  $request['billing_zip'],
-                'landmark'      =>  $request['billing_landmark'],
-            ]);
+                /* Storing Data in Table */
+                $user = User::create([
+                    'name'                  =>  $request['billing_name'],
+                    'email'                 =>  $request['billing_email'],
+                    'mobile'                =>  $request['billing_mobile'],
+                    'address'               =>  $request['billing_address'],
+                    'country'               =>  $request['billing_country'],
+                    'state'                 =>  $request['billing_state'],
+                    'city'                  =>  $request['billing_city'],
+                    'pincode'               =>  $request['billing_zip'],
+                    'password'              =>  $pass,
+                    'role_id'               =>  2,
+                ]);
 
-            $user_id = $user->id;
-        }
-        $orderNumber = $this->order_no();
+                UserAddress::create([
+                    'user_id'       =>  $user->id,
+                    'name'          =>  $request['billing_name'],
+                    'email'         =>  $request['billing_email'],
+                    'mobile'        =>  $request['billing_mobile'],
+                    'address'       =>  $request['billing_address'],
+                    'country'       =>  $request['billing_country'],
+                    'state'         =>  $request['billing_state'],
+                    'city'          =>  $request['billing_city'],
+                    'zip'           =>  $request['billing_zip'],
+                    'landmark'      =>  $request['billing_landmark'],
+                ]);
 
-
-        $sale_price = 0;
-        $hazardous_qty = 0;
-        $hazardous_amt = 0;
-        $lift_gate_amt = 0;
-        $discount_amt = 0;
-        $items = 0;
-        $total_weight = 0;
-        foreach ($request->product_id as $key => $product_id) {
-            $items += 1;
-            $product = DB::table('products')->find($product_id);
-            $sale_price += $product->sale_price;
-            $total_weight += $product->weight * $request->quantity[$key];
-            if ($product->hazardous == 1) {
-                $hazardous_qty += 1;
+                $user_id = $user->id;
             }
-        }
 
-        $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
+            $orderNumber = $this->order_no();
 
-        $shipment_via = 0;
-        $shipping_charge = 0;
-        if ($total_weight >= 71) {
-            $shipment_via = 'saia';
-            $shipping_charge = $this->getSaiaShipRate($newRequest);
-        } else {
-            $shipment_via = 'fedex';
-            $shipping_charge = $this->getFedexShipRate($newRequest);
-        }
-
-        $order_amt = $sale_price;
-        $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
-        $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
-        $lift_gate_amount = $lift_gate->value ?? 0;
-        $hazardous_amount = $hazardous->value ?? 0;
-        if ($hazardous_qty > 0) {
-            $hazardous_amt = $hazardous_amount;
-        }
-
-        if ($request->lift_gate == 1) {
-            $lift_gate_amt = $lift_gate_amount;
-        }
-
-        $coupon_id = '';
-        $coupon = '';
-        if (!empty($request->coupon)) {
-            $coupon = DB::table('coupons')->find($request->coupon);
-            if ($coupon != null) {
-                $coupon_id = $coupon->id;
-                if ($coupon->disc_type == 'percent') {
-                    $discount_amt = ($order_amt * $coupon->discount) / 100;
-                } else {
-                    $discount_amt = $coupon->discount;
+            $sale_price = 0;
+            $hazardous_qty = 0;
+            $hazardous_amt = 0;
+            $lift_gate_amt = 0;
+            $discount_amt = 0;
+            $items = 0;
+            $total_weight = 0;
+            foreach ($request->product_id as $key => $product_id) {
+                $items += 1;
+                $product = DB::table('products')->find($product_id);
+                $sale_price += $product->sale_price * $request->quantity[$key];
+                $total_weight += $product->weight * $request->quantity[$key];
+                if ($product->hazardous == 1) {
+                    $hazardous_qty += 1;
                 }
             }
-        }
 
-        $taxAmount = 0;
-        $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
-        if ($tax != null) {
-            if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
-                $taxAmount = 0;
+            $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
+
+            $shipment_via = 0;
+            $shipping_charge = 0;
+            if ($total_weight >= 71) {
+                $shipment_via = 'saia';
+                $shipping_charge = $this->getSaiaShipRate($newRequest);
             } else {
-                $taxAmount = ($order_amt * $tax->rate) / 100;
+                $shipment_via = 'fedex';
+                $shipping_charge = $this->getFedexShipRate($newRequest);
             }
-        }
 
-        $order_total = $order_amt + $lift_gate_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
-        $order = Order::create([
-            'order_no'                  =>  $orderNumber,
-            'user_id'                   =>  $user_id,
-            'order_amount'              =>  $order_amt,
-            'discount_applied'          =>  $discount_amt,
-            'lift_gate_amt'             =>  $lift_gate_amt,
-            'hazardous_amt'             =>  $hazardous_amt,
-            'tax_amount'                =>  $taxAmount,
-            'total_amount'              =>  $order_total,
-            'no_items'                  =>  $items,
-            'billing_name'              =>  $request->billing_name,
-            'billing_mobile'            =>  $request->billing_mobile,
-            'billing_email'             =>  $request->billing_email,
-            'billing_address'           =>  $request->billing_address,
-            'billing_country'           =>  $request->billing_country,
-            'billing_state'             =>  $request->billing_state,
-            'billing_city'              =>  $request->billing_city,
-            'billing_zip'               =>  $request->billing_zip,
-            'billing_landmark'          =>  $request->billing_landmark,
-            'shipping_name'             =>  $request->shipping_name,
-            'shipping_mobile'           =>  $request->shipping_mobile,
-            'shipping_email'            =>  $request->shipping_email,
-            'shipping_address'          =>  $request->shipping_address,
-            'shipping_country'          =>  $request->shipping_country,
-            'shipping_state'            =>  $request->shipping_state,
-            'shipping_city'             =>  $request->shipping_city,
-            'shipping_zip'              =>  $request->shipping_zip,
-            'shipping_landmark'         =>  $request->shipping_landmark,
-            'order_status'              =>  $request->order_status,
-            'payment_status'            =>  $request->payment_status,
-            'payment_currency'          =>  'dollar',
-            'payment_status'            =>  'pending',
-            'shippment_via'             =>  $shipment_via,
-            'shippment_status'          =>  'pending',
-            'coupon_id'                 =>  $coupon_id ?? '',
-            'coupon_discount'           =>  $discount_amt,
-            'order_comments'            =>  $request->order_comments,
-            'payment_amount'            =>  $order_total,
-            'shippment_rate'            =>  $shipping_charge
-        ]);
-
-        foreach ($request->product_id as $key => $item) {
-            $product = DB::table('products')->find($item);
-            if (!empty($item) && !empty($request->quantity[$key])) {
-                OrderItems::create([
-                    'order_id'              =>  $order->id,
-                    'product_id'            =>  $item,
-                    'quantity'              =>  $request->quantity[$key],
-                    'sale_price'            =>  $product->sale_price
-                ]);
+            $order_amt = $sale_price;
+            $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+            $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
+            $lift_gate_amount = $lift_gate->value ?? 0;
+            $hazardous_amount = $hazardous->value ?? 0;
+            if ($hazardous_qty > 0) {
+                $hazardous_amt = $hazardous_amount;
             }
-        }
 
-        return redirect('admin/orders')->with('success', 'Order Added Successfully');
+            if ($request->lift_gate == 1) {
+                $lift_gate_amt = $lift_gate_amount;
+            }
+
+            $coupon_id = '';
+            $coupon = '';
+            if (!empty($request->coupon)) {
+                $coupon = DB::table('coupons')->find($request->coupon);
+                if ($coupon != null) {
+                    $coupon_id = $coupon->id;
+                    if ($coupon->disc_type == 'percent') {
+                        $discount_amt = ($order_amt * $coupon->discount) / 100;
+                        $discount_amt = number_format((float)$discount_amt, 2, '.', '');
+                    } else {
+                        $discount_amt = $coupon->discount;
+                    }
+                }
+            }
+
+            $taxAmount = 0;
+            $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
+            if ($tax != null) {
+                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                    $taxAmount = 0;
+                    $coupon_id = '';
+                } else {
+                    $taxAmount = ($order_amt * $tax->rate) / 100;
+                    $taxAmount = number_format((float)$taxAmount, 2, '.', '');
+                }
+            }
+
+            $order_total = $order_amt + $lift_gate_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
+            $order = Order::create([
+                'order_no'                  =>  $orderNumber,
+                'user_id'                   =>  $user_id,
+                'order_amount'              =>  $order_amt,
+                'discount_applied'          =>  $discount_amt,
+                'lift_gate_amt'             =>  $lift_gate_amt,
+                'hazardous_amt'             =>  $hazardous_amt,
+                'tax_amount'                =>  $taxAmount,
+                'total_amount'              =>  $order_total,
+                'no_items'                  =>  $items,
+                'billing_name'              =>  $request->billing_name,
+                'billing_mobile'            =>  $request->billing_mobile,
+                'billing_email'             =>  $request->billing_email,
+                'billing_address'           =>  $request->billing_address,
+                'billing_country'           =>  $request->billing_country,
+                'billing_state'             =>  $request->billing_state,
+                'billing_city'              =>  $request->billing_city,
+                'billing_zip'               =>  $request->billing_zip,
+                'billing_landmark'          =>  $request->billing_landmark,
+                'shipping_name'             =>  $request->shipping_name,
+                'shipping_mobile'           =>  $request->shipping_mobile,
+                'shipping_email'            =>  $request->shipping_email,
+                'shipping_address'          =>  $request->shipping_address,
+                'shipping_country'          =>  $request->shipping_country,
+                'shipping_state'            =>  $request->shipping_state,
+                'shipping_city'             =>  $request->shipping_city,
+                'shipping_zip'              =>  $request->shipping_zip,
+                'shipping_landmark'         =>  $request->shipping_landmark,
+                'order_status'              =>  $request->order_status,
+                'payment_status'            =>  $request->payment_status,
+                'payment_currency'          =>  'dollar',
+                'payment_status'            =>  'pending',
+                'shippment_via'             =>  $shipment_via,
+                'shippment_status'          =>  'pending',
+                'coupon_id'                 =>  $coupon_id ?? '',
+                'coupon_discount'           =>  $discount_amt,
+                'order_comments'            =>  $request->order_comments,
+                'payment_amount'            =>  $order_total,
+                'shippment_rate'            =>  $shipping_charge
+            ]);
+
+            foreach ($request->product_id as $key => $item) {
+                $product = DB::table('products')->find($item);
+                if (!empty($item) && !empty($request->quantity[$key])) {
+                    OrderItems::create([
+                        'order_id'              =>  $order->id,
+                        'product_id'            =>  $item,
+                        'quantity'              =>  $request->quantity[$key],
+                        'sale_price'            =>  $product->sale_price
+                    ]);
+                }
+            }
+
+            if (!empty($coupon)) {
+                $time_applied = 0;
+                $applied_coupon = Coupon::find($coupon->id);
+                if ($applied_coupon != null && $applied_coupon->type == 'cart_value_discount' && $applied_coupon->disc_type == 'percent' && $applied_coupon->discount == '100') {
+                    $time_applied = 0;
+                } else {
+                    $time_applied = 1;
+                }
+                $applied_coupon->times_applied = $applied_coupon->times_applied + $time_applied;
+                if ($applied_coupon->coupon_limit == $applied_coupon->times_applied + $time_applied) {
+                    $applied_coupon->status = 1;
+                    $applied_coupon->flag = 1;
+                }
+                $applied_coupon->update();
+            }
+
+            DB::commit();
+            return redirect('admin/orders')->with('success', 'Order Added Successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('danger', $e->getMessage());
+        }
     }
 
     public function edit($id)
@@ -281,6 +308,9 @@ class OrderController extends Controller
         $products = DB::table('products')->where('status', 1)->orderBy('name', 'asc')->get();
         $users = DB::table('users')->where('role_id', '!=', 1)->where('flag', 0)->orderBy('name', 'asc')->get();
         $order = Order::where('id', $id)->with('items')->first();
+        foreach ($order->items as $item) {
+            $order->total_qty += $item->quantity;
+        }
         if ($order->lift_gate_amt > 0) {
             $order->lift_gate_status = '1';
         } else {
@@ -315,100 +345,203 @@ class OrderController extends Controller
             'product_total'         =>  'required',
         ]);
 
-        if (!empty($request->customer)) {
-            $user_id = $request->customer;
-        } else {
-            $request->validate([
-                'billing_mobile'        =>  'required|digits:10|unique:users,mobile',
-                'billing_email'         =>  'required|email|unique:users,email',
-            ]);
-            /* Hashing password */
-            $pass = Hash::make($request['billing_mobile']);
+        DB::beginTransaction();
 
-            /* Storing Data in Table */
-            $user = User::create([
-                'name'                  =>  $request['billing_name'],
-                'email'                 =>  $request['billing_email'],
-                'mobile'                =>  $request['billing_mobile'],
-                'address'               =>  $request['billing_address'],
-                'country'               =>  $request['billing_country'],
-                'state'                 =>  $request['billing_state'],
-                'city'                  =>  $request['billing_city'],
-                'pincode'               =>  $request['billing_zip'],
-                'password'              =>  $pass,
-                'role_id'               =>  2,
-            ]);
+        try {
+            if (!empty($request->customer)) {
+                $user_id = $request->customer;
+            } else {
+                $request->validate([
+                    'billing_mobile'        =>  'required|digits:10|unique:users,mobile',
+                    'billing_email'         =>  'required|email|unique:users,email',
+                ]);
+                /* Hashing password */
+                $pass = Hash::make($request['billing_mobile']);
 
-            UserAddress::create([
-                'user_id'       =>  $user->id,
-                'name'          =>  $request['billing_name'],
-                'email'         =>  $request['billing_email'],
-                'mobile'        =>  $request['billing_mobile'],
-                'address'       =>  $request['billing_address'],
-                'country'       =>  $request['billing_country'],
-                'state'         =>  $request['billing_state'],
-                'city'          =>  $request['billing_city'],
-                'zip'           =>  $request['billing_zip'],
-                'landmark'      =>  $request['billing_landmark'],
-            ]);
+                /* Storing Data in Table */
+                $user = User::create([
+                    'name'                  =>  $request['billing_name'],
+                    'email'                 =>  $request['billing_email'],
+                    'mobile'                =>  $request['billing_mobile'],
+                    'address'               =>  $request['billing_address'],
+                    'country'               =>  $request['billing_country'],
+                    'state'                 =>  $request['billing_state'],
+                    'city'                  =>  $request['billing_city'],
+                    'pincode'               =>  $request['billing_zip'],
+                    'password'              =>  $pass,
+                    'role_id'               =>  2,
+                ]);
 
-            $user_id = $user->id;
-        }
-        $total_amount = $request->total_amt;
-        $total_left_gate = $request->lift_gate_amt;
-        $amount_total = $total_amount + $total_left_gate;
-        $order = Order::where('id', $id)->update([
-            'user_id'                   =>  $user_id,
-            'order_amount'              =>  $request->total_amt,
-            'discount_applied'          =>  $request->discount,
-            'total_amount'              =>  $amount_total,
-            'no_items'                  =>  $request->total_qty,
-            'billing_name'              =>  $request->billing_name,
-            'billing_mobile'            =>  $request->billing_mobile,
-            'billing_email'             =>  $request->billing_email,
-            'billing_address'           =>  $request->billing_address,
-            'billing_country'           =>  $request->billing_country,
-            'billing_state'             =>  $request->billing_state,
-            'billing_city'              =>  $request->billing_city,
-            'billing_zip'               =>  $request->billing_zip,
-            'billing_landmark'          =>  $request->billing_landmark,
-            'shipping_name'             =>  $request->shipping_name,
-            'shipping_mobile'           =>  $request->shipping_mobile,
-            'shipping_email'            =>  $request->shipping_email,
-            'shipping_address'          =>  $request->shipping_address,
-            'shipping_country'          =>  $request->shipping_country,
-            'shipping_state'            =>  $request->shipping_state,
-            'shipping_city'             =>  $request->shipping_city,
-            'shipping_zip'              =>  $request->shipping_zip,
-            'shipping_landmark'         =>  $request->shipping_landmark,
-            'order_status'              =>  $request->order_status,
-            'payment_status'            =>  $request->payment_status,
-            'shippment_via'             =>  $request->shippment_via,
-            'payment_amount'            =>  $amount_total,
-            'lift_gate_amt'            =>  $request->lift_gate_amt,
-            // 'sale_price'                =>  $request->sale_price
-        ]);
+                UserAddress::create([
+                    'user_id'       =>  $user->id,
+                    'name'          =>  $request['billing_name'],
+                    'email'         =>  $request['billing_email'],
+                    'mobile'        =>  $request['billing_mobile'],
+                    'address'       =>  $request['billing_address'],
+                    'country'       =>  $request['billing_country'],
+                    'state'         =>  $request['billing_state'],
+                    'city'          =>  $request['billing_city'],
+                    'zip'           =>  $request['billing_zip'],
+                    'landmark'      =>  $request['billing_landmark'],
+                ]);
 
-        $items = OrderItems::where('order_id', $id)->get();
-        foreach ($items as $item) {
-            $item->delete();
-        }
+                $user_id = $user->id;
+            }
 
-        foreach ($request->product_id as $key => $item) {
-            if (!empty($item)) {
-                $product = DB::table('products')->find($item);
-                if (!empty($item) && !empty($request->quantity[$key])) {
-                    OrderItems::create([
-                        'order_id'              =>  $id,
-                        'product_id'            =>  $item,
-                        'quantity'              =>  $request->quantity[$key],
-                        'sale_price'            =>  $product->sale_price
-                    ]);
+            $sale_price = 0;
+            $hazardous_qty = 0;
+            $hazardous_amt = 0;
+            $lift_gate_amt = 0;
+            $discount_amt = 0;
+            $items = 0;
+            $total_weight = 0;
+            foreach ($request->product_id as $key => $product_id) {
+                $items += 1;
+                $product = DB::table('products')->find($product_id);
+                $sale_price += $product->sale_price * $request->quantity[$key];
+                $total_weight += $product->weight * $request->quantity[$key];
+                if ($product->hazardous == 1) {
+                    $hazardous_qty += 1;
                 }
             }
-        }
 
-        return redirect('admin/orders')->with('success', 'Order Updated Successfully');
+            $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
+
+            $shipment_via = 0;
+            $shipping_charge = 0;
+            if ($total_weight >= 71) {
+                $shipment_via = 'saia';
+                $shipping_charge = $this->getSaiaShipRate($newRequest);
+            } else {
+                $shipment_via = 'fedex';
+                $shipping_charge = $this->getFedexShipRate($newRequest);
+            }
+
+            $order_amt = $sale_price;
+            $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+            $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
+            $lift_gate_amount = $lift_gate->value ?? 0;
+            $hazardous_amount = $hazardous->value ?? 0;
+            if ($hazardous_qty > 0) {
+                $hazardous_amt = $hazardous_amount;
+            }
+
+            if ($request->lift_gate == 1) {
+                $lift_gate_amt = $lift_gate_amount;
+            }
+
+            $coupon_id = '';
+            $coupon = '';
+            if (!empty($request->coupon)) {
+                $coupon = DB::table('coupons')->find($request->coupon);
+                if ($coupon != null) {
+                    $coupon_id = $coupon->id;
+                    if ($coupon->disc_type == 'percent') {
+                        $discount_amt = ($order_amt * $coupon->discount) / 100;
+                        $discount_amt = number_format((float)$discount_amt, 2, '.', '');
+                    } else {
+                        $discount_amt = $coupon->discount;
+                    }
+                }
+            }
+
+            $taxAmount = 0;
+            $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
+            if ($tax != null) {
+                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                    $taxAmount = 0;
+                    $coupon_id = '';
+                } else {
+                    $taxAmount = ($order_amt * $tax->rate) / 100;
+                    $taxAmount = number_format((float)$taxAmount, 2, '.', '');
+                }
+            }
+
+            $order_total = $order_amt + $lift_gate_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
+
+            $order = Order::where('id', $id)->update([
+                'user_id'                   =>  $user_id,
+                'order_amount'              =>  $order_amt,
+                'discount_applied'          =>  $discount_amt,
+                'lift_gate_amt'             =>  $lift_gate_amt,
+                'hazardous_amt'             =>  $hazardous_amt,
+                'tax_amount'                =>  $taxAmount,
+                'total_amount'              =>  $order_total,
+                'no_items'                  =>  $items,
+                'billing_name'              =>  $request->billing_name,
+                'billing_mobile'            =>  $request->billing_mobile,
+                'billing_email'             =>  $request->billing_email,
+                'billing_address'           =>  $request->billing_address,
+                'billing_country'           =>  $request->billing_country,
+                'billing_state'             =>  $request->billing_state,
+                'billing_city'              =>  $request->billing_city,
+                'billing_zip'               =>  $request->billing_zip,
+                'billing_landmark'          =>  $request->billing_landmark,
+                'shipping_name'             =>  $request->shipping_name,
+                'shipping_mobile'           =>  $request->shipping_mobile,
+                'shipping_email'            =>  $request->shipping_email,
+                'shipping_address'          =>  $request->shipping_address,
+                'shipping_country'          =>  $request->shipping_country,
+                'shipping_state'            =>  $request->shipping_state,
+                'shipping_city'             =>  $request->shipping_city,
+                'shipping_zip'              =>  $request->shipping_zip,
+                'shipping_landmark'         =>  $request->shipping_landmark,
+                'order_status'              =>  $request->order_status,
+                'payment_status'            =>  $request->payment_status,
+                'payment_currency'          =>  'dollar',
+                'payment_status'            =>  'pending',
+                'shippment_via'             =>  $shipment_via,
+                'shippment_status'          =>  'pending',
+                'coupon_id'                 =>  $coupon_id ?? '',
+                'coupon_discount'           =>  $discount_amt,
+                'order_comments'            =>  $request->order_comments,
+                'payment_amount'            =>  $order_total,
+                'shippment_rate'            =>  $shipping_charge
+            ]);
+
+            $items = OrderItems::where('order_id', $id)->get();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+
+            foreach ($request->product_id as $key => $item) {
+                if (!empty($item)) {
+                    $product = DB::table('products')->find($item);
+                    if (!empty($item) && !empty($request->quantity[$key])) {
+                        OrderItems::create([
+                            'order_id'              =>  $id,
+                            'product_id'            =>  $item,
+                            'quantity'              =>  $request->quantity[$key],
+                            'sale_price'            =>  $product->sale_price
+                        ]);
+                    }
+                }
+            }
+
+            if (!empty($coupon)) {
+                $time_applied = 0;
+                $applied_coupon = Coupon::find($coupon->id);
+                if ($applied_coupon != null && $applied_coupon->type == 'cart_value_discount' && $applied_coupon->disc_type == 'percent' && $applied_coupon->discount == '100') {
+                    $time_applied = 0;
+                } else {
+                    $time_applied = 1;
+                }
+                $applied_coupon->times_applied = $applied_coupon->times_applied + $time_applied;
+                if ($applied_coupon->coupon_limit == $applied_coupon->times_applied + $time_applied) {
+                    $applied_coupon->status = 1;
+                    $applied_coupon->flag = 1;
+                }
+                $applied_coupon->update();
+            }
+
+            DB::commit();
+
+            return redirect('admin/orders')->with('success', 'Order Updated Successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('danger', $e->getMessage());
+        }
     }
 
     public function order_no()
@@ -521,7 +654,7 @@ class OrderController extends Controller
             $discount_amt = $coupon->discount;
         }
 
-        return $discount_amt;
+        return number_format((float)$discount_amt, 2, '.', '');;
     }
 
     public function getTaxableAmount(Request $request)
@@ -544,11 +677,13 @@ class OrderController extends Controller
     {
         $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
 
-        $products = DB::table('products')->select('hazardous')->whereIn('id', $request->product_ids)->get();
+        $products = DB::table('products')->whereIn('id', $request->product_id)->get();
         $total_weight = 0;
         if ($products->isNotEmpty()) {
             foreach ($products as $product) {
-                $total_weight += $product->weight * $request->quantity;
+                if (!empty($product->weight)) {
+                    $total_weight += $product->weight * $request->quantity;
+                }
             }
         }
 
@@ -562,6 +697,6 @@ class OrderController extends Controller
             $shipping_charge = $this->getFedexShipRate($newRequest);
         }
 
-        return number_format((float)$shipping_charge, 2, '.', '');;
+        return $shipping_charge;
     }
 }
