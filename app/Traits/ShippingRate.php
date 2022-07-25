@@ -118,15 +118,15 @@ trait ShippingRate
 		$data['requestedShipment']['requestedPackageLineItems'] = $item;
 
 		try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content->access_token,
-                'Content-Type' => 'application/json',
-                'x-customer-transaction-id' => config('fedex.customer_transaction_id'),
-                'x-locale' => 'en_US'
-            ])->post(config('fedex.url') . 'rate/v1/rates/quotes', $data);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
+			$response = Http::accept('application/json')->withHeaders([
+				'Authorization' => 'Bearer ' . $content->access_token,
+				'Content-Type' => 'application/json',
+				'x-customer-transaction-id' => config('fedex.customer_transaction_id'),
+				'x-locale' => 'en_US'
+			])->post(config('fedex.url') . 'rate/v1/rates/quotes', $data);
+		} catch (\Exception $e) {
+			return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+		}
 
 		$decodedresponse = json_decode($response, true);
 		if (isset($decodedresponse['errors']) && !empty($decodedresponse['errors'])) {
