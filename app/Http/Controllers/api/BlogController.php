@@ -38,7 +38,7 @@ class BlogController extends Controller
                 $blog->image = url('storage/blogs', $blog->image);
             }
             $categories = DB::table('blog_categories')
-            ->where(['flag' => 0, 'status' => 1])
+            ->where(['flag' => 0])
             ->orderBy('blog_category')
             ->get();
             return response()->json(['message' => 'Data fetched Successfully', 'code' => 200, 'data' => $blogs, $categories], 200);
