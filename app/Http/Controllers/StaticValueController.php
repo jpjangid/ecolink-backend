@@ -24,7 +24,7 @@ class StaticValueController extends Controller
                         'id'            => $staticvalue->id,
                         'name'          => $staticvalue->name,
                         'type'          => $staticvalue->type,
-                        'value'         => '$'.$staticvalue->value,
+                        'value'         => $staticvalue->value,
                     ]);
                 }
 

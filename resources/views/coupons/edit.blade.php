@@ -92,7 +92,7 @@
                     <div class="col-md-3" id="user_id">
                         <div class="form-group">
                             <label class="form-label" for="user_id">Customer</label>
-                            <select name="user_id" class="form-control">
+                            <select name="user_id" class="form-control select2bs4">
                                 <option value="">Select Customer</option>
                                 @foreach($users as $user)
                                 <option value="{{ $user->id }}" {{ $coupon->user_id == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
