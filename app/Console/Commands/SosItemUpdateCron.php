@@ -2,13 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Notification;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use App\Traits\SosItemUpdate;
-use App\Models\Product;
-use Illuminate\Support\Facades\Http;
-use App\Http\Controllers\api\OrderController;
+use Illuminate\Support\Facades\Log;
 
 class SosItemUpdateCron extends Command
 {
@@ -45,6 +41,6 @@ class SosItemUpdateCron extends Command
     public function handle()
     {
         $data = $this->itemUpdate();
-        \Log::info("Cron Job is working Fine");
+        Log::info("Sos Item Update Cron Job is working Fine");
     }
 }
