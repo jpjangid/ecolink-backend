@@ -140,7 +140,7 @@ trait ShippingRate
 		}
 		$fedex_markup = DB::table('static_values')->where('name', 'FedEx Markup')->first();
 		$fedex_markup_percent = $fedex_markup->value ?? 0;
-		return $rate* ((100 + ($fedex_markup_percent)) / 100);
+		return round($rate* ((100 + ($fedex_markup_percent)) / 100),2);
 	} 
 
 	public function getSaiaShipRate(Request $request)
@@ -288,6 +288,6 @@ trait ShippingRate
 		curl_close($curl);
 		$saia_markup = DB::table('static_values')->where('name', 'SAIA Markup')->first();
 		$saia_markup_percent = $saia_markup->value ?? 0;
-		return (float)($rate * ((100 + ($saia_markup_percent)) / 100));
+		return round((float)($rate * ((100 + ($saia_markup_percent)) / 100)),2);
 	}
 }
