@@ -75,21 +75,21 @@ class CheckoutController extends Controller
 
 	public function getFedexShippingRates(Request $request): \Illuminate\Http\JsonResponse
 	{
-		$fedex_markup = DB::table('static_values')->where('name', 'FedEx Markup')->first();
-		$fedex_markup_percent = $fedex_markup->value ?? 0;
+		// $fedex_markup = DB::table('static_values')->where('name', 'FedEx Markup')->first();
+		// $fedex_markup_percent = $fedex_markup->value ?? 0;
 
 		$rate = $this->getFedexShipRate($request);
-		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate * ((100 + ($fedex_markup_percent)) / 100), 'code' => '200'], 200);
+		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate , 'code' => '200'], 200);
 		//return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 
 	public function getSaiaShippingRates(Request $request): \Illuminate\Http\JsonResponse
 	{
-		$saia_markup = DB::table('static_values')->where('name', 'SAIA Markup')->first();
-		$saia_markup_percent = $saia_markup->value ?? 0;
+		// $saia_markup = DB::table('static_values')->where('name', 'SAIA Markup')->first();
+		// $saia_markup_percent = $saia_markup->value ?? 0;
 
 		$rate = $this->getSaiaShipRate($request);
-		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate * ((100 + ($saia_markup_percent)) / 100), 'code' => '200'], 200);
+		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate , 'code' => '200'], 200);
 		// return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 }
