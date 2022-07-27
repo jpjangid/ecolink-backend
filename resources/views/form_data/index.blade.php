@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Froms List</h1>
+                    <h1 class="m-0 text-dark">Forms List</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -53,7 +53,7 @@
                     <th>Last Name</th>
                     <th>Email Address</th>
                     <th>Mobile</th>
-                    <th>Submited Date</th>
+                    <th>Date/Time</th>
                     <th class="no-sort">Action</th>
                 </tr>
             </thead>
