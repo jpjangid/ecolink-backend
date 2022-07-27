@@ -31,6 +31,7 @@ use App\Http\Controllers\DropshipController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StaticValueController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\FormDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -292,6 +293,9 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::put('/update/{id}', [DropshipController::class, 'update']);
         Route::delete('/delete/{id}', [DropshipController::class, 'destroy']);
     });
+
+    Route::get('form/detail/{id}',[FormDataController::class,'show']);
+    Route::get('forms/list',[FormDataController::class,'index']);
 });
 
 Route::get('qboCustomer/{companyName}/{user_id}', [UserController::class, 'qboCustomer']);

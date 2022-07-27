@@ -562,6 +562,14 @@
 							</a>
 						</li>
 						@endif
+						<li class="nav-item has-treeview">
+							<a href="{{ url('admin/forms/list') }}" class="nav-link">
+								<i class="fas fa-solid fa-address-book nav-icon"></i>
+								<p>
+									List
+								</p>
+							</a>
+						</li>
 					</ul>
 				</li>
 				<li class="nav-item has-treeview">
