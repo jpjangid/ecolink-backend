@@ -109,17 +109,14 @@
                 <hr>
                 <h4>Payment Details</h4>
                 <div class="col-md-12 mb-4">
-                    <table class="table table-row-bordered table-hover text-nowrap">
+                    <table class="table table-row-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>Payment Via</th>
                                 <th>Payment Status</th>
                                 <th>Total Amount</th>
-                                <th>Coupon Discount</th>
-                                <th>Shipping Charge</th>
-                                <th>Wallet Amount</th>
-                                <th>Paid Amount</th>
-                                <!-- <th>Action</th> -->
+                                <th>Hazardous Amount</th>
+                                <th>Lift Gate Amount</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -136,20 +133,53 @@
                                     0
                                     @endif
                                 </td>
+                                <td>
+                                    @if(!empty($order->hazardous_amt))
+                                    ${{ number_format((float)$order->hazardous_amt,2,'.',','), }}
+                                    @else
+                                    0
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(!empty($order->lift_gate_amt))
+                                    ${{ number_format((float)$order->lift_gate_amt,2,'.',','), }}
+                                    @else
+                                    0
+                                    @endif
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-row-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Coupon Discount</th>
+                                <th>Shipping Via</th>
+                                <th>Shipping Charge</th>
+                                <th>Taxable Amount</th>
+                                <th>Paid Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                            $amount = number_format((float)$order->order_amount,2,'.',',');
+                            @endphp
+                            <tr>
                                 <td>@if(!empty($order->coupon_discount))
                                     ${{ number_format((float)$order->coupon_discount,2,'.',','), }}
                                     @else
                                     0
                                     @endif
                                 </td>
-                                <td>@if(!empty($order->service_charge_applied))
-                                    ${{ number_format((float)$order->service_charge_applied,2,'.',','), }}
+                                <td>{{ strtoupper($order->shippment_via) }}</td>
+                                <td>@if(!empty($order->shippment_rate))
+                                    ${{ number_format((float)$order->shippment_rate,2,'.',','), }}
                                     @else
                                     0
                                     @endif
                                 </td>
-                                <td>@if(!empty($order->wallet_amount))
-                                    ${{ number_format((float)$order->wallet_amount,2,'.',','), }}
+                                <td>@if(!empty($order->tax_amount))
+                                    ${{ number_format((float)$order->tax_amount,2,'.',','), }}
                                     @else
                                     0
                                     @endif
@@ -160,7 +190,6 @@
                                     0
                                     @endif
                                 </td>
-                                <!-- <td></td> -->
                             </tr>
                         </tbody>
                     </table>

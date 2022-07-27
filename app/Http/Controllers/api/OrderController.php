@@ -178,8 +178,9 @@ class OrderController extends Controller
             if ($tax != null) {
                 if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
                     $taxAmount = 0;
+                    $coupon_id = '';
                 } else {
-                    $taxAmount = $tax->rate;
+                    $taxAmount = ($payable_total_amt * $tax->rate) / 100;
                 }
             }
 
@@ -249,8 +250,14 @@ class OrderController extends Controller
             }
 
             if (!empty($coupon)) {
-                $coupon->times_applied = $coupon->times_applied + 1;
-                if ($coupon->coupon_limit == $coupon->times_applied + 1) {
+                $time_applied = 0;
+                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                    $time_applied = 0;
+                }else{
+                    $time_applied = 1;
+                }
+                $coupon->times_applied = $coupon->times_applied + $time_applied;
+                if ($coupon->coupon_limit == $coupon->times_applied + $time_applied) {
                     $coupon->status = 1;
                     $coupon->flag = 1;
                 }
