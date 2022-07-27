@@ -56,7 +56,7 @@
                     <th>Order Status</th>
                     <th>Payment Status</th>
                     <th>Total Amount</th>
-                    <th>Order Date</th>
+                    <th>Date/Time</th>
                     <th>Special Requirement</th>
                     <th>Customer Status</th>
                     <th>Action</th>

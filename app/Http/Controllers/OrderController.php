@@ -40,7 +40,7 @@ class OrderController extends Controller
                             'order_status'          => ucfirst(strtolower($order->order_status)),
                             'payment_status'        => ucfirst(strtolower($order->payment_status)),
                             'total'                 => '$' . number_format((float)$order->total_amount, 2, '.', ','),
-                            'date'                  => date('m-d-Y', strtotime($order->created_at)),
+                            'date'                  => date('m-d-Y H:i', strtotime($order->created_at)),
                             'order_comments'        => $order->order_comments,
                             'active'                => $order->user->flag == 0 ? 'Active' : 'Deactivated'
                         ]);
