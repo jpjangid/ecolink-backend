@@ -111,7 +111,8 @@ class UserController extends Controller
                 'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
                 'password'          =>  'required|min:8',
                 'role_id'           =>  'required',
-                'profile_image'     =>  'required'
+                'profile_image'     =>  'required',
+                'validity_date'     =>  'required_if:tax_exempt,==,1',
             ];
             $validationMessages = [
                 'name.required'             =>  'Please Enter Name',
@@ -132,16 +133,17 @@ class UserController extends Controller
                 'mobile.numeric'            =>  'The Mobile No. must be numeric',
                 'password.required'         =>  'Please Enter Password',
                 'profile_image.required'    =>  'Please Select Profile Image',
+                'validity_date.required_if' =>  'Please Select Tax Exempt Validity Date',
             ];
             if ($request->tax_exempt == 1) {
                 $validations = array_merge($validations, [
                     'files'             =>  'required_if:tax_exempt,==,1',
-                    'files.*'            =>  'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+                    'files.*'           =>  'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
                 ]);
                 $validationMessages = array_merge($validationMessages, [
                     'files.required_if'         =>  'Please Select Files',
-                    'files.*.mimes'             =>     'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
-                    'files.*.max'                 =>     'Sorry! Maximum allowed size for an file is 10MB',
+                    'files.*.mimes'             =>  'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+                    'files.*.max'               =>   'Sorry! Maximum allowed size for an file is 10MB',
                 ]);
             }
             $request->validate($validations, $validationMessages);
@@ -177,7 +179,8 @@ class UserController extends Controller
                     'password'              =>  $pass,
                     'role_id'               =>  $request['role_id'],
                     'profile_image'         =>  $image_name,
-                    'tax_exempt'         =>  $request['tax_exempt'],
+                    'tax_exempt'            =>  $request['tax_exempt'],
+                    'validity_date'         =>  $request['validity_date'],
                 ]);
 
                 UserAddress::create([
@@ -269,7 +272,8 @@ class UserController extends Controller
             'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
             'password'          =>  'nullable|min:8',
             'role_id'           =>  'required',
-            'files.*'           =>  'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+            'files.*'           =>  'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg',
+            'validity_date'     =>  'required_if:tax_exempt,==,1',
         ], [
             'name.required'             =>  'Please Enter Name',
             'company_name.required'     =>  'Please Enter Company Name',
@@ -288,6 +292,7 @@ class UserController extends Controller
             'mobile.numeric'            =>  'The Mobile No. must be numeric',
             'files.*.mimes'             =>  'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
             'files.*.max'               =>  'Sorry! Maximum allowed size for an file is 10MB',
+            'validity_date.required_if' =>  'Please Select Tax Exempt Validity Date',
         ]);
 
         /* Fetching Blog Data using Id */
@@ -328,6 +333,7 @@ class UserController extends Controller
             $user->tax_exempt       =   $request['tax_exempt'];
             $user->flag             =   $request['flag'];
             $user->profile_image    =   $image_name;
+            $user->validity_date    =   $request['validity_date'];
             $user->save();
 
             $user->url = url('') . '/profile/auth';

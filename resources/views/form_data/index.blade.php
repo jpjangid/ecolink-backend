@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Orders')
+@section('title', 'Froms List')
 
 @section('content')
 <div class="content">
@@ -18,27 +18,24 @@
         <strong>Danger! </strong>{{ $message }}
     </div>
     @endif
-
-    <!-- <h3 class="mb-3" style="margin-bottom: 30px">Orders <a href="/client/registraion" class="btn btn-info mt-o" style="float: right;">New Client</a></h3> -->
-
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Orders</h1>
+                    <h1 class="m-0 text-dark">Froms List</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <a class="btn btn-info mr-1 mb-1" href="{{ url()->previous() }}">Back</a>
-                        <li class="breadcrumb-item"><a href="{{ url('admin/orders/create') }}" class="btn btn-info mt-o" style="float: right;">New Order</a></li>
                     </ol>
                     <div class="row">
                         <div class="col-sm-6"></div>
                         <div class="col-sm-6">
-                            <select id="active" class="form-control">
-                                <option value="all">All</option>
-                                <option value="0">Active</option>
-                                <option value="1">Deactivated</option>
+                            <select id="formId" class="form-control">
+                                <option value="all" selected>All</option>
+                                @foreach($form_ids as $form_id)
+                                    <option value="{{ $form_id->form_id }}">{{ ucwords(str_replace("_"," ",$form_id->form_id)) }}</option>    
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -48,18 +45,16 @@
     </div>
 
     <div class="container-fluid" style="overflow-x:auto;">
-        <table id="orderTable" class="table table-striped table-bordered" style="width:100%">
+        <table id="formTable" class="table table-striped table-bordered" style="width:100%">
             <thead>
                 <tr class="text-center">
-                    <th>Order No</th>
-                    <th>Customer Name</th>
-                    <th>Order Status</th>
-                    <th>Payment Status</th>
-                    <th>Total Amount</th>
-                    <th>Date/Time</th>
-                    <th>Special Requirement</th>
-                    <th>Customer Status</th>
-                    <th>Action</th>
+                    <th>Form Id</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email Address</th>
+                    <th>Mobile</th>
+                    <th>Submited Date</th>
+                    <th class="no-sort">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,59 +65,54 @@
 @endsection
 @section('js')
 <script type="text/javascript">
+
     $(function() {
         datatable();
     });
 
-    $(document).on('change', '#active', function() {
+    $(document).on('change', '#formId', function() {
         datatable();
     });
 
+    
+    let formTable = null;
     function datatable() {
-        var orderTable = $('#orderTable').DataTable({
+        formTable = $('#formTable').DataTable({
             destroy: true,
             scrollY: "70vh",
             processing: true,
             serverSide: true,
             order: [],
             ajax: {
-                url: "{{ url('admin/orders') }}",
+                url: "{{ url('admin/forms/list') }}",
                 type: "get",
                 data: function(d) {
-                    d.active = $('#active').val();
+                    d.form_id = $('#formId').val();
                 },
             },
             columns: [{
-                    data: 'orderno',
-                    name: 'orderno'
+                    data: 'form_id',
+                    name: 'form_id'
                 },
                 {
-                    data: 'client',
-                    name: 'client'
+                    data: 'first_name',
+                    name: 'first_name'
                 },
                 {
-                    data: 'order_status',
-                    name: 'order_status'
+                    data: 'last_name',
+                    name: 'last_name'
                 },
                 {
-                    data: 'payment_status',
-                    name: 'payment_status'
+                    data: 'email_address',
+                    name: 'email_address'
                 },
                 {
-                    data: 'total',
-                    name: 'total'
+                    data: 'mobile_number',
+                    name: 'mobile_number'
                 },
                 {
                     data: 'date',
                     name: 'date'
-                },
-                {
-                    data: 'order_comments',
-                    name: 'order_comments'
-                },
-                {
-                    data: 'active',
-                    name: 'active'
                 },
                 {
                     data: 'action',

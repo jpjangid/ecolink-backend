@@ -122,7 +122,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-2 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label for="flag"><span style="color: red;">* </span>Active:</label>
                         <select class="form-control" name="flag" id="flag">
                             <option value="">Select</option>
@@ -133,7 +133,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-2 mt-2">
+                    <div class="col-md-4 mt-2">
                         <label for="tax_exempt"><span style="color: red;">* </span>Tax Exempt:</label>
                         <select class="form-control" name="tax_exempt" id="tax_exempt">
                             <option value="">Select</option>
@@ -145,7 +145,16 @@
                         @enderror
                     </div>
                     <input type="hidden" id="oldtax_exempt" value="{{ old('tax_exempt') }}">
-                    <div class="col-md-8 mt-2">
+                    <div class="col-md-4 mt-2">
+                        <div class="form-group">
+                            <label class="form-label" for="validity_date">Tax Exempt Validity Date</label>
+                            <input type="date" class="form-control form-control-solid @error('validity_date') is-invalid @enderror" name="validity_date" id="validity_date" placeholder="Please Enter Tax Exempt Validity Date" value="{{ old('validity_date') }}">
+                            @error('validity_date')
+                            <span class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-2">
                         <label for="profile_image"><span style="color: red;">* </span>Profile Image:</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="profile_image" onchange="readURL(this);" accept="image/x-png,image/gif,image/jpeg">
