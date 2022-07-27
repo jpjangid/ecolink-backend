@@ -17,7 +17,8 @@ class FormDataController extends Controller
        } 
 
        $fromdata_array = array();
-       foreach($request->form_data as $form_data) {
+       $formDataArray = json_decode($request->form_data, true);
+       foreach($formDataArray as $form_data) {
           $form_data_object = [];
           if($form_data['type'] == "file") {
             $files_array = array();
