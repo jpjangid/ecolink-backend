@@ -191,7 +191,7 @@ class UserController extends Controller
                     'email'         =>  $request['email'],
                     'mobile'        =>  $request['mobile'],
                     'address'       =>  $request['address'],
-                    'landmark'      =>  $request['landmark'],
+                    // 'landmark'      =>  $request['landmark'],
                     'country'       =>  $request['country'],
                     'state'         =>  $request['state'],
                     'city'          =>  $request['city'],
