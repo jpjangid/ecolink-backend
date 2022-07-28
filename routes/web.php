@@ -302,6 +302,7 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
 
     Route::get('form/detail/{id}',[FormDataController::class,'show']);
     Route::get('forms/list',[FormDataController::class,'index']);
+    Route::get('forms/list/{form_data_id}',[FormDataController::class,'list']);
 });
 
 Route::get('qboCustomer/{companyName}/{user_id}', [UserController::class, 'qboCustomer']);

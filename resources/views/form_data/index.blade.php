@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Forms List</h1>
+                    <h1 class="m-0 text-dark">{{ ucwords(str_replace("_"," ",$form_data_id)) }}</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -31,10 +31,9 @@
                     <div class="row">
                         <div class="col-sm-6"></div>
                         <div class="col-sm-6">
-                            <select id="formId" class="form-control">
-                                <option value="all" selected>All</option>
+                            <select id="formId" class="form-control" hidden>
                                 @foreach($form_ids as $form_id)
-                                    <option value="{{ $form_id->form_id }}">{{ ucwords(str_replace("_"," ",$form_id->form_id)) }}</option>    
+                                    <option value="{{ $form_id }}" {{ $form_id == $form_data_id  ? 'selected' : ''}}>{{ ucwords(str_replace("_"," ",$form_id)) }}</option>    
                                 @endforeach
                             </select>
                         </div>
