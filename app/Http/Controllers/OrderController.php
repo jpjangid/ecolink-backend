@@ -148,7 +148,7 @@ class OrderController extends Controller
                     'state'         =>  $request['billing_state'],
                     'city'          =>  $request['billing_city'],
                     'zip'           =>  $request['billing_zip'],
-                    'landmark'      =>  $request['billing_landmark'],
+                    // 'landmark'      =>  $request['billing_landmark'],
                 ]);
 
                 $user_id = $user->id;
@@ -418,7 +418,7 @@ class OrderController extends Controller
                     'state'         =>  $request['billing_state'],
                     'city'          =>  $request['billing_city'],
                     'zip'           =>  $request['billing_zip'],
-                    'landmark'      =>  $request['billing_landmark'],
+                    // 'landmark'      =>  $request['billing_landmark'],
                 ]);
 
                 $user_id = $user->id;
@@ -524,7 +524,7 @@ class OrderController extends Controller
             $order->billing_state             =  $request->billing_state;
             $order->billing_city              =  $request->billing_city;
             $order->billing_zip               =  $request->billing_zip;
-            $order->billing_landmark          =  $request->billing_landmark;
+            // $order->billing_landmark          =  $request->billing_landmark;
             $order->shipping_name             =  $request->shipping_name;
             $order->shipping_mobile           =  $request->shipping_mobile;
             $order->shipping_email            =  $request->shipping_email;
@@ -533,7 +533,7 @@ class OrderController extends Controller
             $order->shipping_state            =  $request->shipping_state;
             $order->shipping_city             =  $request->shipping_city;
             $order->shipping_zip              =  $request->shipping_zip;
-            $order->shipping_landmark         =  $request->shipping_landmark;
+            // $order->shipping_landmark         =  $request->shipping_landmark;
             $order->order_status              =  $request->order_status;
             $order->payment_status            =  $request->payment_status;
             $order->payment_currency          =  'dollar';

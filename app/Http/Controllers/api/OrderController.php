@@ -84,7 +84,7 @@ class OrderController extends Controller
                 $UserAddress->mobile = $request->billing_mobile;
                 $UserAddress->address = $request->billing_address;
                 $UserAddress->zip = $request->billing_zip;
-                $UserAddress->landmark = $request->billing_landmark;
+                // $UserAddress->landmark = $request->billing_landmark;
                 $UserAddress->state = $request->billing_state;
                 $UserAddress->city = $request->billing_city;
                 $UserAddress->save();
@@ -96,7 +96,7 @@ class OrderController extends Controller
                     $UserAddress->mobile = $request->shipping_mobile;
                     $UserAddress->address = $request->shipping_address;
                     $UserAddress->zip = $request->shipping_zip;
-                    $UserAddress->landmark = $request->shipping_landmark;
+                    // $UserAddress->landmark = $request->shipping_landmark;
                     $UserAddress->state = $request->shipping_state;
                     $UserAddress->city = $request->shipping_city;
                     $UserAddress->save();
@@ -223,7 +223,7 @@ class OrderController extends Controller
                 'billing_state'     =>  $request->billing_state,
                 'billing_city'      =>  $request->billing_city,
                 'billing_zip'       =>  $request->billing_zip,
-                'billing_landmark'  =>  $request->billing_landmark,
+                // 'billing_landmark'  =>  $request->billing_landmark,
                 'shipping_name'     =>  $request->shipping_name,
                 'shipping_mobile'   =>  $request->shipping_mobile,
                 'shipping_email'    =>  $request->shipping_email,
@@ -232,7 +232,7 @@ class OrderController extends Controller
                 'shipping_state'    =>  $request->shipping_state,
                 'shipping_city'     =>  $request->shipping_city,
                 'shipping_zip'      =>  $request->shipping_zip,
-                'shipping_landmark' =>  $request->shipping_landmark,
+                // 'shipping_landmark' =>  $request->shipping_landmark,
                 'order_status'      =>  'pending',
                 'payment_via'       =>  $request->payment_via,
                 'payment_currency'  =>  'dollar',
