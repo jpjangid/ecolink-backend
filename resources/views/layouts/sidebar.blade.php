@@ -3,6 +3,15 @@
 		pointer-events: none;
 	}
 </style> -->
+
+@php
+$coustom_pages = array("Custom_Blade_Solution",
+"Intern_Onboarding_Form",
+"Intership_Application_Form",
+"Scholarship_Contest_Submission",
+"Scholarship_Winner","cannabis",
+"contact_today");  
+@endphp
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#2f2f2f, #2f2f2f); ">
 	<!-- Brand Logo -->
@@ -562,14 +571,17 @@
 							</a>
 						</li>
 						@endif
+						@foreach($coustom_pages as $coustom_page)
 						<li class="nav-item has-treeview">
-							<a href="{{ url('admin/forms/list') }}" class="nav-link">
+							<a href="{{ url('admin/forms/list',$coustom_page) }}" class="nav-link">
 								<i class="fas fa-solid fa-address-book nav-icon"></i>
 								<p>
-									List
+									{{ ucwords(str_replace("_"," ",$coustom_page)) }}
 								</p>
 							</a>
-						</li>
+						</li>						
+						@endforeach
+
 					</ul>
 				</li>
 				<li class="nav-item has-treeview">
