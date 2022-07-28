@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use App\Traits\QboRefreshToken;
+use App\Traits\QuickBooksOnline;
 
 class UserController extends Controller
 {
 	use QboRefreshToken;
+	use QuickBooksOnline;
 
 	public function register(Request $request)
 	{

@@ -12,20 +12,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use App\Traits\ShippingRate;
-use App\Traits\QboRefreshToken;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Product;
-use App\Models\CouponUsedBy;
-use Illuminate\Support\Facades\Log;
-use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
-use QuickBooksOnline\API\DataService\DataService;
+use App\Traits\ShippingRate;
+use App\Traits\QboRefreshToken;
+use App\Traits\ShipVia;
+use App\Traits\QuickBooksOnline;
 
 class OrderController extends Controller
 {
     use ShippingRate;
     use QboRefreshToken;
+    use ShipVia;
+    use QuickBooksOnline;
 
     public function index(Request $request)
     {
@@ -115,27 +115,29 @@ class OrderController extends Controller
                 }
             }
 
-            $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
-            $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
+            $lift_gate  = DB::table('static_values')->where('name', 'Lift Gate')->first();
+            $cert_fee   = DB::table('static_values')->where('name', 'CERT Fee')->first();
+            $hazardous  = DB::table('static_values')->where('name', 'Hazardous')->first();
 
             $lift_gate_amount = $lift_gate->value ?? 0;
+            $cert_fee_amount = $cert_fee->value ?? 0;
             $hazardous_amount = $hazardous->value ?? 0;
 
-            $order_total_amt    = 0;
-            $payable_total_amt  = 0;
-            $product_discount   = 0;
-            $coupon_discount    = 0;
-            $discount           = 0;
-            $lift_gate_qty      = 0;
-            $lift_gate_amt      = 0;
-            $item_lift_gate_amt = 0;
-            $total_weight       = 0;
-            $no_items           = 0;
-            $hazardous_qty      = 0;
-            $hazardous_amt      = 0;
-            $item_hazardous_amt = 0;
-            $product_id = array();
+            $order_total_amt        = 0;
+            $payable_total_amt      = 0;
+            $product_discount       = 0;
+            $coupon_discount        = 0;
+            $discount               = 0;
+            $cert_fee_amt           = 0;
+            $lift_gate_amt          = 0;
+            $item_lift_gate_amt     = 0;
+            $total_weight           = 0;
+            $no_items               = 0;
+            $hazardous_qty          = 0;
+            $hazardous_amt          = 0;
+            $item_hazardous_amt     = 0;
 
+            $product_id  = array();
             $order_items = array();
 
             foreach ($cartItems as $cartItem) {
@@ -157,8 +159,12 @@ class OrderController extends Controller
                 $hazardous_amt = $hazardous_amount;
             }
 
-            if ($request->lift_gate) {
+            if ((int)$request->lift_gate > 0) {
                 $lift_gate_amt = $lift_gate_amount;
+            }
+
+            if ((int)$request->cert_fee > 0) {
+                $cert_fee_amt = $cert_fee_amount;
             }
 
             $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $product_id]);
@@ -175,12 +181,14 @@ class OrderController extends Controller
 
             $taxAmount = 0;
             $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
-            if ($tax != null) {
-                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
-                    $taxAmount = 0;
-                    $coupon_id = '';
-                } else {
-                    $taxAmount = ($payable_total_amt * $tax->rate) / 100;
+            if ($user->tax_exempt == 0) {
+                if ($tax != null) {
+                    if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                        $taxAmount = 0;
+                        $coupon_id = '';
+                    } else {
+                        $taxAmount = ($payable_total_amt * $tax->rate) / 100;
+                    }
                 }
             }
 
@@ -192,8 +200,9 @@ class OrderController extends Controller
                 }
             }
 
-            $payable_total_amt = $payable_total_amt - $coupon_discount + $lift_gate_amt + $hazardous_amt + $shipping_charge + $taxAmount;
-            $discount = $product_discount + $coupon_discount;
+            $payable_total_amt = $payable_total_amt + $lift_gate_amt + $hazardous_amt + $shipping_charge + $taxAmount + $cert_fee_amt - $coupon_discount;
+
+            $discount = $coupon_discount;
 
             $order = Order::create([
                 'order_no'          =>  $orderNumber,
@@ -202,6 +211,7 @@ class OrderController extends Controller
                 'discount_applied'  =>  $discount,
                 'total_amount'      =>  $payable_total_amt,
                 'lift_gate_amt'     =>  $lift_gate_amt,
+                'cert_fee_amt'      =>  $cert_fee_amt,
                 'tax_amount'        =>  $taxAmount,
                 'hazardous_amt'     =>  $hazardous_amt,
                 'no_items'          =>  $no_items,
@@ -226,7 +236,7 @@ class OrderController extends Controller
                 'order_status'      =>  'pending',
                 'payment_via'       =>  $request->payment_via,
                 'payment_currency'  =>  'dollar',
-                'payment_status'    =>  'pending',
+                'payment_status'    =>  !empty($request->payment_info) ? 'complete' : 'pending',
                 'shippment_via'     =>  $shipment_via,
                 'shippment_status'  =>  'pending',
                 'coupon_id'         =>  $coupon_id ?? '',
@@ -235,7 +245,8 @@ class OrderController extends Controller
                 'payment_amount'    =>  $payable_total_amt,
                 'shippment_rate'    =>  $shipping_charge,
                 'order_notes'       =>  $request->order_notes,
-                'search_keywords'   =>  $request->search_keywords
+                'search_keywords'   =>  $request->search_keywords,
+                'payment_response'  =>  $request->payment_info
             ]);
 
             foreach ($order_items as $item) {
@@ -253,7 +264,7 @@ class OrderController extends Controller
                 $time_applied = 0;
                 if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
                     $time_applied = 0;
-                }else{
+                } else {
                     $time_applied = 1;
                 }
                 $coupon->times_applied = $coupon->times_applied + $time_applied;
@@ -271,9 +282,9 @@ class OrderController extends Controller
             }
 
             // if ($order->shippment_via == 'saia') {
-            //     $response = $this->shipViaSaia($order->id);
+            //     $response = $this->ShipViaSaia($order->id);
             // } else {
-            //     $response = $this->shipViaFedex($order->id);
+            //     $response = $this->ShipViaFedex($order->id);
             // }
 
             // if($user->wp_id == null && $user->company_name != null){
@@ -283,8 +294,6 @@ class OrderController extends Controller
             // if($user->wp_id != null){
             //     $qboresponse = $this->quickBookInvoice($order->user_id, $order->id);
             // }
-
-            // $sosresponse = $this->sosItemUpdate();
 
             DB::commit();
 
@@ -328,299 +337,6 @@ class OrderController extends Controller
             return $this->order_no();
         } else {
             return $no;
-        }
-    }
-
-    public function shipViaSaia()
-    {
-        $order_id = 1;
-        $order = Order::find($order_id);
-        $cartItems = Cart::where('user_id', $order->user_id)->with('product')->get();
-
-        $detailItems = '';
-        foreach ($cartItems as $item) {
-            $hazardous = $item->product->hazardous == 1 ? 'Y' : 'N';
-            $description = strip_tags($item->product->description);
-            $detailItems .= '
-            <DetailItem>
-                <DestinationZipcode>' . $order->shipping_zip . '</DestinationZipcode>
-                <DestinationCountry>' . $order->shipping_country . '</DestinationCountry>
-                <Class>50</Class>
-                <Package>BG</Package>
-                <Pieces>' . $item->quantity . '</Pieces>
-                <Weight>' . $item->product->weight . '</Weight>
-                <FoodItem>N</FoodItem>
-                <Hazardous>' . $hazardous . '</Hazardous>
-                <Description>' . $description . '</Description>
-            </DetailItem>';
-        }
-
-        try {
-            $curl = curl_init();
-
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'www.saiasecure.com/webservice/BOL/soap.asmx',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => '<?xml version="1.0" encoding="utf-8"?>
-            <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-                <soap:Body>
-                    <Create xmlns="http://www.SaiaSecure.com/WebService/BOL">
-                        <request>
-                            <UserID>' . config('saia.user_id') . '</UserID>
-                            <Password>' . config('saia.password') . '</Password>
-                            <TestMode>' . config('saia.mode') . '</TestMode>
-                            <ShipmentDate>' . date('Y-m-d', strtotime($order->created_at)) . '</ShipmentDate>
-                            <BillingTerms>Prepaid</BillingTerms>
-                            <BLNumber></BLNumber>
-                            <ShipperNumber></ShipperNumber>
-                            <PONumber></PONumber>
-                            <PrintRates>Y</PrintRates>
-                            <Customs>N</Customs>
-                            <VICS>N</VICS>
-                            <WeightUnits></WeightUnits>
-                            <Shipper>
-                                <AccountNumber>0747932</AccountNumber>
-                            </Shipper>
-                            <Consignee>
-                                <ContactName>' . $order->shipping_name . '</ContactName>
-                                <Address1>' . $order->shipping_address . '</Address1>
-                                <City>' . $order->shipping_city . '</City>
-                                <State>' . $order->shipping_state . '</State>
-                                <Zipcode>' . $order->shipping_zip . '</Zipcode>
-                            </Consignee>
-                            <Details>' . $detailItems . '</Details>
-                        </request>
-                    </Create>
-                </soap:Body>
-            </soap:Envelope>',
-                CURLOPT_HTTPHEADER => array(
-                    'SOAPAction: http://www.SaiaSecure.com/WebService/BOL/Create',
-                    'Content-Type: text/xml; charset=utf-8',
-                    'except:application/json'
-                ),
-            ));
-
-            $response = curl_exec($curl);
-
-            $clean_xml = str_ireplace(['SOAP-ENV:', 'SOAP:'], '', $response);
-            $xml = simplexml_load_string($clean_xml);
-            $data = json_encode($xml, true);
-            $newdata = json_decode($data, true);
-
-            curl_close($curl);
-
-            if (isset($newdata['Body']['CreateResponse']['CreateResult']['ProNumber'])) {
-                return response()->json(['message' => 'Shippment created successfully', 'response' => $newdata, 'code' => 200], 200);
-            } else {
-                return response()->json(['message' => 'Oops! Something went wrong', 'code' => 400], 400);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
-    }
-
-    public function shipViaFedex()
-    {
-        $order_id = 1;
-        $order = Order::where('id', $order_id)->with('items.product')->first();
-
-        $paymentType = $order->payment_via == 'COD' ? 'RECIPIENT' : 'SENDER';
-
-        $items = array();
-        foreach ($order->items as $item) {
-            $weight = collect(['value' => $item->product->weight, 'units' => 'LB']);
-            $itemWeight = collect(['weight' => $weight]);
-            array_push($items, $itemWeight);
-        }
-
-        $token = getFedexAuthToken();
-        $content = json_decode($token);
-
-        $data['labelResponseOptions'] = "URL_ONLY";
-
-        //Shipper Info
-        $data['requestedShipment']['shipper']['contact']['personName'] = "SHIPPER NAME";
-        $data['requestedShipment']['shipper']['contact']['phoneNumber'] = 1234567890;
-        $data['requestedShipment']['shipper']['contact']['companyName'] = "Shipper Company Name";
-        $data['requestedShipment']['shipper']['address']['streetLines'] = ["SHIPPER STREET LINE 1"];
-        $data['requestedShipment']['shipper']['address']['city'] = "HARRISON";
-        $data['requestedShipment']['shipper']['address']['stateOrProvinceCode'] = "AR";
-        $data['requestedShipment']['shipper']['address']['postalCode'] = 72601;
-        $data['requestedShipment']['shipper']['address']['countryCode'] = "US";
-
-        //Recipient Info
-        $contact['personName'] = $order->shipping_name;
-        $contact['phoneNumber'] = $order->shipping_mobile;
-        $contact['companyName'] = $order->shipping_name;
-        $address['streetLines'] = [$order->shipping_address];
-        $address['city'] = $order->shipping_city;
-        $address['stateOrProvinceCode'] = $order->shipping_state;
-        $address['postalCode'] = $order->shipping_zip;
-        $address['countryCode'] = $order->shipping_country;
-
-        $recipients = ['contact' => $contact, 'address' => $address];
-        $data['requestedShipment']['recipients'] = [$recipients];
-
-        $data['requestedShipment']['shipDatestamp'] = date('Y-m-d', strtotime($order->created_at));
-        $data['requestedShipment']['serviceType'] = "FEDEX_GROUND";
-        $data['requestedShipment']['packagingType'] = "YOUR_PACKAGING";
-        $data['requestedShipment']['pickupType'] = "USE_SCHEDULED_PICKUP";
-        $data['requestedShipment']['blockInsightVisibility'] = false;
-        $data['requestedShipment']['shippingChargesPayment']['paymentType'] = $paymentType;
-        $data['requestedShipment']['labelSpecification']['imageType'] = "PDF";
-        $data['requestedShipment']['labelSpecification']['labelStockType'] = "PAPER_85X11_TOP_HALF_LABEL";
-        $data['requestedShipment']['requestedPackageLineItems'] = $items;
-        $data['accountNumber']['value'] = config('fedex.account_no');
-
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content->access_token,
-                'Content-Type' => 'application/json',
-                'x-customer-transaction-id' => config('fedex.customer_transaction_id'),
-                'x-locale' => 'en_US'
-            ])->post(config('fedex.url') . 'ship/v1/shipments', $data);
-
-            return response()->json(['message' => 'Shippment created successfully', 'response' => $response, 'code' => 200], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
-    }
-
-    public function quickBookInvoice($user_id, $order_id)
-    {
-        $cartItems = Cart::where('user_id', $user_id)->with('product')->get();
-        $user = DB::table('users')->find($user_id);
-        $lineItems = array();
-        foreach ($cartItems as $item) {
-            $name = $item->product->name . ' ' . $item->product->variant;
-            $itemRef = ['name' => $name, 'value' => (string)$item->product->wp_id];
-            $salelineItem = ['Qty' => $item->quantity, 'UnitPrice' => $item->product->sale_price, 'ItemRef' => $itemRef];
-            $lineItem = ['Description' => $name, 'Amount' => $item->product->sale_price * $item->quantity, 'DetailType' => 'SalesItemLineDetail', 'SalesItemLineDetail' => $salelineItem];
-
-            array_push($lineItems, $lineItem);
-        }
-
-        $custRef = ['value' => (string)$user->wp_id];
-        $requestBody = ['Line' => $lineItems, 'CustomerRef' => $custRef];
-
-        $file = file_get_contents('storage/qbo.json');
-        $content = json_decode($file, true);
-
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content['access_token'],
-                'Content-Type' => 'application/json'
-            ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/invoice?minorversion=' . config('qboconfig.minorversion'), $requestBody);
-
-            $data = json_decode($response);
-
-            if (isset($data->Invoice) && !empty($data->Invoice)) {
-                return response()->json(['message' => 'QBO Invoice created successfully', 'response' => $data, 'code' => 200], 200);
-            }
-            if (isset($data->fault->error[0]->code)) {
-                $type = "online";
-                $token = $this->accessToken($type);
-                $data = json_encode($token);
-                file_put_contents('storage/qbo.json', $data);
-                return $this->quickBookInvoice($user_id, $order_id);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
-    }
-
-    public function qboCustomer($companyName, $user_id)
-    {
-        $file = file_get_contents('storage/qbo.json');
-        $content = json_decode($file, true);
-        $company_name = str_replace("'", "\'", $companyName);
-        $company_name = str_replace(' ', '%20', $company_name);
-
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content['access_token'],
-                'Content-Type' => 'application/json'
-            ])->get(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/query?query=select%20*%20from%20Customer%20Where%20CompanyName%20=%20\'' . $company_name . '\'&minorversion=' . config('qboconfig.minorversion'));
-
-            $data = json_decode($response);
-            if (isset($data->fault->error[0]->code)) {
-                $type = "online";
-                $token = $this->accessToken($type);
-                $data = json_encode($token);
-                file_put_contents('storage/qbo.json', $data);
-                return $this->qboCustomer($companyName, $user_id);
-            }
-            if (isset($data->QueryResponse->Customer)) {
-                $user = User::find($user_id);
-                $user->wp_id = $data->QueryResponse->Customer[0]->Id;
-                $user->update();
-
-                return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
-            }
-            if (!empty($data->QueryResponse)) {
-                $response = $this->createQboCustomer($companyName, $user_id);
-
-                return $response;
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
-    }
-
-    public function createQboCustomer($companyName, $user_id)
-    {
-        $user = User::find($user_id);
-
-        $file = file_get_contents('storage/qbo.json');
-        $content = json_decode($file, true);
-
-        $data['FullyQualifiedName'] = $user->name;
-        $data['PrimaryEmailAddr']['Address'] = $user->email;
-        $data['DisplayName'] = $user->name;
-        $data['PrimaryPhone']['FreeFormNumber'] = $user->phone;
-        $data['CompanyName'] = $user->company_name;
-        $data['BillAddr']['CountrySubDivisionCode'] = $user->state;
-        $data['BillAddr']['City'] = $user->city;
-        $data['BillAddr']['PostalCode'] = $user->pincode;
-        $data['BillAddr']['Line1'] = $user->address;
-        $data['BillAddr']['Country'] = 'USA';
-        $data['GivenName'] = $user->name;
-
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content['access_token'],
-                'Content-Type' => 'application/json'
-            ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
-
-            $data = json_decode($response);
-
-            if (isset($data->Customer)) {
-                $user = User::find($user_id);
-                $user->wp_id = $data->Customer->Id;
-                $user->update();
-
-                return response()->json(['message' => 'Customer created Successfully', 'code' => 200], 200);
-            }
-
-            if (isset($data->fault->error[0]->code) && $data->fault->error[0]->code == 3200) {
-                $type = "online";
-                $token = $this->accessToken($type);
-                $data = json_encode($token);
-                file_put_contents('storage/qbo.json', $data);
-                return $this->createQboCustomer($companyName, $user_id);
-            }
-
-            if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
-                return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
         }
     }
 
