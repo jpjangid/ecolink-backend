@@ -19,14 +19,18 @@
         </div><!-- /.container-fluid -->
     </div>
     <div id="loader"></div>
-
     <div class="card">
         <div class="card-body">
                 <div class="row">
                     @foreach(json_decode($form_datas->form_data) as $form_data)
                         @if($form_data->type != "file") 
                         <div class="col-md-6">
-                                <label for="">{{ $form_data->name }} :</label><p>{{ $form_data->value }}</p>
+                                <label for="">{{ $form_data->name }} :</label><p>
+                                @if(gettype($form_data->value) == "array")
+                                    {{ implode(', ',$form_data->value) }}
+                                @else
+                                    {{ $form_data->value }}</p>
+                                @endif
                         </div>
                         @else
                         <div class="col-md-12">
