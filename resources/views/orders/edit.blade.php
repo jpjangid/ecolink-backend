@@ -483,7 +483,7 @@
 <script src="{{ asset('js/validations/orders/addorderrules.js') }}"></script>
 <script>
     var actual_Lift_Amout = 0;
-    var left_amt_click_count = 0;
+    var lift_amt_click_count = 0;
     function hazardous(product_ids) {
         return new Promise((resolve) => {
             if (product_ids.length !== 0) {
@@ -692,7 +692,7 @@
     });
 
     function lift_amt_click_count_fun(){
-        left_amt_click_count = left_amt_click_count +1;
+        lift_amt_click_count = lift_amt_click_count +1;
     }
 
     function lift_gate() {
@@ -702,7 +702,7 @@
        // actual_Lift_Amout = $('#lift_gate_amt').val();
         var Ttl_amt = $("#total_amt").val();
         if (id == 1) {
-            if(parseInt(lift_gate_value) > 0 && parseInt(left_amt_click_count) > 0 ){
+            if(parseInt(lift_gate_value) > 0 && parseInt(lift_amt_click_count) > 0 ){
                 $("#total_amt").val( parseInt(Ttl_amt) + parseInt(lift_gate_value));
             }else{
                 $("#total_amt").val();
