@@ -52,7 +52,7 @@ trait ShippingRate
 				}
 			}
 		} else {
-			if(!empty($request['product_id']) && count($request['product_id']) > 0) {
+			if($request['product_id'] != "" && count($request['product_id']) > 0) {
 				$product_ids = array_column($request['product_id'],'id');
 				$products = DB::table('products')->whereIn('products.id',$product_ids)->leftJoin('dropships', 'products.dropship', '=', 'dropships.id')->select('products.id','products.dropship','products.weight','dropships.zip','dropships.state','dropships.country','dropships.city')->get()->groupBy('zip');
 				foreach($products as $key => $product_datas) {
@@ -194,7 +194,7 @@ trait ShippingRate
 				}
 			}
 		} else {
-			if(!empty($request['product_id']) && count($request['product_id']) > 0) {
+			if($request['product_id'] != "" && count($request['product_id']) > 0) {
 				$product_ids = array_column($request['product_id'],'id');
 				$products = DB::table('products')->whereIn('products.id',$product_ids)->leftJoin('dropships', 'products.dropship', '=', 'dropships.id')->select('products.id','products.dropship','products.weight','products.width','products.length','products.height','dropships.zip','dropships.state','dropships.country','dropships.city')->get()->groupBy('zip');
 				foreach($products as $key => $product_datas) {

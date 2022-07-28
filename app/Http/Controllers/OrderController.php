@@ -348,7 +348,6 @@ class OrderController extends Controller
         ]);
 
         DB::beginTransaction();
-
         try {
             if (!empty($request->customer)) {
                 $user_id = $request->customer;
@@ -389,7 +388,6 @@ class OrderController extends Controller
 
                 $user_id = $user->id;
             }
-
             $sale_price = 0;
             $hazardous_qty = 0;
             $hazardous_amt = 0;
@@ -397,17 +395,18 @@ class OrderController extends Controller
             $discount_amt = 0;
             $items = 0;
             $total_weight = 0;
+            $products_array = array();
             foreach ($request->product_id as $key => $product_id) {
                 $items += 1;
                 $product = DB::table('products')->find($product_id);
                 $sale_price += $product->sale_price * $request->quantity[$key];
                 $total_weight += $product->weight * $request->quantity[$key];
+                array_push($products_array,array('id' => $product_id,'qty' => $request->quantity[$key]));
                 if ($product->hazardous == 1) {
                     $hazardous_qty += 1;
                 }
             }
-
-            $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
+            $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $products_array]);
 
             $shipment_via = 0;
             $shipping_charge = 0;
@@ -431,6 +430,7 @@ class OrderController extends Controller
             if ($request->lift_gate == 1) {
                 $lift_gate_amt = $lift_gate_amount;
             }
+
 
             $coupon_id = '';
             $coupon = '';

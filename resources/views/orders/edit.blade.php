@@ -323,7 +323,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label"> Lift Gate</label>
-                            <select class="form-control" name="lift_gate" id="lift_gate">
+                            <select class="form-control" name="lift_gate" id="lift_gate" onchange="lift_amt_click_count_fun()">
                                 <option value="" selected>Select Lift Gate</option>
                                 <option value="1" {{ $order->lift_gate_status == '1' ? 'selected' : '' }}>Yes</option>
                                 <option value="0" {{ $order->lift_gate_status == '0' ? 'selected' : '' }}>No</option>
@@ -460,6 +460,8 @@
 @section('js')
 <script src="{{ asset('js/validations/orders/addorderrules.js') }}"></script>
 <script>
+    var actual_Lift_Amout = 0;
+    var left_amt_click_count = 0;
     function hazardous(product_ids) {
         return new Promise((resolve) => {
             if (product_ids.length !== 0) {
@@ -664,12 +666,25 @@
         lift_gate();
     });
 
+    function lift_amt_click_count_fun(){
+        left_amt_click_count = left_amt_click_count +1;
+    }
+
     function lift_gate() {
         var id = $('#lift_gate').val();
         var name = 'Lift Gate';
         var lift_gate_value = $('#lift_gate_value').val();
+       // actual_Lift_Amout = $('#lift_gate_amt').val();
+        var Ttl_amt = $("#total_amt").val();
         if (id == 1) {
+            if(parseInt(lift_gate_value) > 0 && parseInt(left_amt_click_count) > 0 ){
+                $("#total_amt").val( parseInt(Ttl_amt) + parseInt(lift_gate_value));
+            }else{
+                $("#total_amt").val();
+            }
             $("#lift_gate_amt").val(parseFloat(lift_gate_value));
+
+           
             // $.ajax({
             //     url: "{{ url('admin/orders/static_value') }}",
             //     type: "POST",
@@ -684,7 +699,14 @@
             //     }
             // });
         } else {
+            if(parseInt(lift_gate_value) > 0 ){
+                $("#total_amt").val( parseInt(Ttl_amt) - parseInt(lift_gate_value));
+            }else{
+                $("#total_amt").val();
+            }
             $('#lift_gate_amt').val(0);
+               // $("#lift_gate_amt").val(parseFloat(lift_gate_value));
+           
         }
         calculateTotal();
     }
