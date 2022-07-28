@@ -8,22 +8,22 @@ use App\Models\UserAddress;
 use App\Models\Order;
 use App\Models\OrderItems;
 use Illuminate\Http\Request;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Yajra\DataTables\DataTables;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Traits\ShippingRate;
 use App\Traits\QboRefreshToken;
-use Illuminate\Support\Facades\Http;
-use App\Models\Product;
+use App\Traits\ShipVia;
+use App\Traits\QuickBooksOnline;
 
 class OrderController extends Controller
 {
     use ShippingRate;
     use QboRefreshToken;
+    use ShipVia;
+    use QuickBooksOnline;
 
     public function index(Request $request)
     {
@@ -84,8 +84,9 @@ class OrderController extends Controller
         $products = DB::table('products')->where(['status' => 1, 'flag' => 0])->orderBy('name', 'asc')->get();
         $users = DB::table('users')->where('role_id', '!=', 1)->where('flag', 0)->orderBy('name', 'asc')->get();
         $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+        $cert_fee = DB::table('static_values')->where('name', 'CERT Fee')->first();
 
-        return view('orders.create', compact('products', 'users', 'lift_gate'));
+        return view('orders.create', compact('products', 'users', 'lift_gate', 'cert_fee'));
     }
 
     public function store(Request $request)
@@ -159,6 +160,7 @@ class OrderController extends Controller
             $hazardous_qty = 0;
             $hazardous_amt = 0;
             $lift_gate_amt = 0;
+            $cert_fee_amt = 0;
             $discount_amt = 0;
             $items = 0;
             $total_weight = 0;
@@ -186,8 +188,10 @@ class OrderController extends Controller
 
             $order_amt = $sale_price;
             $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+            $cert_fee = DB::table('static_values')->where('name', 'CERT Fee')->first();
             $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
             $lift_gate_amount = $lift_gate->value ?? 0;
+            $cert_fee_amount = $cert_fee->value ?? 0;
             $hazardous_amount = $hazardous->value ?? 0;
             if ($hazardous_qty > 0) {
                 $hazardous_amt = $hazardous_amount;
@@ -195,6 +199,10 @@ class OrderController extends Controller
 
             if ($request->lift_gate == 1) {
                 $lift_gate_amt = $lift_gate_amount;
+            }
+
+            if ($request->cert_fee == 1) {
+                $cert_fee_amt = $cert_fee_amount;
             }
 
             $coupon_id = '';
@@ -214,23 +222,27 @@ class OrderController extends Controller
 
             $taxAmount = 0;
             $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
-            if ($tax != null) {
-                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
-                    $taxAmount = 0;
-                    $coupon_id = '';
-                } else {
-                    $taxAmount = ($order_amt * $tax->rate) / 100;
-                    $taxAmount = number_format((float)$taxAmount, 2, '.', '');
+            $user = DB::table('users')->find($user_id);
+            if($user->tax_exempt == 0) {
+                if ($tax != null) {
+                    if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                        $taxAmount = 0;
+                        $coupon_id = '';
+                    } else {
+                        $taxAmount = ($order_amt * $tax->rate) / 100;
+                        $taxAmount = number_format((float)$taxAmount, 2, '.', '');
+                    }
                 }
             }
 
-            $order_total = $order_amt + $lift_gate_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
+            $order_total = $order_amt + $lift_gate_amt + $cert_fee_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
             $order = Order::create([
                 'order_no'                  =>  $orderNumber,
                 'user_id'                   =>  $user_id,
                 'order_amount'              =>  $order_amt,
                 'discount_applied'          =>  $discount_amt,
                 'lift_gate_amt'             =>  $lift_gate_amt,
+                'cert_fee_amt'              =>  $cert_fee_amt,
                 'hazardous_amt'             =>  $hazardous_amt,
                 'tax_amount'                =>  $taxAmount,
                 'total_amount'              =>  $order_total,
@@ -296,6 +308,20 @@ class OrderController extends Controller
                 $applied_coupon->update();
             }
 
+            // if ($order->shippment_via == 'saia') {
+            //     $response = $this->ShipViaSaia($order->id);
+            // } else {
+            //     $response = $this->ShipViaFedex($order->id);
+            // }
+
+            // if($user->wp_id == null && $user->company_name != null){
+            //     $this->qboCustomer($user->company_name, $user->id);
+            // }
+
+            // if($user->wp_id != null){
+            //     $qboresponse = $this->quickBookInvoice($order->user_id, $order->id);
+            // }
+
             DB::commit();
             return redirect('admin/orders')->with('success', 'Order Added Successfully');
         } catch (\Exception $e) {
@@ -318,9 +344,15 @@ class OrderController extends Controller
         } else {
             $order->lift_gate_status = '0';
         }
+        if ($order->cert_fee_amt > 0) {
+            $order->cert_fee_status = '1';
+        } else {
+            $order->cert_fee_status = '0';
+        }
         $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+        $cert_fee = DB::table('static_values')->where('name', 'CERT Fee')->first();
 
-        return view('orders.edit', compact('products', 'users', 'order', 'lift_gate'));
+        return view('orders.edit', compact('products', 'users', 'order', 'lift_gate', 'cert_fee'));
     }
 
     public function update(Request $request, $id)
@@ -350,6 +382,8 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
+            $order = Order::where('id', $id)->first();
+
             if (!empty($request->customer)) {
                 $user_id = $request->customer;
             } else {
@@ -394,6 +428,7 @@ class OrderController extends Controller
             $hazardous_qty = 0;
             $hazardous_amt = 0;
             $lift_gate_amt = 0;
+            $cert_fee_amt = 0;
             $discount_amt = 0;
             $items = 0;
             $total_weight = 0;
@@ -421,8 +456,10 @@ class OrderController extends Controller
 
             $order_amt = $sale_price;
             $lift_gate = DB::table('static_values')->where('name', 'Lift Gate')->first();
+            $cert_fee = DB::table('static_values')->where('name', 'CERT Fee')->first();
             $hazardous = DB::table('static_values')->where('name', 'Hazardous')->first();
             $lift_gate_amount = $lift_gate->value ?? 0;
+            $cert_fee_amount = $cert_fee->value ?? 0;
             $hazardous_amount = $hazardous->value ?? 0;
             if ($hazardous_qty > 0) {
                 $hazardous_amt = $hazardous_amount;
@@ -430,6 +467,10 @@ class OrderController extends Controller
 
             if ($request->lift_gate == 1) {
                 $lift_gate_amt = $lift_gate_amount;
+            }
+
+            if ($request->cert_fee == 1) {
+                $cert_fee_amt = $cert_fee_amount;
             }
 
             $coupon_id = '';
@@ -445,63 +486,68 @@ class OrderController extends Controller
                         $discount_amt = $coupon->discount;
                     }
                 }
+            }else{
+                $discount_amt = $order->coupon_discount;
             }
 
             $taxAmount = 0;
             $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
-            if ($tax != null) {
-                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
-                    $taxAmount = 0;
-                    $coupon_id = '';
-                } else {
-                    $taxAmount = ($order_amt * $tax->rate) / 100;
-                    $taxAmount = number_format((float)$taxAmount, 2, '.', '');
+            $user = DB::table('users')->find($user_id);
+            if($user->tax_exempt == 0) {
+                if ($tax != null) {
+                    if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                        $taxAmount = 0;
+                        $coupon_id = '';
+                    } else {
+                        $taxAmount = ($order_amt * $tax->rate) / 100;
+                        $taxAmount = number_format((float)$taxAmount, 2, '.', '');
+                    }
                 }
             }
 
-            $order_total = $order_amt + $lift_gate_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
+            $order_total = $order_amt + $lift_gate_amt + $cert_fee_amt + $hazardous_amt + $taxAmount + $shipping_charge - $discount_amt;
 
-            $order = Order::where('id', $id)->update([
-                'user_id'                   =>  $user_id,
-                'order_amount'              =>  $order_amt,
-                'discount_applied'          =>  $discount_amt,
-                'lift_gate_amt'             =>  $lift_gate_amt,
-                'hazardous_amt'             =>  $hazardous_amt,
-                'tax_amount'                =>  $taxAmount,
-                'total_amount'              =>  $order_total,
-                'no_items'                  =>  $items,
-                'billing_name'              =>  $request->billing_name,
-                'billing_mobile'            =>  $request->billing_mobile,
-                'billing_email'             =>  $request->billing_email,
-                'billing_address'           =>  $request->billing_address,
-                'billing_country'           =>  $request->billing_country,
-                'billing_state'             =>  $request->billing_state,
-                'billing_city'              =>  $request->billing_city,
-                'billing_zip'               =>  $request->billing_zip,
-                'billing_landmark'          =>  $request->billing_landmark,
-                'shipping_name'             =>  $request->shipping_name,
-                'shipping_mobile'           =>  $request->shipping_mobile,
-                'shipping_email'            =>  $request->shipping_email,
-                'shipping_address'          =>  $request->shipping_address,
-                'shipping_country'          =>  $request->shipping_country,
-                'shipping_state'            =>  $request->shipping_state,
-                'shipping_city'             =>  $request->shipping_city,
-                'shipping_zip'              =>  $request->shipping_zip,
-                'shipping_landmark'         =>  $request->shipping_landmark,
-                'order_status'              =>  $request->order_status,
-                'payment_status'            =>  $request->payment_status,
-                'payment_currency'          =>  'dollar',
-                'payment_status'            =>  'pending',
-                'shippment_via'             =>  $shipment_via,
-                'shippment_status'          =>  'pending',
-                'coupon_id'                 =>  $coupon_id ?? '',
-                'coupon_discount'           =>  $discount_amt,
-                'order_comments'            =>  $request->order_comments,
-                'payment_amount'            =>  $order_total,
-                'shippment_rate'            =>  $shipping_charge,
-                'order_notes'               =>  $request->order_notes,
-                'search_keywords'           =>  $request->search_keywords
-            ]);
+            $order->user_id                   =  $user_id;
+            $order->order_amount              =  $order_amt;
+            $order->discount_applied          =  $discount_amt;
+            $order->lift_gate_amt             =  $lift_gate_amt;
+            $order->cert_fee_amt              =  $cert_fee_amt;
+            $order->hazardous_amt             =  $hazardous_amt;
+            $order->tax_amount                =  $taxAmount;
+            $order->total_amount              =  $order_total;
+            $order->no_items                  =  $items;
+            $order->billing_name              =  $request->billing_name;
+            $order->billing_mobile            =  $request->billing_mobile;
+            $order->billing_email             =  $request->billing_email;
+            $order->billing_address           =  $request->billing_address;
+            $order->billing_country           =  $request->billing_country;
+            $order->billing_state             =  $request->billing_state;
+            $order->billing_city              =  $request->billing_city;
+            $order->billing_zip               =  $request->billing_zip;
+            $order->billing_landmark          =  $request->billing_landmark;
+            $order->shipping_name             =  $request->shipping_name;
+            $order->shipping_mobile           =  $request->shipping_mobile;
+            $order->shipping_email            =  $request->shipping_email;
+            $order->shipping_address          =  $request->shipping_address;
+            $order->shipping_country          =  $request->shipping_country;
+            $order->shipping_state            =  $request->shipping_state;
+            $order->shipping_city             =  $request->shipping_city;
+            $order->shipping_zip              =  $request->shipping_zip;
+            $order->shipping_landmark         =  $request->shipping_landmark;
+            $order->order_status              =  $request->order_status;
+            $order->payment_status            =  $request->payment_status;
+            $order->payment_currency          =  'dollar';
+            $order->payment_status            =  'pending';
+            $order->shippment_via             =  $shipment_via;
+            $order->shippment_status          =  'pending';
+            $order->coupon_id                 =  $coupon_id ?? '';
+            $order->coupon_discount           =  $discount_amt;
+            $order->order_comments            =  $request->order_comments;
+            $order->payment_amount            =  $order_total;
+            $order->shippment_rate            =  $shipping_charge;
+            $order->order_notes               =  $request->order_notes;
+            $order->search_keywords           =  $request->search_keywords;
+            $order->update();
 
             $items = OrderItems::where('order_id', $id)->get();
             foreach ($items as $item) {
@@ -537,6 +583,20 @@ class OrderController extends Controller
                 }
                 $applied_coupon->update();
             }
+
+            // if ($order->shippment_via == 'saia') {
+            //     $response = $this->ShipViaSaia($order->id);
+            // } else {
+            //     $response = $this->ShipViaFedex($order->id);
+            // }
+
+            // if($user->wp_id == null && $user->company_name != null){
+            //     $this->qboCustomer($user->company_name, $user->id);
+            // }
+
+            // if($user->wp_id != null){
+            //     $qboresponse = $this->quickBookInvoice($order->user_id, $order->id);
+            // }
 
             DB::commit();
 
@@ -663,18 +723,33 @@ class OrderController extends Controller
 
     public function getTaxableAmount(Request $request)
     {
-        $taxAmount = 0;
+        $taxAmount = 0.00;
         $coupon = DB::table('coupons')->find($request->coupon);
         $tax = DB::table('tax_rates')->select('rate')->where('zip', $request->shipping_zip)->first();
-        if ($tax != null) {
-            if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
-                $taxAmount = 0;
-            } else {
-                $taxAmount = ($request->total * $tax->rate) / 100;
-            }
-        }
+        if(!empty($request->client_id)){
+            $client = DB::table('users')->find($request->client_id);
+            if ($client->tax_exempt == 0) {
+                if ($tax != null) {
+                    if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                        $taxAmount = 0.00;
+                    } else {
+                        $taxAmount = ($request->total * $tax->rate) / 100;
+                    }
+                }
 
-        return number_format((float)$taxAmount, 2, '.', '');;
+                return number_format((float)$taxAmount, 2, '.', '');
+            }
+        }else{
+            if ($tax != null) {
+                if ($coupon != null && $coupon->type == 'cart_value_discount' && $coupon->disc_type == 'percent' && $coupon->discount == '100') {
+                    $taxAmount = 0.00;
+                } else {
+                    $taxAmount = ($request->total * $tax->rate) / 100;
+                }
+            }
+
+            return number_format((float)$taxAmount, 2, '.', '');
+        }
     }
 
     public function getShippingCharge(Request $request)

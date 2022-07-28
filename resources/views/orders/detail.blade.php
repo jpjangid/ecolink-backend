@@ -117,6 +117,7 @@
                                 <th>Total Amount</th>
                                 <th>Hazardous Amount</th>
                                 <th>Lift Gate Amount</th>
+                                <th>CERT Fee</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -130,21 +131,28 @@
                                     @if(!empty($order->order_amount))
                                     ${{ number_format((float)$order->order_amount,2,'.',','), }}
                                     @else
-                                    0
+                                    $0
                                     @endif
                                 </td>
                                 <td>
                                     @if(!empty($order->hazardous_amt))
                                     ${{ number_format((float)$order->hazardous_amt,2,'.',','), }}
                                     @else
-                                    0
+                                    $0
                                     @endif
                                 </td>
                                 <td>
                                     @if(!empty($order->lift_gate_amt))
                                     ${{ number_format((float)$order->lift_gate_amt,2,'.',','), }}
                                     @else
-                                    0
+                                    $0
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(!empty($order->cert_fee_amt))
+                                    ${{ number_format((float)$order->cert_fee_amt,2,'.',','), }}
+                                    @else
+                                    $0
                                     @endif
                                 </td>
                             </tr>
@@ -157,7 +165,7 @@
                                 <th>Shipping Via</th>
                                 <th>Shipping Charge</th>
                                 <th>Taxable Amount</th>
-                                <th>Paid Amount</th>
+                                <th colspan="2">Paid Amount</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -168,26 +176,26 @@
                                 <td>@if(!empty($order->coupon_discount))
                                     ${{ number_format((float)$order->coupon_discount,2,'.',','), }}
                                     @else
-                                    0
+                                    $0
                                     @endif
                                 </td>
                                 <td>{{ strtoupper($order->shippment_via) }}</td>
                                 <td>@if(!empty($order->shippment_rate))
                                     ${{ number_format((float)$order->shippment_rate,2,'.',','), }}
                                     @else
-                                    0
+                                    $0
                                     @endif
                                 </td>
                                 <td>@if(!empty($order->tax_amount))
                                     ${{ number_format((float)$order->tax_amount,2,'.',','), }}
                                     @else
-                                    0
+                                    $0
                                     @endif
                                 </td>
                                 <td>@if(!empty($order->total_amount))
                                     ${{ number_format((float)$order->total_amount,2,'.',','), }}
                                     @else
-                                    0
+                                    $0
                                     @endif
                                 </td>
                             </tr>
