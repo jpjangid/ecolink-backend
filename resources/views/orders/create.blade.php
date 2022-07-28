@@ -274,7 +274,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select name="product_id[]" class="form-control select2bs4 product_id" required>
+                                    <select name="product_id[]" class="form-control product_id" required>
                                         <option value="">Select Product</option>
                                         @foreach($products as $product)
                                         <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? "selected" : "" }}>{{ $product->name }} - {{$product->variant}}</option>
@@ -312,7 +312,7 @@
                             <input type="hidden" id="lift_gate_value" value="{{ $lift_gate->value }}" />
                         </div>
                     </div>
-                    <!-- lift Gate -->
+                    <!-- lift Gate Status -->
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label"> Lift Gate</label>
@@ -323,12 +323,31 @@
                             </select>
                         </div>
                     </div>
-                    <!-- Discount -->
+                    <!-- lift Gate Amount -->
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label" for="lift_gate_amt"> Lift Gate Amount </label>
                             <input type="number" step=".01" class="form-control form-control-solid @error('lift_gate_amt') is-invalid @enderror" name="lift_gate_amt" id="lift_gate_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter Lift Gate Amount" readonly>
                             <input type="hidden" id="lift_gate_value" value="{{ $lift_gate->value }}" />
+                        </div>
+                    </div>
+                    <!-- CERT Fee Status -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label"> CERT Fee</label>
+                            <select class="form-control" name="cert_fee" id="cert_fee">
+                                <option value="">Select CERT Fee</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- CERT Fee Amount -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="required form-label" for="cert_fee_amt"> CERT Fee Amount </label>
+                            <input type="number" step=".01" class="form-control form-control-solid @error('cert_fee_amt') is-invalid @enderror" name="cert_fee_amt" id="cert_fee_amt" min="0" oninput="validity.valid||(value='');" placeholder="Please Enter CERT Fee Amount" readonly>
+                            <input type="hidden" id="cert_fee_value" value="{{ $cert_fee->value }}" />
                         </div>
                     </div>
                     <!-- Hazardous -->
@@ -488,6 +507,7 @@
             var shipping_zip = $('#shipping_zip').val();
             var total = $('#order_amount').val();
             var coupon = $('#coupon').val();
+            var client_id = $('#customer').val();
             if (total > 0 && shipping_zip !== '') {
                 $.ajax({
                     url: "{{ url('admin/orders/getTaxableAmount') }}",
@@ -497,6 +517,7 @@
                         shipping_zip: shipping_zip,
                         total: total,
                         coupon: coupon,
+                        client_id: client_id,
                         _token: '{{csrf_token()}}'
                     },
                     success: function(data) {
@@ -688,6 +709,22 @@
         calculateTotal();
     }
 
+    $(document).on('change', '#cert_fee', function() {
+        cert_fee();
+    });
+
+    function cert_fee() {
+        var id = $('#cert_fee').val();
+        var name = 'CERT Fee';
+        var cert_fee_value = $('#cert_fee_value').val();
+        if (id == 1) {
+            $("#cert_fee_amt").val(parseFloat(cert_fee_value));
+        } else {
+            $('#cert_fee_amt').val(0);
+        }
+        calculateTotal();
+    }
+
     function getCouponCode() {
         var user_id = $('#customer').val();
         $.ajax({
@@ -798,6 +835,9 @@
         let lift_gate_amt = $('#lift_gate_amt').val();
         lift_gate_amt = lift_gate_amt !== '' ? lift_gate_amt : 0;
 
+        let cert_fee_amt = $('#cert_fee_amt').val();
+        cert_fee_amt = cert_fee_amt !== '' ? cert_fee_amt : 0;
+
         let tax_amt = $('#tax_amt').val();
         let shipping_charge = $('#shipping_charge').val();
 
@@ -806,7 +846,7 @@
 
         tax_amt = tax_amt != '' ? tax_amt : 0;
 
-        total_amt = parseFloat(total_amt) + parseFloat(hazardous_amt) + parseFloat(lift_gate_amt) + parseFloat(tax_amt) + parseFloat(shipping_charge) - parseFloat(discount);
+        total_amt = parseFloat(total_amt) + parseFloat(hazardous_amt) + parseFloat(lift_gate_amt) + parseFloat(tax_amt) + parseFloat(shipping_charge) + parseFloat(cert_fee_amt) - parseFloat(discount);
 
         $(".total_qty").val(total_qty);
         $(".total_amt").val(total_amt.toFixed(2));
