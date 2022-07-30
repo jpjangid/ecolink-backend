@@ -51,6 +51,10 @@ Route::middleware('auth:api')->group(function () {
 
     //Route For Add Cart Items
     Route::post('addCartItems', [CartController::class, 'addCartItems']);
+
+    //Route For Cookies Cart Item to Save Into Database
+    Route::post('addCookiCartItems', [CartController::class, 'addCookiCartItems']);
+
     //Route For Delete Cart Items
     Route::post('deleteCartItems', [CartController::class, 'deleteCartItems']);
 
@@ -147,3 +151,4 @@ Route::post('qboPayment', [OrderController::class, 'qboPayment']);
 Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);
 Route::get('getCityList', [TaxRateController::class, 'getCityList']);
+
