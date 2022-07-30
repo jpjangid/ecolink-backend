@@ -229,9 +229,32 @@ class UserController extends Controller
                     }
                 }
 
-                DB::commit();
-                /* Validating Input fields */
+                $tax_user = User::select('id', 'name')->where('id', $user->id)->with('documents')->first()->toArray();
 
+                $files = array();
+                if (!empty($tax_user['documents'])) {
+                    foreach ($tax_user['documents'] as $document) {
+                        $file = public_path('storage/documents/' . $tax_user['id'] . '/' . $document['file_name']);
+                        array_push($files, $file);
+                    }
+                }
+
+                try {
+                    if (!empty($files)) {
+                        Mail::send('emails.taxexempt', ['user' => $tax_user], function ($message) use ($files) {
+                            $message->to('accountinggroup@ecolink.com', 'accountinggroup@ecolink.com')
+                                ->subject("Tax Exempt Documents");
+
+                            foreach ($files as $file) {
+                                $message->attach($file);
+                            }
+                        });
+                    }
+                } catch (\Exception $e) {
+                    return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
+                }
+
+                DB::commit();
 
                 /* After Successfull insertion of data redirecting to listing page with message */
                 return redirect('admin/users')->with('success', 'User has been added successfully');
@@ -358,10 +381,10 @@ class UserController extends Controller
                         'file_type'    => $ext,
                         'file_name'    => $name
                     ]);
-                    array_push($documents,asset('storage/documents/'.$user->id.'/'.$name));
+                    array_push($documents, asset('storage/documents/' . $user->id . '/' . $name));
                 }
             }
-            
+
             $user->documents = $documents;
             if ($request['tax_exempt'] == 1 && $request['flag'] == 0 && $request['role_id'] == 2) {
                 try {
@@ -369,6 +392,31 @@ class UserController extends Controller
                 } catch (\Exception $e) {
                     return redirect()->back()->with('success', $e->getMessage());
                 }
+            }
+
+            $tax_user = User::select('id', 'name')->where('id', $user->id)->with('documents')->first()->toArray();
+
+            $files = array();
+            if (!empty($tax_user['documents'])) {
+                foreach ($tax_user['documents'] as $document) {
+                    $file = public_path('storage/documents/' . $tax_user['id'] . '/' . $document['file_name']);
+                    array_push($files, $file);
+                }
+            }
+
+            try {
+                if (!empty($files)) {
+                    Mail::send('emails.taxexempt', ['user' => $tax_user], function ($message) use ($files) {
+                        $message->to('accountinggroup@ecolink.com', 'accountinggroup@ecolink.com')
+                            ->subject("Tax Exempt Documents");
+
+                        foreach ($files as $file) {
+                            $message->attach($file);
+                        }
+                    });
+                }
+            } catch (\Exception $e) {
+                return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
             }
 
             DB::commit();

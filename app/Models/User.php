@@ -35,4 +35,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\Models\Role', 'role_id');
     }
+
+    public function documents()
+    {
+        $date = date('Y-m-d');
+        return $this->hasMany('App\Models\UserDocument')->select('user_id','file_type','file_name','created_at')->where('is_deleted',0)->whereDate('created_at', $date);
+    }
 }
