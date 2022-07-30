@@ -3,6 +3,15 @@
 		pointer-events: none;
 	}
 </style> -->
+
+@php
+$coustom_pages = array("Custom_Blade_Solution",
+"Intern_Onboarding_Form",
+"Intership_Application_Form",
+"Scholarship_Contest_Submission",
+"Scholarship_Winner","cannabis",
+"contact_today");  
+@endphp
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background: linear-gradient(#2f2f2f, #2f2f2f); ">
 	<!-- Brand Logo -->
@@ -96,6 +105,18 @@
 				        	</a>
 				       </li>
 			        	@endif
+						@if(auth()->user()->role_id == 1)
+			        	@if(checkpermission('UserPermissionController@index'))
+			        	<li class="nav-item has-treeview">
+			  		       <a href="{{ url('admin/userpermissions') }}" class="nav-link">
+						      <i class="fas fa-user-lock nav-icon"></i>
+						         <p>
+						    	     User Permissions
+						        </p>
+				          	</a>
+			        	</li>
+			        	@endif
+			         	@endif
 					</ul>
 				</li>
 				<li class="nav-item has-treeview">
@@ -125,33 +146,6 @@
 						@endif
 					</ul>
 				</li>
-				{{-- <li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="nav-icon fas fa-cubes"></i>
-						<p>
-							Blog Category
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('BlogCategoryController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/blogcategory/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Blog Category</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('BlogCategoryController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/blogcategory') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Blog Category List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li> --}}
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
 						<i class="nav-icon fas fa-blog"></i>
@@ -199,33 +193,6 @@
 									<a href="{{ url('admin/blogcategory') }}" class="nav-link">
 										<i class="far fa-circle nav-icon"></i>
 										<p>Blog Category List</p>
-									</a>
-								</li>
-								@endif
-							</ul>
-						</li>
-						<li class="nav-item has-treeview">
-							<a href="#" class="nav-link">
-								<i class="nav-icon fas fa-clone"></i>
-								<p>
-									Sub Category
-									<i class="fas fa-angle-left right"></i>
-								</p>
-							</a>
-							<ul class="nav nav-treeview">
-								@if(checkpermission('SubCategoryController@create'))
-								<li class="nav-item">
-									<a href="{{ url('admin/sub/categories/create') }}" class="nav-link">
-										<i class="far fa-circle nav-icon"></i>
-										<p>Add Sub Category</p>
-									</a>
-								</li>
-								@endif
-								@if(checkpermission('SubCategoryController@index'))
-								<li class="nav-item">
-									<a href="{{ url('admin/sub/categories') }}" class="nav-link">
-										<i class="far fa-circle nav-icon"></i>
-										<p>Sub Category List</p>
 									</a>
 								</li>
 								@endif
@@ -367,6 +334,33 @@
 						</li>
 						<li class="nav-item has-treeview">
 							<a href="#" class="nav-link">
+								<i class="nav-icon fas fa-clone"></i>
+								<p>
+									Sub Category
+									<i class="fas fa-angle-left right"></i>
+								</p>
+							</a>
+							<ul class="nav nav-treeview">
+								@if(checkpermission('SubCategoryController@create'))
+								<li class="nav-item">
+									<a href="{{ url('admin/sub/categories/create') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Add Sub Category</p>
+									</a>
+								</li>
+								@endif
+								@if(checkpermission('SubCategoryController@index'))
+								<li class="nav-item">
+									<a href="{{ url('admin/sub/categories') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Sub Category List</p>
+									</a>
+								</li>
+								@endif
+							</ul>
+						</li>
+						<li class="nav-item has-treeview">
+							<a href="#" class="nav-link">
 								<i class="nav-icon fas fa-map-pin"></i>
 								<p>
 									Dropship Locations
@@ -419,88 +413,100 @@
 							</a>
 						</li>
 						@endif
+						<li class="nav-item has-treeview">
+							<a href="#" class="nav-link">
+								<i class="fas fa-tags nav-icon"></i>
+								<p>
+									Coupon
+									<i class="fas fa-angle-left right"></i>
+								</p>
+							</a>
+							<ul class="nav nav-treeview">
+								@if(checkpermission('CouponController@create'))
+								<li class="nav-item">
+									<a href="{{ url('admin/coupons/create') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Add Coupon</p>
+									</a>
+								</li>
+								@endif
+								@if(checkpermission('CouponController@index'))
+								<li class="nav-item">
+									<a href="{{ url('admin/coupons') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Coupon List</p>
+									</a>
+								</li>
+								@endif
+							</ul>
+						</li>
+
+						<li class="nav-item has-treeview">
+							<a href="#" class="nav-link">
+								<i class="fas fa-solid fa-percent nav-icon"></i>
+								<p>
+									Tax Rate
+									<i class="fas fa-angle-left right"></i>
+								</p>
+							</a>
+							<ul class="nav nav-treeview">
+								@if(checkpermission('TaxRateController@create'))
+								<li class="nav-item">
+									<a href="{{ url('admin/taxrates/create') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Add Tax Rate</p>
+									</a>
+								</li>
+								@endif
+								@if(checkpermission('TaxRateController@index'))
+								<li class="nav-item">
+									<a href="{{ url('admin/taxrates') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Tax Rate List</p>
+									</a>
+								</li>
+								@endif
+							</ul>
+						</li>
+						<li class="nav-item has-treeview">
+							<a href="#" class="nav-link">
+								<i class="fas fa-shopping-cart nav-icon"></i>
+								<p>
+									Carts
+									<i class="fas fa-angle-left right"></i>
+								</p>
+							</a>
+							<ul class="nav nav-treeview">
+								@if(checkpermission('CartController@create'))
+								<li class="nav-item">
+									<a href="{{ url('admin/carts/create') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Add Cart</p>
+									</a>
+								</li>
+								@endif
+								@if(checkpermission('CartController@index'))
+								<li class="nav-item">
+									<a href="{{ url('admin/carts') }}" class="nav-link">
+										<i class="far fa-circle nav-icon"></i>
+										<p>Cart List</p>
+									</a>
+								</li>
+								@endif
+							</ul>
+						</li>
+						@if(checkpermission('WishlistController@index'))
+						<li class="nav-item has-treeview">
+							<a href="{{ url('admin/wishlists') }}" class="nav-link">
+								<i class="fas fa-solid fa-heart nav-icon"></i>
+								<p>
+									Wish List
+								</p>
+							</a>
+						</li>
+						@endif
 					</ul>
-				</li>
-				<li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="fas fa-tags nav-icon"></i>
-						<p>
-							Coupon
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('CouponController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/coupons/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Coupon</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('CouponController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/coupons') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Coupon List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li>
-				<li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="fas fa-solid fa-percent nav-icon"></i>
-						<p>
-							Tax Rate
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('TaxRateController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/taxrates/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Tax Rate</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('TaxRateController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/taxrates') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Tax Rate List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li>
-				<li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="fas fa-shopping-cart nav-icon"></i>
-						<p>
-							Carts
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('CartController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/carts/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Cart</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('CartController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/carts') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Cart List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
+					
 				</li>
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
@@ -565,51 +571,19 @@
 							</a>
 						</li>
 						@endif
+						@foreach($coustom_pages as $coustom_page)
+						<li class="nav-item has-treeview">
+							<a href="{{ url('admin/forms/list',$coustom_page) }}" class="nav-link">
+								<i class="fas fa-solid fa-address-book nav-icon"></i>
+								<p>
+									{{ ucwords(str_replace("_"," ",$coustom_page)) }}
+								</p>
+							</a>
+						</li>						
+						@endforeach
+
 					</ul>
 				</li>
-
-				@if(auth()->user()->role_id == 1)
-				@if(checkpermission('UserPermissionController@index'))
-				<li class="nav-item has-treeview">
-					<a href="{{ url('admin/userpermissions') }}" class="nav-link">
-						<i class="fas fa-user-lock nav-icon"></i>
-						<p>
-							User Permissions
-						</p>
-					</a>
-				</li>
-				@endif
-				@endif
-
-
-				{{-- <li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="nav-icon fas fa-map-pin"></i>
-						<p>
-							Dropship Locations
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('ProductController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/dropship/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Dropship Location</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('ProductController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/dropship') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Dropship Location List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li> --}}
-
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
 						<i class="fas fa-solid fa-envelope-open-text nav-icon"></i>
@@ -637,157 +611,7 @@
 						@endif
 					</ul>
 				</li>
-
-				{{-- <li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="nav-icon fas fa-file"></i>
-						<p>
-							Page
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('PageController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/pages/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Page</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('PageController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/pages') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Page List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li> --}}
-
-				{{-- <li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="fas fa-tags nav-icon"></i>
-						<p>
-							Coupon
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('CouponController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/coupons/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Coupon</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('CouponController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/coupons') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Coupon List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li> --}}
-
-				{{-- <li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="fas fa-solid fa-percent nav-icon"></i>
-						<p>
-							Tax Rate
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('TaxRateController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/taxrates/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Tax Rate</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('TaxRateController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/taxrates') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Tax Rate List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li> --}}
-
-				{{-- <li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="fas fa-shopping-cart nav-icon"></i>
-						<p>
-							Carts
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('CartController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/carts/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Cart</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('CartController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/carts') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Cart List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li> --}}
-
-				{{-- <li class="nav-item has-treeview">
-					<a href="#" class="nav-link">
-						<i class="fab fa-opencart nav-icon"></i>
-						<p>
-							Orders
-							<i class="fas fa-angle-left right"></i>
-						</p>
-					</a>
-					<ul class="nav nav-treeview">
-						@if(checkpermission('OrderController@create'))
-						<li class="nav-item">
-							<a href="{{ url('admin/orders/create') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Add Order</p>
-							</a>
-						</li>
-						@endif
-						@if(checkpermission('OrderController@index'))
-						<li class="nav-item">
-							<a href="{{ url('admin/orders') }}" class="nav-link">
-								<i class="far fa-circle nav-icon"></i>
-								<p>Order List</p>
-							</a>
-						</li>
-						@endif
-					</ul>
-				</li> --}}
-
-				@if(checkpermission('WishlistController@index'))
-				<li class="nav-item has-treeview">
-					<a href="{{ url('admin/wishlists') }}" class="nav-link">
-						<i class="fas fa-solid fa-heart nav-icon"></i>
-						<p>
-							Wish List
-						</p>
-					</a>
-				</li>
-				@endif
+			
 				<li class="nav-item has-treeview">
 					<a href="#" class="nav-link">
 						<i class="fas fa-solid fa-cog nav-icon"></i>
@@ -810,7 +634,7 @@
 					       <a href="{{ url('admin/notices') }}" class="nav-link">
 					        	<i class="fas fa-solid fa-pen nav-icon"></i>
 					         	<p>
-					        		Notice
+					        		Popups
 					        	</p>
 				         	</a>
 			         	</li>				

@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use App\Traits\QboRefreshToken;
+use App\Traits\QuickBooksOnline;
 
 class UserController extends Controller
 {
 	use QboRefreshToken;
+	use QuickBooksOnline;
 
 	public function register(Request $request)
 	{
@@ -111,7 +113,7 @@ class UserController extends Controller
 				'state'         =>  $request['state'],
 				'city'          =>  $request['city'],
 				'zip'           =>  $request['pincode'],
-				'landmark'      =>  $request['landmark'],
+				// 'landmark'      =>  $request['landmark'],
 				'name'          =>  $request['name'],
 				'address_type'  => 'billing'
 			]);
@@ -395,7 +397,7 @@ class UserController extends Controller
 			$user->pincode          =   $request['pincode'];
 			$user->password         =   $pass;
 			$user->profile_image    =   $image_name;
-			$user->landmark         =   $request['landmark'];
+			// $user->landmark         =   $request['landmark'];
 			$user->save();
 
 			$user->profile_image = asset('storage/profile_image/' . $user->profile_image);

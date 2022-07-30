@@ -20,6 +20,7 @@ use App\Http\Controllers\api\ReturnController;
 use App\Http\Controllers\api\TaxRateController;
 use App\Http\Controllers\api\StaticValueController;
 use App\Http\Controllers\api\NoticeController;
+use App\Http\Controllers\api\FormDataController;
 
 //Route for register new user
 Route::post('register', [UserController::class, 'register']);
@@ -129,6 +130,9 @@ Route::post('filterProduct', [HomeController::class, 'filterProduct']);
 Route::post('get-fedex-rates', [CheckoutController::class, 'getFedexShippingRates']);
 //Route For Get Saia Shipping Rates
 Route::post('get-saia-rates', [CheckoutController::class, 'getSaiaShippingRates']);
+
+//Route for submiting the form data
+Route::post('form/data/store',[FormDataController::class,'store']);
 
 //Route For Getting Tax Using zip
 Route::get('getTaxByZip', [TaxRateController::class, 'getTaxByZip']);

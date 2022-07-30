@@ -46,7 +46,7 @@ class CategoryController extends Controller
     
     $category = Category::where(['slug' => $request->slug, 'flag' => 0, 'parent_id' => null, 'status' => 1])->with(['subcategory:id,name,slug,parent_id,image,alt', 'products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty,hazardous,weight', 'products.wishlist' => function ($query) use ($user_id) {
       $query->where('user_id', $user_id);
-    }, 'subcategory.products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty', 'subcategory.products.wishlist' => function ($query) use ($user_id) {
+    }, 'subcategory.products:id,name,slug,parent_id,image,alt,sale_price,regular_price,minimum_qty,weight,length,width,height,shipping_class,dropship,insurance,hazardous,status,flag', 'subcategory.products.wishlist' => function ($query) use ($user_id) {
       $query->where('user_id', $user_id);
     }])->first();
     

@@ -31,6 +31,7 @@ use App\Http\Controllers\DropshipController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StaticValueController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\FormDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -177,6 +178,12 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::post('/getAddresses', [OrderController::class, 'getAddresses']);
         Route::post('/getAddressDetail', [OrderController::class, 'getAddressDetail']);
         Route::post('/getProductById', [OrderController::class, 'getProductById']);
+        Route::post('/static_value', [OrderController::class, 'StaticValue']);
+        Route::post('/getHazardous', [OrderController::class, 'getHazardous']);
+        Route::post('/getCouponCode', [OrderController::class, 'getCouponCode']);
+        Route::post('/codeApplied', [OrderController::class, 'codeApplied']);
+        Route::post('/getShippingCharge', [OrderController::class, 'getShippingCharge']);
+        Route::post('/getTaxableAmount', [OrderController::class, 'getTaxableAmount']);
     });
 
     Route::prefix('returns')->group(function () {
@@ -295,6 +302,10 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::put('/update/{id}', [DropshipController::class, 'update']);
         Route::delete('/delete/{id}', [DropshipController::class, 'destroy']);
     });
+
+    Route::get('form/detail/{id}',[FormDataController::class,'show']);
+    Route::get('forms/list',[FormDataController::class,'index']);
+    Route::get('forms/list/{form_data_id}',[FormDataController::class,'list']);
 });
 
 Route::get('qboCustomer/{companyName}/{user_id}', [UserController::class, 'qboCustomer']);

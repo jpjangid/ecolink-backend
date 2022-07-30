@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 use Spatie\Permission\Models\Role;
 use App\Traits\QboRefreshToken;
+use App\Traits\QuickBooksOnline;
 
 class UserController extends Controller
 {
     use QboRefreshToken;
+    use QuickBooksOnline;
 
     public function index(Request $request)
     {
@@ -111,7 +113,8 @@ class UserController extends Controller
                 'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
                 'password'          =>  'required|min:8',
                 'role_id'           =>  'required',
-                'profile_image'     =>  'required'
+                'profile_image'     =>  'required',
+                'validity_date'     =>  'required_if:tax_exempt,==,1',
             ];
             $validationMessages = [
                 'name.required'             =>  'Please Enter Name',
@@ -132,16 +135,17 @@ class UserController extends Controller
                 'mobile.numeric'            =>  'The Mobile No. must be numeric',
                 'password.required'         =>  'Please Enter Password',
                 'profile_image.required'    =>  'Please Select Profile Image',
+                'validity_date.required_if' =>  'Please Select Tax Exempt Validity Date',
             ];
             if ($request->tax_exempt == 1) {
                 $validations = array_merge($validations, [
                     'files'             =>  'required_if:tax_exempt,==,1',
-                    'files.*'            =>  'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+                    'files.*'           =>  'max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
                 ]);
                 $validationMessages = array_merge($validationMessages, [
                     'files.required_if'         =>  'Please Select Files',
-                    'files.*.mimes'             =>     'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
-                    'files.*.max'                 =>     'Sorry! Maximum allowed size for an file is 10MB',
+                    'files.*.mimes'             =>  'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
+                    'files.*.max'               =>   'Sorry! Maximum allowed size for an file is 10MB',
                 ]);
             }
             $request->validate($validations, $validationMessages);
@@ -177,7 +181,8 @@ class UserController extends Controller
                     'password'              =>  $pass,
                     'role_id'               =>  $request['role_id'],
                     'profile_image'         =>  $image_name,
-                    'tax_exempt'         =>  $request['tax_exempt'],
+                    'tax_exempt'            =>  $request['tax_exempt'],
+                    'validity_date'         =>  $request['validity_date'],
                 ]);
 
                 UserAddress::create([
@@ -186,7 +191,7 @@ class UserController extends Controller
                     'email'         =>  $request['email'],
                     'mobile'        =>  $request['mobile'],
                     'address'       =>  $request['address'],
-                    'landmark'      =>  $request['landmark'],
+                    // 'landmark'      =>  $request['landmark'],
                     'country'       =>  $request['country'],
                     'state'         =>  $request['state'],
                     'city'          =>  $request['city'],
@@ -269,7 +274,8 @@ class UserController extends Controller
             'country'           =>  'required|regex:/^[\pL\s\-]+$/u',
             'password'          =>  'nullable|min:8',
             'role_id'           =>  'required',
-            'files.*'           =>  'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg'
+            'files.*'           =>  'nullable|max:10000|mimes:doc,docx,pdf,jpg,png,jpeg',
+            'validity_date'     =>  'required_if:tax_exempt,==,1',
         ], [
             'name.required'             =>  'Please Enter Name',
             'company_name.required'     =>  'Please Enter Company Name',
@@ -288,6 +294,7 @@ class UserController extends Controller
             'mobile.numeric'            =>  'The Mobile No. must be numeric',
             'files.*.mimes'             =>  'Only doc,docx,pdf,jpg,png and jpeg files are allowed',
             'files.*.max'               =>  'Sorry! Maximum allowed size for an file is 10MB',
+            'validity_date.required_if' =>  'Please Select Tax Exempt Validity Date',
         ]);
 
         /* Fetching Blog Data using Id */
@@ -328,6 +335,7 @@ class UserController extends Controller
             $user->tax_exempt       =   $request['tax_exempt'];
             $user->flag             =   $request['flag'];
             $user->profile_image    =   $image_name;
+            $user->validity_date    =   $request['validity_date'];
             $user->save();
 
             $user->url = url('') . '/profile/auth';
@@ -404,94 +412,5 @@ class UserController extends Controller
     {
         $data = User::where(['email' => $request->email, 'flag' => '1'])->first();
         return response()->json($data);
-    }
-
-    public function qboCustomer($companyName, $user_id)
-    {
-        $file = file_get_contents('storage/qbo.json');
-        $content = json_decode($file, true);
-        $company_name = str_replace("'", "\'", $companyName);
-        $company_name = str_replace(' ', '%20', $company_name);
-
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content['access_token'],
-                'Content-Type' => 'application/json'
-            ])->get(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/query?query=select%20*%20from%20Customer%20Where%20CompanyName%20=%20\'' . $company_name . '\'&minorversion=' . config('qboconfig.minorversion'));
-
-            $data = json_decode($response);
-            if (isset($data->fault->error[0]->code)) {
-                $type = "online";
-                $token = $this->accessToken($type);
-                $data = json_encode($token);
-                file_put_contents('storage/qbo.json', $data);
-                return $this->qboCustomer($companyName, $user_id);
-            }
-            if (isset($data->QueryResponse->Customer)) {
-                $user = User::find($user_id);
-                $user->wp_id = $data->QueryResponse->Customer[0]->Id;
-                $user->update();
-
-                return response()->json(['message' => 'Customer data fetched Successfully', 'code' => 200], 200);
-            }
-            if (!empty($data->QueryResponse)) {
-                $response = $this->createQboCustomer($companyName, $user_id);
-
-                return $response;
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
-    }
-
-    public function createQboCustomer($companyName, $user_id)
-    {
-        $user = User::find($user_id);
-
-        $file = file_get_contents('storage/qbo.json');
-        $content = json_decode($file, true);
-
-        $data['FullyQualifiedName'] = $user->name;
-        $data['PrimaryEmailAddr']['Address'] = $user->email;
-        $data['DisplayName'] = $user->name;
-        $data['PrimaryPhone']['FreeFormNumber'] = $user->phone;
-        $data['CompanyName'] = $user->company_name;
-        $data['BillAddr']['CountrySubDivisionCode'] = $user->state;
-        $data['BillAddr']['City'] = $user->city;
-        $data['BillAddr']['PostalCode'] = $user->pincode;
-        $data['BillAddr']['Line1'] = $user->address;
-        $data['BillAddr']['Country'] = 'USA';
-        $data['GivenName'] = $user->name;
-
-        try {
-            $response = Http::accept('application/json')->withHeaders([
-                'Authorization' => 'Bearer ' . $content['access_token'],
-                'Content-Type' => 'application/json'
-            ])->post(config('qboconfig.accounting_url') . 'v3/company/' . config('qboconfig.company_id') . '/customer', $data);
-
-            $data = json_decode($response);
-
-            if (isset($data->Customer)) {
-                $user = User::find($user_id);
-                $user->wp_id = $data->Customer->Id;
-                $user->update();
-
-                return response()->json(['message' => 'Customer created Successfully', 'code' => 200], 200);
-            }
-
-            if (isset($data->fault->error[0]->code) && $data->fault->error[0]->code == 3200) {
-                $type = "online";
-                $token = $this->accessToken($type);
-                $data = json_encode($token);
-                file_put_contents('storage/qbo.json', $data);
-                return $this->createQboCustomer($companyName, $user_id);
-            }
-
-            if (isset($data->Fault->Error[0]->code) && $data->Fault->Error[0]->code == 6240) {
-                return response()->json(['message' => $data->Fault->Error[0]->Message, 'code' => 400], 400);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'code' => 400], 400);
-        }
     }
 }

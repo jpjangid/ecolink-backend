@@ -9,6 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         Commands\SosItemUpdateCron::class,
+        Commands\TaxExemptCron::class,
     ];
     /**
      * Define the application's command schedule.
@@ -19,6 +20,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('sositemupdate:cron')->daily();
+        $schedule->command('taxexempt:cron')->daily();
     }
 
     /**

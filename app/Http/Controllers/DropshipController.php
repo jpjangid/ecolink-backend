@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dropship;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -172,9 +173,13 @@ class DropshipController extends Controller
      */
     public function destroy($id)
     {
+        $dropships = Product::where('dropship', $id)->get();
+
+        if($dropships->isNotEmpty()){
+            return redirect('admin/dropship')->with('danger', 'This Value is Being Used Somewhere so Cannot be Deleted.');
+        }
         Dropship::where('id', $id)->update(['status'=>1]);
-
-
-            return redirect('admin/dropship')->with('danger', 'Drop Ship Deleted');
+        return redirect('admin/dropship')->with('danger', 'Drop Ship Deleted');
+        
     }
 }
