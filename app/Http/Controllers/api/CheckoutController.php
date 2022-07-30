@@ -66,7 +66,7 @@ class CheckoutController extends Controller
 
 		$current = date('Y-m-d H:i:s');
 
-		$coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->orWhere([['type', 'customer_based'], ['user_id', $user->id],['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->get();
+		$coupons = Coupon::select('id', 'name', 'type', 'code', 'disc_type', 'discount')->where(['flag' => 0])->where([['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->orWhere([['type', 'customer_based'], ['user_id', $user->id], ['offer_start', '<=', $current], ['offer_end', '>=', $current], ['min_order_amount', '<=', $order_total], ['max_order_amount', '>=', $order_total]])->get();
 
 		$data = collect(['carts' => $carts, 'user' => $user, 'order_total' => $order_total, 'payable' => $payable, 'total_discount' => $total_discount, 'product_count' => $product_count, 'coupons' => $coupons, 'addresses' => $addresses, 'hazardous_amt' => $hazardous_amt, 'lift_gate_amt' => $lift_gate_amt]);
 
@@ -79,7 +79,7 @@ class CheckoutController extends Controller
 		// $fedex_markup_percent = $fedex_markup->value ?? 0;
 
 		$rate = $this->getFedexShipRate($request);
-		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate , 'code' => '200'], 200);
+		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 		//return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 
@@ -89,7 +89,7 @@ class CheckoutController extends Controller
 		// $saia_markup_percent = $saia_markup->value ?? 0;
 
 		$rate = $this->getSaiaShipRate($request);
-		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate , 'code' => '200'], 200);
+		return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 		// return response()->json(['message' => 'Rate fetched successfully.', 'rate' => $rate, 'code' => '200'], 200);
 	}
 }

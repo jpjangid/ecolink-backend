@@ -2,6 +2,10 @@
 
 @section('title', 'Edit Page')
 
+
+@section('css')
+
+@endsection
 @section('content')
 <div class="content">
     <div class="content-header">
@@ -125,7 +129,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
-                            <textarea id="wysiwyg" class="form-control form-control-solid @error('description') is-invalid @enderror" name="description"><?php echo $page->description; ?></textarea>
+                            <textarea id="summernote" class="form-control form-control-solid @error('description') is-invalid @enderror" name="description"><?php echo $page->description; ?></textarea>
                             @error('description')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -250,7 +254,6 @@
 </div>
 @endsection
 @section('js')
-<script src="{{ asset('js/validations/pages/editpagerules.js') }}"></script>
 <script type=text/javascript>
     function readURL(input) {
         if (input.files && input.files[0]) {

@@ -63,6 +63,9 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
     //Profile Route
     Route::get('profile/{id}', [ProfileController::class, 'edit']);
     Route::patch('profile/update/{id}', [ProfileController::class, 'update']);
+    Route::post('/summernote', [PageController::class, 'summernote']);
+
+
 
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
@@ -286,12 +289,12 @@ Route::middleware(['auth', 'prevent-back-history'])->prefix('admin')->group(func
         Route::put('/update/{category_title}/{category_des}', [SettingController::class, 'update']);
     });
 
-    Route::prefix('reports')->group(function(){
+    Route::prefix('reports')->group(function () {
         Route::get('/sales', [ReportController::class, 'salesReport']);
         Route::get('/carts', [ReportController::class, 'abandonedCartReport']);
     });
 
-    Route::prefix('dropship')->group(function (){
+    Route::prefix('dropship')->group(function () {
         Route::get('/', [DropshipController::class, 'index']);
         Route::get('/create', [DropshipController::class, 'create']);
         Route::post('/store', [DropshipController::class, 'store']);

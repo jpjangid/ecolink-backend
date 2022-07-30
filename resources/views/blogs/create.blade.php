@@ -135,7 +135,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="required form-label" for="description"><span style="color: red;">* </span>Detail Description</label>
-                            <textarea id="wysiwyg" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo old('description'); ?></textarea>
+                            <textarea id="summernote" class="form-control @error('description') is-invalid @enderror" name="description"><?php echo old('description'); ?></textarea>
                             @error('description')
                             <span class="error invalid-feedback">{{ $message }}</span>
                             @enderror
