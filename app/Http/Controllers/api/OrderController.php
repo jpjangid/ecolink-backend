@@ -402,6 +402,43 @@ class OrderController extends Controller
         }
     }
 
+    public function qboEcheckPayment(Request $request)
+    {
+        $request_id = strtoupper(Str::random(20));
+        $data['bankAccount']['phone'] = $request->phone;
+        $data['bankAccount']['routingNumber'] = $request->routingNumber;
+        $data['bankAccount']['name'] = $request->name;
+        $data['bankAccount']['accountType'] = $request->accountType;
+        $data['bankAccount']['accountNumber'] = $request->accountNumber;
+
+        $data['paymentMode'] = "WEB";
+        $data['amount'] = sprintf("%.2f", $request->amount);
+
+        try {
+            $file = file_get_contents('storage/qbopayment.json');
+            $content = json_decode($file, true);
+
+            $response = Http::withHeaders([
+                'request-id' => $request_id,
+                'Authorization' => 'Bearer ' . $content['access_token'],
+                'Content-Type' => 'application/json'
+            ])->post(config('qboconfig.payment_url') . 'quickbooks/v4/payments/echecks', $data);
+
+            if (isset($response['code']) && $response['code'] == 'AuthenticationFailed') {
+                $type = "payment";
+                $token = $this->accessToken($type);
+                $data = json_encode($token);
+                file_put_contents('storage/qbopayment.json', $data);
+                return $this->qboEcheckPayment($request);
+            }
+
+            $data = ['request_id' => $request_id, 'response' => json_decode($response)];
+            return $data;
+        } catch (\Exception $e) {
+            return  $e->getMessage();
+        }
+    }
+
     public function sosItemUpdate()
     {
         $file = file_get_contents('storage/sos.json');

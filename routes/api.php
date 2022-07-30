@@ -144,6 +144,7 @@ Route::get('sosRefreshToken', [OrderController::class, 'sosRefreshToken']);
 Route::get('qboCustomer', [OrderController::class, 'qboCustomer']);
 Route::get('createQboCustomer', [UserController::class, 'createQboCustomer']);
 Route::post('qboPayment', [OrderController::class, 'qboPayment']);
+Route::post('qboEcheckPayment', [OrderController::class, 'qboEcheckPayment']);
 Route::get('getStaticValue', [StaticValueController::class, 'getStaticValue']);
 Route::get('getNotice', [NoticeController::class, 'getNotice']);
 Route::get('getCityList', [TaxRateController::class, 'getCityList']);
