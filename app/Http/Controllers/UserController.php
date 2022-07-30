@@ -340,14 +340,11 @@ class UserController extends Controller
 
             $user->url = url('') . '/profile/auth';
 
-            if ($request['tax_exempt'] == 1 && $request['flag'] == 0 && $request['role_id'] == 2) {
-                Mail::to($request->email)->send(new NotifyUser($user));
-            }
-
             if ($user->wp_id == null && $user->company_name != null) {
                 $this->qboCustomer($user->company_name, $user->id);
             }
 
+            $documents = array();
             if (!empty($request->file('files'))) {
                 $files = $request->file('files');
 
@@ -361,6 +358,16 @@ class UserController extends Controller
                         'file_type'    => $ext,
                         'file_name'    => $name
                     ]);
+                    array_push($documents,asset('storage/documents/'.$user->id.'/'.$name));
+                }
+            }
+            
+            $user->documents = $documents;
+            if ($request['tax_exempt'] == 1 && $request['flag'] == 0 && $request['role_id'] == 2) {
+                try {
+                    Mail::to($request->email)->send(new NotifyUser($user));
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('success', $e->getMessage());
                 }
             }
 
