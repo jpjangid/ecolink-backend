@@ -7,21 +7,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NotifyUser extends Mailable
+class OrderSuccessful extends Mailable
 {
     use Queueable, SerializesModels;
-    public $user;
-    public $files;
+    public $order;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($order)
     {
-        $this->user = $user;
-        $this->files = $user->documents;
+        $this->order = $order;
     }
 
     /**
@@ -31,12 +29,9 @@ class NotifyUser extends Mailable
      */
     public function build()
     {
-        $this->markdown('emails.notifyuser')
+        $this->markdown('emails.ordersuccessful')
             ->from('developerecolink@gmail.com', 'ecolink')
-            ->subject('Tax Exempted');
-        foreach($this->files as $file) {
-            $this->attach($file);
-        }
-        return $this;    
+            ->subject('Order Successful');
+        return $this;  
     }
 }

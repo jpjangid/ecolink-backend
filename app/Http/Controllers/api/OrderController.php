@@ -19,6 +19,9 @@ use App\Traits\ShippingRate;
 use App\Traits\QboRefreshToken;
 use App\Traits\ShipVia;
 use App\Traits\QuickBooksOnline;
+use App\Mail\OrderSuccessful;
+use App\Mail\OrderCancel;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -296,6 +299,8 @@ class OrderController extends Controller
             // }
 
             DB::commit();
+            $order->email = $user->email;
+            Mail::to($user->email)->send(new OrderSuccessful($order));
 
             return response()->json(['message' => 'Order Placed Successfully', 'code' => 200, 'data' => $order], 200);
         } catch (\Exception $e) {
@@ -323,6 +328,9 @@ class OrderController extends Controller
             $order->order_status = 'cancelled';
             $order->update();
 
+            $order->email = $user->email;
+
+            Mail::to($user->email)->send(new OrderCancel($order));
             return response()->json(['message' => 'Data fetched Successfully', 'data' => $order], 200);
         } else {
             return response()->json(['message' => 'No Order Found', 'code' => 400], 400);
