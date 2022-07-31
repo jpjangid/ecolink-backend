@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class TaxExemptCron extends Command
 {
@@ -47,6 +48,19 @@ class TaxExemptCron extends Command
             User::where('id', $client->id)->update([
                 'tax_exempt'    =>  0,
             ]);
+
+            $user['email'] = $client->email;
+            $user['name'] = $client->name;
+
+            Mail::send('emails.notifyuser', $user, function($message)use($user) {
+                $message->to($user["email"], $user["email"])
+                        ->subject('Tax Exempt Validity Expired');
+            });
+
+            Mail::send('emails.notifyuser', $user, function($message)use($user) {
+                $message->to('accountinggroup@ecolink.com', 'accountinggroup@ecolink.com')
+                        ->subject('Tax Exempt Validity Expired');
+            });
         }
 
         Log::info("Tax Exempt Cron Job is working Fine");
