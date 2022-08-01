@@ -156,7 +156,7 @@ class UserController extends Controller
 
 				if(!empty($files)){
 					Mail::send('emails.taxexempt', ['user' => $tax_user], function ($message) use ($files) {
-						$message->to('accountinggroup@ecolink.com', 'accountinggroup@ecolink.com')
+						$message->to('vishvendrasingh3365@gmail.com', 'vishvendrasingh3365@gmail.com')
 							->subject("Tax Exempt Documents");
 		
 						foreach ($files as $file) {
@@ -456,7 +456,7 @@ class UserController extends Controller
 			try {
 				if(!empty($files)){
 					Mail::send('emails.taxexempt', ['user' => $tax_user], function ($message) use ($files) {
-						$message->to('accountinggroup@ecolink.com', 'accountinggroup@ecolink.com')
+						$message->to('vishvendrasingh3365@gmail.com', 'vishvendrasingh3365@gmail.com')
 							->subject("Tax Exempt Documents");
 		
 						foreach ($files as $file) {
