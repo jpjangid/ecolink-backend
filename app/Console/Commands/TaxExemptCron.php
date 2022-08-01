@@ -58,7 +58,7 @@ class TaxExemptCron extends Command
             });
 
             Mail::send('emails.notifyuser', $user, function($message)use($user) {
-                $message->to('accountinggroup@ecolink.com', 'accountinggroup@ecolink.com')
+                $message->to('vishvendrasingh3365@gmail.com', 'vishvendrasingh3365@gmail.com')
                         ->subject('Tax Exempt Validity Expired');
             });
         }
