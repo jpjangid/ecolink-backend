@@ -270,7 +270,7 @@
                                 <th><span style="color: red;">* </span>Quantity</th>
                                 <th><span style="color: red;">* </span>Sale Price</th>
                                 <th><span style="color: red;">* </span> Total</th>
-                                <th><button type="button" class="btn btn-primary btn-sm add_row"><i class="fa fa-plus-circle"></i></button></th>
+                                {{-- <th><button type="button" class="btn btn-primary btn-sm add_row"><i class="fa fa-plus-circle"></i></button></th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -291,7 +291,7 @@
                                 </td>
                                 <td><input type="text" name="sale_price[]" value="{{$item->sale_price}}" class="form-control sale_price" placeholder="Enter Sale Price" readonly></td>
                                 <td><input type="text" value="{{ $item->sale_price * $item->quantity }}" name="product_total[]" class="form-control product_total" placeholder="Enter Product Total" readonly></td>
-                                <td><button type="button" class="btn btn-danger btn-sm delete_row"><i class="fa fa-minus-circle"></i></button></td>
+                                {{-- <td><button type="button" class="btn btn-danger btn-sm delete_row"><i class="fa fa-minus-circle"></i></button></td> --}}
                             </tr>
                             @endforeach
                         </tbody>
@@ -569,13 +569,13 @@
         });
     }
 
-    $(document).ready(function() {
-        getCouponCode();
-        getAddresses();
-        lift_gate();
-        cert_fee();
-        calculateTotal();
-    });
+    // $(document).ready(function() {
+    //     getCouponCode();
+    //     getAddresses();
+    //     lift_gate();
+    //     cert_fee();
+    //     calculateTotal();
+    // });
 
     $(document).on('change', '#same', function() {
         var same = $('#same').val();
