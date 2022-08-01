@@ -389,15 +389,12 @@
                     </div>
 
                     <!-- Ship Via -->
-                    <!-- <div class="col-md-4">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label"> Ship Via </label>
-                            <select class="form-control" name="shippment_via">
-                                <option value="saia" {{ $order->shippment_via == 'saia' ? 'selected' : '' }}>Saia</option>
-                                <option value="fedex" {{ $order->shippment_via == 'fedex' ? 'selected' : '' }}>Fedex</option>
-                            </select>
+                            <input type="text" id="shipVia" class="form-control" placeholder="Please Enter Ship Via" value="{{ ucfirst($order->shippment_via) }}" readonly/>
                         </div>
-                    </div> -->
+                    </div>
 
                     <!-- Shipping Charge -->
                     <div class="col-md-4">
@@ -528,12 +525,14 @@
                         _token: '{{csrf_token()}}'
                     },
                     success: function(data) {
-                        $('#shipping_charge').val(data.toFixed(2));
+                        $('#shipping_charge').val(data.shipping_charge);
+                        $('#shipVia').val(data.shipment_via);
                         resolve(true);
                     }
                 });
             } else {
                 $('#shipping_charge').val(0);
+                $('#shipVia').val('');
                 resolve(true);
             }
         });

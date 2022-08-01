@@ -753,7 +753,14 @@ class OrderController extends Controller
 
     public function getShippingCharge(Request $request)
     {
-        $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $request->product_id]);
+        $product_id_and_qty = array();
+        foreach ($request->product_id as $key => $product_id){
+            $prod['id'] = $product_id;
+            $prod['qty'] = $request->quantity[$key];
+            array_push($product_id_and_qty, $prod);
+        }
+
+        $newRequest = new Request(['city' => $request->shipping_city, 'state' => $request->shipping_state, 'zip' => $request->shipping_zip, 'country' => $request->shipping_country, 'product_id' => $product_id_and_qty]);
 
         $products = DB::table('products')->whereIn('id', $request->product_id)->get();
         $total_weight = 0;
@@ -768,13 +775,14 @@ class OrderController extends Controller
         $shipment_via = 0;
         $shipping_charge = 0;
         if ($total_weight >= 71) {
-            $shipment_via = 'saia';
+            $shipment_via = 'Saia';
             $shipping_charge = $this->getSaiaShipRate($newRequest);
         } else {
-            $shipment_via = 'fedex';
+            $shipment_via = 'Fedex';
             $shipping_charge = $this->getFedexShipRate($newRequest);
         }
 
-        return $shipping_charge;
+        $data = ['shipment_via' => $shipment_via, 'shipping_charge' => $shipping_charge];
+        return $data;
     }
 }
