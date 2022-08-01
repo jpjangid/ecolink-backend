@@ -377,15 +377,12 @@
                     </div>
 
                     <!-- Ship Via -->
-                    <!-- <div class="col-md-4">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label class="required form-label"> Ship Via </label>
-                            <select class="form-control" name="shippment_via">
-                                <option value="saia">Saia</option>
-                                <option value="fedex">Fedex</option>
-                            </select>
+                            <input type="text" id="shipVia" class="form-control" placeholder="Please Enter Ship Via" value="" readonly/>
                         </div>
-                    </div> -->
+                    </div>
 
                     <!-- Shipping Charge -->
                     <div class="col-md-4">
@@ -491,12 +488,14 @@
                         _token: '{{csrf_token()}}'
                     },
                     success: function(data) {
-                        $('#shipping_charge').val(data);
+                        $('#shipping_charge').val(data.shipping_charge);
+                        $('#shipVia').val(data.shipment_via);
                         resolve(true);
                     }
                 });
             } else {
                 $('#shipping_charge').val(0);
+                $('#shipVia').val('');
                 resolve(true);
             }
         });
