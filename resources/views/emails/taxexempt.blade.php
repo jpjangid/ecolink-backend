@@ -9,7 +9,7 @@
 <body style="margin:0;">
     <div style="font:normal 16px 'Poppins',sans-serif;width:600px;max-width:100%; margin:auto;background:#f1f1f1;line-height:1.3">
         <div style="border-bottom:1px solid #9e9e9e; margin:0 30px;text-align:center;padding:15px 15px 12px">
-            <img src="{{ asset('img/New_Ecolink_Logo-33.png') }}" alt="Ecolink">
+            <img src="{{ asset('ECOLINK_EMAIL_LOGO.png') }}" alt="Ecolink">
         </div>
         <div style="padding:0 15px;">
             <div style="padding:35px 20px;text-align:center">
