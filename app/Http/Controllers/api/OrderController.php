@@ -297,6 +297,9 @@ class OrderController extends Controller
             // if($user->wp_id != null){
             //     $qboresponse = $this->quickBookInvoice($order->user_id, $order->id);
             // }
+            $order = Order::with(['items' => function ($query){
+                $query->with(['product']);
+            }])->where('id',$order->id)->first();
 
             DB::commit();
             $order->email = $user->email;
@@ -328,8 +331,11 @@ class OrderController extends Controller
             $order->order_status = 'cancelled';
             $order->update();
 
-            $order->email = $user->email;
+            $order = Order::with(['items' => function ($query){
+                $query->with(['product']);
+            }])->where('id',$order->id)->first();
 
+            $order->email = $user->email;
             Mail::to($user->email)->send(new OrderCancel($order));
             return response()->json(['message' => 'Data fetched Successfully', 'data' => $order], 200);
         } else {
