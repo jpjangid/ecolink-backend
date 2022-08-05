@@ -20,9 +20,9 @@
         </div>
         <div style="text-align:center;margin-top:10px;">
             <p class="summary-head">Order Summary</p>
-        <p class="summary-body">Your Order with <span style="font-weight:700">Order Id: {{$order->order_no}} </span> been Cancelled Successfully.</p>
+        <p class="summary-body">Your Order with <span style="font-weight:700">Order Id: #{{$order->order_no}} </span> been Cancelled Successfully.</p>
         @foreach($order->items as $key => $item)
-        <table class="table-sm table-borderless productTable">
+        <table class="table-sm table-borderless productTable" width="100%;">
             {{-- <tr>
                 <td rowspan="12"><img src="{{ asset('') }}" style="float:left; height:60%; width:60%;"></td>
             </tr> --}}
@@ -36,7 +36,7 @@
             </tr>
             <tr>
                 <th>Price</th>
-                <td>&#8377; {{ number_format((float)$item->product->regular_price, 2, '.', '') }}</td>
+                <td>${{number_format((float)$item->product->regular_price, 3, '.', ','),}}</td>
             </tr>
         </table>
         <hr>
@@ -44,23 +44,23 @@
         <table class="table-sm table-borderless productTable" width="100%">
             <tr>
                 <th>Sub Total</th>
-                <td>&#8377; {{ number_format((float)$order->order_amount, 2, '.', '') }}</td>
+                <td>${{ number_format((float)$order->order_amount, 3, '.', ','),}}</td>
             </tr>
             <tr>
                 <th>Coupon Discount</th>
-                <td>&#8377; {{ number_format((float)$order->discount_applied, 2, '.', '') }}</td>
+                <td>${{ number_format((float)$order->discount_applied, 3, '.', ','),}}</td>
             </tr>
             <tr>
                 <th>Tax Applied</th>
-                <td>&#8377; {{ number_format((float)$order->tax_amount, 2, '.', '') }}</td>
+                <td>${{ number_format((float)$order->tax_amount, 3, '.', ','),}}</td>
             </tr>
             <tr>
                 <th>Shipping Charges</th>
-                <td>&#8377; {{ number_format((float)$order->shippment_rate, 2, '.', '') }}</td>
+                <td>${{ number_format((float)$order->shippment_rate, 3, '.', ','),}}</td>
             </tr>
             <tr>
                 <th>Refundable Amount</th>
-                <td>&#8377; {{ number_format((float)$order->payment_amount, 2, '.', '') }}</td>
+                <td>${{ number_format((float)$order->payment_amount, 3, '.', ','),}}</td>
             </tr>
         </table>
      
